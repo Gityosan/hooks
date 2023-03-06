@@ -1,0 +1,62 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "build:development": "cross-env MODE=DEVELOPMENT nuxt build",
+    "build:staging": "cross-env MODE=STAGING nuxt build",
+    "build:production": "cross-env MODE=PRODUCTION nuxt build",
+    "start": "PORT=8080 node .output/server/index.mjs",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "lint:js": "eslint --ext \".js,.vue,.ts\" --ignore-path .gitignore .",
+    "lint:style": "stylelint \"**/*.{css,scss,sass,html,vue}\" --ignore-path .gitignore",
+    "lint:prettier": "prettier --check .",
+    "lint": "yarn lint:js && yarn lint:style && yarn lint:prettier",
+    "lintfix": "prettier --write --list-different . && yarn lint:js --fix && yarn lint:style --fix"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "@mdi/font": "npm:@mdi/font@latest",
+    "@mdi/js": "npm:@mdi/js@latest",
+    "@nuxtjs/eslint-config-typescript": "npm:@nuxtjs/eslint-config-typescript@latest",
+    "@types/node": "npm:@types/node@latest",
+    "@types/uuid": "npm:@types/uuid@latest",
+    "@typescript-eslint/eslint-plugin": "npm:@typescript-eslint/eslint-plugin@latest",
+    "@typescript-eslint/parser": "npm:@typescript-eslint/parser@latest",
+    "cross-env": "npm:cross-env@latest",
+    "eslint": "npm:eslint@latest",
+    "eslint-config-prettier": "npm:eslint-config-prettier@latest",
+    "nuxt": "^3.2.0",
+    "postcss-html": "npm:postcss-html@latest",
+    "prettier": "npm:prettier@latest",
+    "sass": "npm:sass@latest",
+    "stylelint": "npm:stylelint@latest",
+    "stylelint-config-prettier": "npm:stylelint-config-prettier@latest",
+    "stylelint-config-recess-order": "npm:stylelint-config-recess-order@latest",
+    "stylelint-config-standard-scss": "npm:stylelint-config-standard-scss@latest",
+    "the-new-css-reset": "npm:the-new-css-reset@latest",
+    "typescript": "npm:typescript@latest",
+    "vite-plugin-vuetify": "npm:vite-plugin-vuetify@latest",
+    "vuetify": "^3.1.4"
+  },
+  "dependencies": {
+    "@aws-amplify/api-graphql": "npm:@aws-amplify/api-graphql@latest",
+    "@aws-amplify/ui-vue": "npm:@aws-amplify/ui-vue@latest",
+    "@tiptap/extension-highlight": "npm:@tiptap/extension-highlight@latest",
+    "@tiptap/extension-image": "npm:@tiptap/extension-image@latest",
+    "@tiptap/extension-text-align": "npm:@tiptap/extension-text-align@latest",
+    "@tiptap/extension-typography": "npm:@tiptap/extension-typography@latest",
+    "@tiptap/pm": "npm:@tiptap/pm@latest",
+    "@tiptap/starter-kit": "npm:@tiptap/starter-kit@latest",
+    "@tiptap/vue-3": "npm:@tiptap/vue-3@latest",
+    "aws-amplify": "npm:aws-amplify@latest"
+  },
+  "resolutions": {
+    "vue": "npm:vue@latest",
+    "vite": "npm:vite@latest",
+    "@tiptap/core": "npm:@tiptap/core@latest",
+    "postcss": "npm:postcss@latest",
+    "uuid": "npm:uuid@latest"
+  }
+}
