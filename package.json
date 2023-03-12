@@ -43,9 +43,13 @@
   "dependencies": {
     "@aws-amplify/api-graphql": "npm:@aws-amplify/api-graphql@latest",
     "@aws-amplify/ui-vue": "npm:@aws-amplify/ui-vue@latest",
+    "@tiptap/extension-color": "npm:@tiptap/extension-color@latest",
+    "@tiptap/extension-text-style": "npm:@tiptap/extension-text-style@latest",
     "@tiptap/extension-highlight": "npm:@tiptap/extension-highlight@latest",
     "@tiptap/extension-image": "npm:@tiptap/extension-image@latest",
     "@tiptap/extension-text-align": "npm:@tiptap/extension-text-align@latest",
+    "@tiptap/extension-link": "npm:@tiptap/extension-link@latest",
+    "@tiptap/extension-underline": "npm:@tiptap/extension-underline@latest",
     "@tiptap/extension-typography": "npm:@tiptap/extension-typography@latest",
     "@tiptap/pm": "npm:@tiptap/pm@latest",
     "@tiptap/starter-kit": "npm:@tiptap/starter-kit@latest",

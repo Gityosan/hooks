@@ -40,7 +40,7 @@ const deleteItem = async () => {
       <div class="d-flex my-2">
         <atom-text text="一括取得" font-size="text-h6" class="my-2" />
         <v-spacer />
-        <atom-button :loading="banEdit" text="再取得" @btn-click="$emit('fetch-func')" />
+        <atom-button :loading="banEdit" text="再取得" @click-func="$emit('fetch-func')" />
       </div>
     </template>
     <template #item.oparation="{ item }">
@@ -58,13 +58,13 @@ const deleteItem = async () => {
           text="削除します"
           :loading="banEdit"
           btn-class="rounded-pill width-200"
-          @btn-click="deleteItem()"
+          @click-func="deleteItem()"
         />
         <atom-button
           text="キャンセル"
           :loading="banEdit"
           btn-class="rounded-pill width-200"
-          @btn-click="open = false"
+          @click-func="open = false"
         />
       </div>
     </v-card>

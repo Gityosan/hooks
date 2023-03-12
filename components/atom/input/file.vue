@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { S3Object } from '~~/assets/API'
-const { $getImage } = useNuxtApp()
+const { $getImage, $makeS3Object } = useNuxtApp()
 const imageURL = ref<string>('')
 const props = withDefaults(
   defineProps<{
@@ -13,15 +13,20 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void
 }>()
-const onImagePicked = (e: Event) => {
-  const t = e.target as HTMLInputElement
-  if (!t.files?.length) return
-  imageURL.value = URL.createObjectURL(t.files[0])
+const onImagePicked = async (f: File[]) => {
+  console.log('c.modelValue')
+  // const t = e.target as HTMLInputElement
+  // if (!t.files?.length) return
+  if (!f.length) return
+  const v = props.modelValue
+  if (v && 'key' in v && 'identityId' in v) {
+    imageURL.value = await $getImage(v.key, v.identityId)
+  } else imageURL.value = URL.createObjectURL(f[0])
+  const data = await $makeS3Object(f[0])
+  emit('update:model-value', data)
 }
-watch(props, async (_, c) => {
-  const v = c.modelValue
-  if (!v || !('key' in v) || !('identityId' in v)) return
-  imageURL.value = await $getImage(v.key, v.identityId)
+watch(props, (_, c) => {
+  console.log(c.modelValue)
 })
 const resetImage = () => {
   emit('update:model-value', null)
@@ -41,7 +46,7 @@ const makeValue = (v: S3Object | null) => {
     variant="underlined"
     accept="image/*"
     :model-value="makeValue(modelValue)"
-    @update:model-value="$emit('update:model-value', $event)"
+    @update:model-value="onImagePicked($event)"
     @click:clear="resetImage()"
     @change="onImagePicked($event)"
   ></v-file-input>

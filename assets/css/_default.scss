@@ -22,3 +22,37 @@ html {
     --#{$name}: #{$color};
   }
 }
+:focus-visible {
+  outline: none !important;
+}
+.ProseMirror {
+  :not(pre) code {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #ff357f;
+    margin: 0 2px;
+    padding: 2px 4px;
+  }
+  pre {
+    background-color: #23241f;
+    color: #f8f8f2;
+    overflow: visible;
+    white-space: pre-wrap;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding: 5px 10px;
+    border-radius: 3px;
+  }
+  blockquote {
+    border-left: 4px solid #ccc;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding-left: 16px;
+  }
+  a {
+    text-decoration: none;
+  }
+  img.ProseMirror-selectednode {
+    outline: 3px solid #68cef8;
+  }
+}

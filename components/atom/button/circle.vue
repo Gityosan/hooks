@@ -15,7 +15,7 @@ withDefaults(
     :class="[isHovering ? 'elevation-3 background-white' : 'background-grey-lighten-4', btnClass]"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
-    @click="$emit('btn-click')"
+    @click="$emit('click-func')"
   >
     <slot />
   </div>

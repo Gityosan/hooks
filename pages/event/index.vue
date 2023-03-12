@@ -17,7 +17,7 @@ await getEvents()
     <div class="d-flex py-10">
       <atom-text font-size="text-h4" text="Event" />
       <v-spacer />
-      <atom-button v-if="isSignedIn" text="新規作成" @btn-click="navigateTo('/admin/event')" />
+      <atom-button v-if="isSignedIn" text="新規作成" @click-func="navigateTo('/admin/event')" />
     </div>
     <div class="d-flex flex-wrap">
       <module-content-medium

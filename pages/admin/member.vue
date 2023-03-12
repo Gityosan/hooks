@@ -41,7 +41,7 @@ await getUsers()
       <div class="d-flex my-2">
         <atom-text text="プロフィール変更" font-size="text-h6" class="my-2" />
         <v-spacer />
-        <atom-button :loading="banEdit" text="更新" @btn-click="updateMyUser()" />
+        <atom-button :loading="banEdit" text="更新" @click-func="updateMyUser()" />
       </div>
       <v-form ref="form">
         <atom-input

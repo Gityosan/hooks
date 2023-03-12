@@ -3168,6 +3168,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code/-/extension-code-2.0.0-beta.217.tgz#40f8bea6af46c1571212f4eae8900481dea51829"
   integrity sha512-IPpuI8MeVX5N0ueWQcIvh2nD+EN6DbFtKSsoU+FgFJ9meOkiEWGibSJ5yFQinPsiE9zrwYIaZzzjhr4oeY2JNA==
 
+"@tiptap/extension-color@npm:@tiptap/extension-color@latest":
+  version "2.0.0-beta.220"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-color/-/extension-color-2.0.0-beta.220.tgz#c87d5f0ce1a94eb4a5ecc31585f579a8f4db97bf"
+  integrity sha512-a2P1jlCHsc3ICcVFEfStF0xTeDe8nkJ2FB5QLFAPe1VZi6AgFAGG0FLC904Zfb988Rr+TZK8AQku/X1MlMqa/A==
+
 "@tiptap/extension-document@^2.0.0-beta.217":
   version "2.0.0-beta.217"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-document/-/extension-document-2.0.0-beta.217.tgz#ce53814197af814fe533da541f9681111fa5d52e"
@@ -3225,6 +3230,13 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-italic/-/extension-italic-2.0.0-beta.217.tgz#e6470cfd1763af0141f74165e404029332bca0bf"
   integrity sha512-Oua5QbsOJ/MNV41fvbBtJOE/ciw2AjWybSiPkn8clu1/KjieE9dectlj+COaNbVIOccTNhurECpqfF0h8K87Kg==
 
+"@tiptap/extension-link@npm:@tiptap/extension-link@latest":
+  version "2.0.0-beta.220"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-link/-/extension-link-2.0.0-beta.220.tgz#c9954613cd1e0a0f1527853b732ef50dff734eac"
+  integrity sha512-vjEA8cE37ZZVVgPHSpttw3kbJoClb+ya/BVukDtJ1h6C7mIR1rqzNxTgpbnXJuA8xww0JOjpa5dpzEgcs294fA==
+  dependencies:
+    linkifyjs "^4.1.0"
+
 "@tiptap/extension-list-item@^2.0.0-beta.217":
   version "2.0.0-beta.217"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-list-item/-/extension-list-item-2.0.0-beta.217.tgz#811c1197023bed2ed96f1e88f14ee66eac77d8f7"
@@ -3250,6 +3262,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-text-align/-/extension-text-align-2.0.0-beta.217.tgz#5de3986cf63d57ce00dd123f01723d4f52a51f6c"
   integrity sha512-oFr1xkUFJKHGJkFA0CDcfkEA4z3jr1umFRkr6qejKiYqwAUdnn5YrtfdGICJzBEa6/1wOCZz0ODzCnv9XmGDkA==
 
+"@tiptap/extension-text-style@npm:@tiptap/extension-text-style@latest":
+  version "2.0.0-beta.220"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-text-style/-/extension-text-style-2.0.0-beta.220.tgz#d72f2ee3247a14a1fc6702145ede83ddcc8de97a"
+  integrity sha512-eKavMVrVrnHq/iR1ksyPvoJTfiT6rxDKYZoN8WifqRyOz/y+TjuqH/AzV6NgAU+mSu6c0AY7a3Y0FfFU2BV7JA==
+
 "@tiptap/extension-text@^2.0.0-beta.217":
   version "2.0.0-beta.217"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-text/-/extension-text-2.0.0-beta.217.tgz#7d3f7bda8991b1bac9ef7cbc62ed71d17ad0243b"
@@ -3259,6 +3276,11 @@
   version "2.0.0-beta.217"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-typography/-/extension-typography-2.0.0-beta.217.tgz#beb96783a815a62624fbeb8723840b8bda135d25"
   integrity sha512-xr/KBgdcI3qbTshbY0FCN8BiSRW++MH7yQwvAKlhk47Qt0UcVsRIGc/FfXFD2MhfoZ4vaVrIn5daU4P4p3d+wA==
+
+"@tiptap/extension-underline@npm:@tiptap/extension-underline@latest":
+  version "2.0.0-beta.220"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-underline/-/extension-underline-2.0.0-beta.220.tgz#62b6c02f63a439721f79dff63a73ea366fa31919"
+  integrity sha512-MW2EjL12xW01Nmlwih7wHwHSn8zGUtsyruqPH8sTxnOtbVOmMBnmFj0/LW+TvwqjlNdkwkrteZO4svLdD0MEhw==
 
 "@tiptap/pm@npm:@tiptap/pm@latest":
   version "2.0.0-beta.217"
@@ -6518,6 +6540,11 @@ linkify-it@^4.0.1:
   integrity sha512-C7bfi1UZmoj8+PQx22XyeXCuBlokoyWQL5pWSP+EI6nzRylyThouddufc2c1NDIcP9k5agmN9fLpA7VNJfIiqw==
   dependencies:
     uc.micro "^1.0.1"
+
+linkifyjs@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/linkifyjs/-/linkifyjs-4.1.0.tgz#0460bfcc37d3348fa80e078d92e7bbc82588db15"
+  integrity sha512-Ffv8VoY3+ixI1b3aZ3O+jM6x17cOsgwfB1Wq7pkytbo1WlyRp6ZO0YDMqiWT/gQPY/CmtiGuKfzDIVqxh1aCTA==
 
 listhen@^1.0.2:
   version "1.0.3"

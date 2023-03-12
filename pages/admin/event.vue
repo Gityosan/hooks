@@ -50,12 +50,12 @@ await getEvents()
           :loading="banEdit"
           text="リセット"
           btn-class="mr-3"
-          @btn-click="input = defaultInput"
+          @click-func="input = defaultInput"
         />
         <atom-button
           :loading="banEdit"
           :text="input.id ? '更新' : '新規作成'"
-          @btn-click="mutateEvent()"
+          @click-func="mutateEvent()"
         />
       </div>
       <v-form ref="form">

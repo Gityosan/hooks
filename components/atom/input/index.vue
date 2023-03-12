@@ -12,13 +12,13 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void
 }>()
-const onChange = async ({ index = 0, event }: { index?: number; event?: Event | File[] }) => {
+const onChange = ({ index = 0, event }: { index?: number; event?: Event | File[] }) => {
   let res = props.modelValue
-  let data: any = event
-  if (props.input.type === 'fileinput' && Array.isArray(event)) {
-    if (!event?.length) return
-    data = await $makeS3Object(event[0])
-  }
+  const data: any = event
+  // if (props.input.type === 'fileinput' && Array.isArray(event)) {
+  //   if (!event?.length) return
+  //   data = await $makeS3Object(event[0])
+  // }
   if (Array.isArray(props.modelValue)) res[index] = data
   else res = data
 
