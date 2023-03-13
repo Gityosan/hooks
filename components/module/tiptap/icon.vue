@@ -3,10 +3,11 @@ type TiptapButtonType = {
   title?: string
   icon?: string
   disabled: () => boolean
-  func?: (url?: string) => void
+  func?: any
   items?: TiptapButtonType[]
+  editor?: any
 }
-const props = withDefaults(defineProps<TiptapButtonType>(), {
+withDefaults(defineProps<TiptapButtonType>(), {
   title: '',
   icon: '',
   disabled: () => false,
@@ -14,9 +15,6 @@ const props = withDefaults(defineProps<TiptapButtonType>(), {
 })
 const link = ref<string>('')
 const file = ref<any>()
-const setImage = (file: File) => {
-  if (props.func) props.func(URL.createObjectURL(file))
-}
 </script>
 <template>
   <template v-if="icon">
@@ -49,7 +47,7 @@ const setImage = (file: File) => {
             line-height="line-height-40"
             class="mr-2"
           />
-          <v-text-field v-model="link" variant="outlined" density="compact" hide-details class="" />
+          <v-text-field v-model="link" variant="outlined" density="compact" hide-details />
           <atom-text
             text="保存"
             font-size="text-subtitle-2"
@@ -69,7 +67,7 @@ const setImage = (file: File) => {
         <div class="d-flex">
           <atom-text text="画像をアップロード" line-height="line-height-40" />
           <v-spacer />
-          <atom-button text="挿入" @click-func="setImage(file.file)" />
+          <atom-button text="挿入" @click-func="func && func(file.file)" />
         </div>
         <atom-input-file v-model="file" />
       </div>

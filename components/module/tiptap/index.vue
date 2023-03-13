@@ -43,17 +43,12 @@ const editor = useEditor({
   }
 })
 watch(props, (v, c) => {
-  // if (!isProd) console.log(c.modelValue)
   if (editor.value?.getHTML() === c.modelValue) return
   editor.value?.commands.setContent(c.modelValue, false)
 })
 onBeforeUnmount(() => {
   editor.value?.destroy()
 })
-const setLink = () => {
-  // if (!url) editor.value?.chain().focus().extendMarkRange('link').unsetLink().run()
-  // else editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-}
 const icons = computed(() => [
   {
     title: '文字サイズ',
@@ -205,24 +200,22 @@ const icons = computed(() => [
   {
     title: '画像',
     icon: 'mdi-image',
-    func: (url = '') => {
-      console.log('url', url)
+    func: (file: File | null = null) => {
+      if (!file) return
+      const url = URL.createObjectURL(file)
       editor.value?.chain().focus().setImage({ src: url }).run()
-    },
-    disabled: () => false
+    }
   },
   {},
   {
     title: '区切り線',
     icon: 'mdi-minus',
-    func: () => editor.value?.chain().focus().setHorizontalRule().run(),
-    disabled: () => false
+    func: () => editor.value?.chain().focus().setHorizontalRule().run()
   },
   {
     title: '改行',
     icon: 'mdi-keyboard-return',
-    func: () => editor.value?.chain().focus().setHardBreak().run(),
-    disabled: () => false
+    func: () => editor.value?.chain().focus().setHardBreak().run()
   },
   {
     title: '一つ前に戻る',
