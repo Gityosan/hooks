@@ -57,6 +57,39 @@ const file = ref<any>()
             @click="func && func(link)"
           />
         </div>
+        <div class="d-flex">
+          <atom-text
+            text="リンク先:"
+            font-size="text-caption"
+            line-height="line-height-40"
+            class="mr-2"
+          />
+          <atom-text
+            :text="link"
+            font-size="text-subtitle-2"
+            color="text-blue"
+            line-height="line-height-40"
+            class="mr-4 cursor-pointer"
+            style="flex: 1"
+          />
+          <atom-text
+            text="編集"
+            font-size="text-subtitle-2"
+            color="text-blue"
+            line-height="line-height-40"
+            class="cursor-pointer"
+            @click="func && func(link)"
+          />
+          <v-divider vertical class="my-3 mx-2" />
+          <atom-text
+            text="削除"
+            font-size="text-subtitle-2"
+            color="text-blue"
+            line-height="line-height-40"
+            class="cursor-pointer"
+            @click="func && func('')"
+          />
+        </div>
       </div>
     </v-menu>
     <v-menu v-else-if="icon === 'mdi-image'">
