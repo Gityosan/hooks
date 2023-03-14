@@ -57,13 +57,13 @@ const deleteItem = async () => {
         <atom-button
           text="削除します"
           :loading="banEdit"
-          btn-class="rounded-pill width-200"
+          class="rounded-pill width-200"
           @click-func="deleteItem()"
         />
         <atom-button
           text="キャンセル"
           :loading="banEdit"
-          btn-class="rounded-pill width-200"
+          class="rounded-pill width-200"
           @click-func="open = false"
         />
       </div>

@@ -2,13 +2,11 @@
 withDefaults(
   defineProps<{
     text: string
-    btnClass: string
     textClass: string
     loading: boolean
   }>(),
   {
     text: '',
-    btnClass: '',
     textClass: '',
     loading: false
   }
@@ -18,7 +16,7 @@ const isHovering = ref<boolean>(false)
 <template>
   <v-btn
     class="height-40 px-4 py-2 transition-short-ease"
-    :class="[isHovering ? 'bg-main-color' : 'bg-white', btnClass]"
+    :class="[isHovering ? 'bg-main-color' : 'bg-white']"
     :loading="loading"
     :ripple="false"
     variant="outlined"

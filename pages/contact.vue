@@ -68,7 +68,7 @@ const submit = async () => {
         counter="500"
         class="mb-5"
       />
-      <atom-button text="送信" btn-class="w-100" :loading="banEdit" @click-func="submit()" />
+      <atom-button text="送信" class="w-100" :loading="banEdit" @click-func="submit()" />
     </v-form>
   </layout-public>
 </template>

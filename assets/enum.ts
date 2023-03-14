@@ -64,17 +64,12 @@ export const InputComponents = (key?: string, v?: any): InputComponentsType => {
         'hide-details': true,
         inset: true,
         class: v ? 'text-main-color' : 'text-grey-darken-4',
-        label: v ? 'している' : 'していない'
+        label: v ? 'している' : 'していない',
+        style: 'width: fit-content;'
       }
     },
-    fileinput: {
-      comp: 'atom-input-file',
-      props: {}
-    },
-    select: {
-      comp: 'atom-input-select',
-      props: {}
-    }
+    fileinput: { comp: 'atom-input-file' },
+    select: { comp: 'atom-input-select' }
   }
 }
 export const articleInputs: InputType[] = [

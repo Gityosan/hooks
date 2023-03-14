@@ -5,20 +5,27 @@ type TiptapButtonType = {
   disabled: () => boolean
   func?: any
   items?: TiptapButtonType[]
-  editor?: any
+  link?: string
+  color?: string
 }
-withDefaults(defineProps<TiptapButtonType>(), {
+const props = withDefaults(defineProps<TiptapButtonType>(), {
   title: '',
   icon: '',
   disabled: () => false,
-  items: () => []
+  items: () => [],
+  link: '',
+  color: '#000000'
 })
-const link = ref<string>('')
+watch(props, (v, c) => {
+  isLinkEditMode.value = !c.link
+})
 const file = ref<any>()
+const open = ref<boolean>(false)
+const isLinkEditMode = ref<boolean>(!props.link)
 </script>
 <template>
   <template v-if="icon">
-    <v-menu v-if="items.length">
+    <v-menu v-if="items.length" v-model="open">
       <template #activator="{ props: menu }">
         <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
       </template>
@@ -33,61 +40,109 @@ const file = ref<any>()
         />
       </div>
     </v-menu>
-    <v-menu v-else-if="icon === 'mdi-link'" :close-on-content-click="false">
+    <v-menu
+      v-else-if="icon === 'mdi-format-color-text' || icon === 'mdi-texture'"
+      v-model="open"
+      :close-on-content-click="false"
+    >
+      <template #activator="{ props: menu }">
+        <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
+      </template>
+      <div class="bg-white rounded border-solid border-width-1 border-black px-4 py-1">
+        <v-color-picker
+          :modes="['rgb', 'hex', 'hexa']"
+          elevation="0"
+          hide-canvas
+          show-swatches
+          :model-value="color"
+          @update:model-value="$emit('update:color', $event)"
+        />
+        <atom-button
+          text="保存"
+          text-class="text-caption"
+          class="my-2 w-100"
+          @click-func="
+            () => {
+              open = false
+              func && func()
+            }
+          "
+        />
+      </div>
+    </v-menu>
+    <v-menu v-else-if="icon === 'mdi-link'" v-model="open" :close-on-content-click="false">
       <template #activator="{ props: menu }">
         <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
       </template>
       <div
         class="bg-white rounded border-solid border-width-1 border-black min-width-300 px-2 py-1"
       >
-        <div class="d-flex">
+        <div v-if="isLinkEditMode" class="d-flex">
           <atom-text
             text="リンク先を入力:"
             font-size="text-caption"
             line-height="line-height-40"
             class="mr-2"
           />
-          <v-text-field v-model="link" variant="outlined" density="compact" hide-details />
+          <v-text-field
+            :model-value="link"
+            variant="outlined"
+            density="compact"
+            hide-details
+            @update:model-value="$emit('update:link', $event)"
+          />
           <atom-text
             text="保存"
             font-size="text-subtitle-2"
-            color="text-blue"
+            color="text-blue-darken-1"
             line-height="line-height-40"
             class="ml-2 cursor-pointer"
-            @click="func && func(link)"
+            @click="
+              () => {
+                open = false
+                func && func()
+              }
+            "
           />
         </div>
-        <div class="d-flex">
+        <div v-else class="d-flex flex-nowrap">
           <atom-text
             text="リンク先:"
             font-size="text-caption"
             line-height="line-height-40"
-            class="mr-2"
+            class="mr-2 white-space-nowrap"
           />
-          <atom-text
-            :text="link"
-            font-size="text-subtitle-2"
-            color="text-blue"
-            line-height="line-height-40"
-            class="mr-4 cursor-pointer"
-            style="flex: 1"
-          />
+          <nuxt-link :to="link" target="_blank" rel="noopener">
+            <atom-text
+              :text="link"
+              font-size="text-subtitle-2"
+              color="text-blue-darken-1"
+              line-height="line-height-40"
+              class="mr-4 cursor-pointer line-clamp-1 max-width-130"
+              style="flex: 1"
+            />
+          </nuxt-link>
           <atom-text
             text="編集"
             font-size="text-subtitle-2"
-            color="text-blue"
+            color="text-blue-darken-1"
             line-height="line-height-40"
-            class="cursor-pointer"
-            @click="func && func(link)"
+            class="cursor-pointer white-space-nowrap"
+            @click="isLinkEditMode = true"
           />
           <v-divider vertical class="my-3 mx-2" />
           <atom-text
             text="削除"
             font-size="text-subtitle-2"
-            color="text-blue"
+            color="text-blue-darken-1"
             line-height="line-height-40"
-            class="cursor-pointer"
-            @click="func && func('')"
+            class="cursor-pointer white-space-nowrap"
+            @click="
+              () => {
+                open = false
+                func && func()
+              }
+            "
           />
         </div>
       </div>

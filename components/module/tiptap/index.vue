@@ -3,15 +3,19 @@ import { Underline } from '@tiptap/extension-underline'
 import { Highlight } from '@tiptap/extension-highlight'
 import { Link } from '@tiptap/extension-link'
 import { Color } from '@tiptap/extension-color'
+import { TextStyle } from '@tiptap/extension-text-style'
 import { Typography } from '@tiptap/extension-typography'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Image } from '@tiptap/extension-image'
-import { EditorContent, useEditor } from '@tiptap/vue-3'
+import { BubbleMenu, EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
 // const config = useRuntimeConfig()
 // const isProd = config.public.isProd
 const textAlignTypeIcon = ref<string>('mdi-format-align-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
+const isLinkEditMode = ref<boolean>(false)
+const link = ref<string>('')
+const color = ref<string>('')
 const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void
@@ -22,8 +26,14 @@ const editor = useEditor({
     StarterKit,
     Underline,
     Color,
+    TextStyle,
     Highlight,
-    Link,
+    Link.configure({
+      openOnClick: false,
+      HTMLAttributes: {
+        class: 'text-blue-darken-1 cursor-text'
+      }
+    }),
     Typography,
     TextAlign.configure({
       types: ['heading', 'paragraph']
@@ -40,6 +50,11 @@ const editor = useEditor({
     if ('textAlign' in selectedText)
       textAlignTypeIcon.value = `mdi-format-align-${selectedText.textAlign}`
     if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
+  },
+  onSelectionUpdate: () => {
+    link.value = editor.value?.getAttributes('link').href
+    color.value = editor.value?.getAttributes('textStyle').color
+    isLinkEditMode.value = !editor.value?.getAttributes('link').href
   }
 })
 watch(props, (v, c) => {
@@ -49,6 +64,10 @@ watch(props, (v, c) => {
 onBeforeUnmount(() => {
   editor.value?.destroy()
 })
+const setLink = (link = '') => {
+  if (!link) editor.value?.chain().focus().extendMarkRange('link').unsetLink().run()
+  else editor.value?.chain().focus().extendMarkRange('link').setLink({ href: link }).run()
+}
 const icons = computed(() => [
   {
     title: '文字サイズ',
@@ -94,14 +113,12 @@ const icons = computed(() => [
   {
     title: '背景色',
     icon: 'mdi-texture',
-    func: () => editor.value?.chain().focus().toggleCode().run(),
-    disabled: () => editor.value?.isActive('code') || false
+    func: () => editor.value?.chain().focus().toggleHighlight({ color: color.value }).run()
   },
   {
     title: '文字色',
     icon: 'mdi-format-color-text',
-    func: () => editor.value?.chain().focus().toggleCode().run(),
-    disabled: () => editor.value?.isActive('code') || false
+    func: () => editor.value?.chain().focus().setColor(color.value).run()
   },
   {},
   {
@@ -151,7 +168,6 @@ const icons = computed(() => [
     title: '横位置',
     icon: textAlignTypeIcon.value,
     func: () => editor.value?.chain().focus().setTextAlign('left').run(),
-    disabled: () => editor.value?.isActive({ textAlign: 'left' }) || false,
     items: [
       {
         icon: 'mdi-format-align-left',
@@ -191,11 +207,9 @@ const icons = computed(() => [
   {
     title: 'リンク',
     icon: 'mdi-link',
-    func: (url = '') => {
-      if (!url) editor.value?.chain().focus().extendMarkRange('link').unsetLink().run()
-      else editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-    },
-    disabled: () => editor.value?.isActive('link') || false
+    func: () => {
+      setLink(link.value)
+    }
   },
   {
     title: '画像',
@@ -237,6 +251,8 @@ const icons = computed(() => [
       <module-tiptap-icon
         v-for="item in icons"
         :key="item.icon"
+        v-model:link="link"
+        v-model:color="color"
         :title="item.title"
         :icon="item.icon"
         :items="item.items"
@@ -245,6 +261,79 @@ const icons = computed(() => [
       />
     </div>
     <v-divider class="text-grey-darken-4"></v-divider>
-    <editor-content :editor="editor" class="py-5 px-2 rich-text" />
+    <!-- <bubble-menu
+      :editor="editor"
+      :tippy-options="{ duration: 0 }"
+      :should-show="
+        ({ editor, view, state, oldState, from, to }) => {
+          // links = String(!!editor.getAttributes('link').href)
+          return !!editor.getAttributes('link').href
+        }
+      "
+    >
+      <div
+        class="bg-white rounded border-solid border-width-1 border-black min-width-300 px-2 py-1"
+      >
+        <div v-if="isLinkEditMode" class="d-flex">
+          <atom-text
+            text="リンク先を入力:"
+            font-size="text-caption"
+            line-height="line-height-40"
+            class="mr-2"
+          />
+          <v-text-field
+            :model-value="editor.getAttributes('link').href"
+            variant="outlined"
+            density="compact"
+            hide-details
+            @update:model-value="link = $event"
+          />
+          <atom-text
+            text="保存"
+            font-size="text-subtitle-2"
+            color="text-blue-darken-1"
+            line-height="line-height-40"
+            class="ml-2 cursor-pointer"
+            @click="setLink(link)"
+          />
+        </div>
+        <div v-else class="d-flex flex-nowrap">
+          <atom-text
+            text="リンク先:"
+            font-size="text-caption"
+            line-height="line-height-40"
+            class="mr-2 white-space-nowrap"
+          />
+          <nuxt-link :to="editor.getAttributes('link').href" target="_blank" rel="noopener">
+            <atom-text
+              :text="editor.getAttributes('link').href"
+              font-size="text-subtitle-2"
+              color="text-blue-darken-1"
+              line-height="line-height-40"
+              class="mr-4 cursor-pointer line-clamp-1 max-width-130"
+              style="flex: 1"
+            />
+          </nuxt-link>
+          <atom-text
+            text="編集"
+            font-size="text-subtitle-2"
+            color="text-blue-darken-1"
+            line-height="line-height-40"
+            class="cursor-pointer white-space-nowrap"
+            @click="isLinkEditMode = true"
+          />
+          <v-divider vertical class="my-3 mx-2" />
+          <atom-text
+            text="削除"
+            font-size="text-subtitle-2"
+            color="text-blue-darken-1"
+            line-height="line-height-40"
+            class="cursor-pointer white-space-nowrap"
+            @click="setLink('')"
+          />
+        </div>
+      </div>
+    </bubble-menu> -->
+    <editor-content :editor="editor" class="py-5 px-2 rich-text max-height-300 overflow-y-auto" />
   </div>
 </template>

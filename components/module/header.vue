@@ -38,7 +38,7 @@ const menu = [
         v-for="item in menu.filter((v) => v.outside)"
         :key="item.text"
         :text="item.text"
-        btn-class="my-1"
+        class="my-1"
         style="border: none"
         @click-func="navigateTo(item.path)"
       />

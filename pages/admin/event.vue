@@ -49,7 +49,7 @@ await getEvents()
         <atom-button
           :loading="banEdit"
           text="リセット"
-          btn-class="mr-3"
+          class="mr-3"
           @click-func="input = defaultInput"
         />
         <atom-button

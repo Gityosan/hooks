@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { InputType } from '~/assets/type'
 import { InputComponents } from '~/assets/enum'
-const { $makeS3Object } = useNuxtApp()
 const props = withDefaults(
   defineProps<{
     input: InputType
@@ -15,13 +14,8 @@ const emit = defineEmits<{
 const onChange = ({ index = 0, event }: { index?: number; event?: Event | File[] }) => {
   let res = props.modelValue
   const data: any = event
-  // if (props.input.type === 'fileinput' && Array.isArray(event)) {
-  //   if (!event?.length) return
-  //   data = await $makeS3Object(event[0])
-  // }
   if (Array.isArray(props.modelValue)) res[index] = data
   else res = data
-
   emit('update:model-value', res)
 }
 </script>
