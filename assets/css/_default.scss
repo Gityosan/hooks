@@ -10,22 +10,18 @@ html {
   overflow: auto;
   @extend .font-family-main;
   @extend .designed-scrollbar;
-}
-.rich-text {
-  li {
-    margin-left: 16px !important;
-  }
-}
-
-html {
   @each $name, $color in var.$colors {
     --#{$name}: #{$color};
   }
 }
+
 :focus-visible {
   outline: none !important;
 }
 .ProseMirror {
+  li {
+    margin-left: 16px !important;
+  }
   :not(pre) code {
     border: 1px solid #ddd;
     background-color: #fff;
