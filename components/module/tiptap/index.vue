@@ -27,7 +27,7 @@ const editor = useEditor({
     Underline,
     Color,
     TextStyle,
-    Highlight,
+    Highlight.configure({ multicolor: true }),
     Link.configure({
       openOnClick: false,
       HTMLAttributes: {
@@ -334,6 +334,6 @@ const icons = computed(() => [
         </div>
       </div>
     </bubble-menu> -->
-    <editor-content :editor="editor" class="py-5 px-2 rich-text max-height-300 overflow-y-auto" />
+    <editor-content :editor="editor" class="py-5 px-2 max-height-300 overflow-y-auto" />
   </div>
 </template>
