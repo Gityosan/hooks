@@ -18,9 +18,9 @@ const submit = async () => {
   }
   const content =
     '「' + name.value + '」さんからお問い合わせがありました！\n\nお問い合わせ内容\n' + body.value
-  if (!config.public.discordwebhook) return
+  if (!config.public.discordWebhook) return
   await $baseFetch(
-    config.public.discordwebhook,
+    config.public.discordWebhook,
     $options({
       key: content,
       method: 'POST',

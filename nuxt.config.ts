@@ -52,10 +52,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      isProd: process.env.MODE?.toUpperCase() === 'PRODUCTION' || false,
-      baseUrl: process.env.BASEURL || '',
       limit: 100,
-      discordwebhook: process.env.DISCORDWEBHOOK || ''
+      discordWebhook: ''
     }
   }
 })
