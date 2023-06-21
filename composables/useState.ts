@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import { User } from '~/assets/API'
 import { SnackbarType, SnackbarTypeList } from '~/assets/type'
 import { iconTypes } from '~/assets/enum'
