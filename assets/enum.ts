@@ -1,4 +1,4 @@
-import { validation } from './validation'
+import { validation as v } from './validation'
 import { InputType, InputComponentsType, SnackbarType, SnackbarTypeList } from '~/assets/type'
 export const Regexp = {
   normalize: /\/$/,
@@ -80,7 +80,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'title',
@@ -89,7 +89,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   },
   {
     key: 'body',
@@ -98,7 +98,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(1000)]
+    rules: [v.required, v.maxString(1000)]
   },
   {
     key: 'published',
@@ -116,7 +116,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.checkUUID],
+    rules: [v.required, v.checkUUID],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   },
   {
@@ -126,7 +126,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID],
+    rules: [v.checkUUID],
     props: { queryName: 'listProjects', itemTitle: 'title' }
   },
   {
@@ -136,7 +136,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID],
+    rules: [v.checkUUID],
     props: { queryName: 'listEvents', itemTitle: 'title' }
   },
   {
@@ -146,7 +146,7 @@ export const articleInputs: InputType[] = [
     schemaType: 'S3Object',
     isArray: false,
     default: null,
-    rules: [validation.maxFileSize(5)]
+    rules: [v.maxFileSize(5)]
   }
 ]
 export const eventInputs: InputType[] = [
@@ -157,7 +157,7 @@ export const eventInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'title',
@@ -166,7 +166,7 @@ export const eventInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   },
   {
     key: 'date',
@@ -175,7 +175,7 @@ export const eventInputs: InputType[] = [
     schemaType: 'AWSDate',
     isArray: true,
     default: ['2000-01-01'],
-    rules: [validation.required, validation.checkAWSDate]
+    rules: [v.required, v.checkAWSDate]
   },
   {
     key: 'description',
@@ -184,7 +184,7 @@ export const eventInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(300)]
+    rules: [v.required, v.maxString(300)]
   },
   {
     key: 'wanted',
@@ -193,7 +193,7 @@ export const eventInputs: InputType[] = [
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: [validation.required]
+    rules: [v.required]
   },
   {
     key: 'published',
@@ -211,7 +211,7 @@ export const eventInputs: InputType[] = [
     schemaType: 'S3Object',
     isArray: false,
     default: null,
-    rules: [validation.maxFileSize(5)]
+    rules: [v.maxFileSize(5)]
   }
 ]
 export const memberInputs: InputType[] = [
@@ -222,7 +222,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'name',
@@ -231,7 +231,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(20)]
+    rules: [v.required, v.maxString(20)]
   },
   {
     key: 'email',
@@ -240,7 +240,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required]
+    rules: [v.required]
   },
   {
     key: 'university',
@@ -249,7 +249,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   },
   {
     key: 'faculty',
@@ -258,7 +258,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   },
   {
     key: 'grade',
@@ -267,7 +267,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'Int',
     isArray: false,
     default: 0,
-    rules: [validation.required, validation.rangeInt([1, 6])]
+    rules: [v.required, v.rangeInt([1, 6])]
   },
   {
     key: 'jobHunting',
@@ -285,7 +285,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'AWSDate',
     isArray: false,
     default: '',
-    rules: [validation.checkAWSDate]
+    rules: [v.checkAWSDate]
   },
   {
     key: 'leave',
@@ -294,7 +294,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'AWSDate',
     isArray: false,
     default: '',
-    rules: [validation.checkAWSDate]
+    rules: [v.checkAWSDate]
   },
   {
     key: 'discordId',
@@ -303,7 +303,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.equalString(18)]
+    rules: [v.equalString(18)]
   },
   {
     key: 'description',
@@ -312,7 +312,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(300)]
+    rules: [v.required, v.maxString(300)]
   },
   {
     key: 'forRecruitment',
@@ -321,7 +321,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.maxString(1000)]
+    rules: [v.maxString(1000)]
   },
   {
     key: 'history',
@@ -330,7 +330,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.maxString(1000)]
+    rules: [v.maxString(1000)]
   },
   {
     key: 'github',
@@ -339,7 +339,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.checkURL, validation.maxString(40)]
+    rules: [v.checkURL, v.maxString(40)]
   },
   {
     key: 'zenn',
@@ -348,7 +348,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.checkURL, validation.maxString(40)]
+    rules: [v.checkURL, v.maxString(40)]
   },
   {
     key: 'qiita',
@@ -357,7 +357,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.checkURL, validation.maxString(40)]
+    rules: [v.checkURL, v.maxString(40)]
   },
   {
     key: 'twitter',
@@ -366,7 +366,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.checkURL, validation.maxString(40)]
+    rules: [v.checkURL, v.maxString(40)]
   },
   {
     key: 'slide',
@@ -375,7 +375,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.checkURL, validation.maxString(40)]
+    rules: [v.checkURL, v.maxString(40)]
   },
   {
     key: 'file',
@@ -384,7 +384,7 @@ export const memberInputs: InputType[] = [
     schemaType: 'S3Object',
     isArray: false,
     default: null,
-    rules: [validation.maxFileSize(5)]
+    rules: [v.maxFileSize(5)]
   }
 ]
 export const portfolioInputs: InputType[] = [
@@ -395,7 +395,7 @@ export const portfolioInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'title',
@@ -404,7 +404,7 @@ export const portfolioInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   },
   {
     key: 'url',
@@ -413,7 +413,7 @@ export const portfolioInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.checkURL, validation.maxString(40)]
+    rules: [v.checkURL, v.maxString(40)]
   },
   {
     key: 'description',
@@ -422,7 +422,7 @@ export const portfolioInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(300)]
+    rules: [v.required, v.maxString(300)]
   },
   {
     key: 'published',
@@ -440,7 +440,7 @@ export const portfolioInputs: InputType[] = [
     schemaType: 'S3Object',
     isArray: false,
     default: null,
-    rules: [validation.maxFileSize(5)]
+    rules: [v.maxFileSize(5)]
   },
   {
     key: 'userPortfolioId',
@@ -449,7 +449,7 @@ export const portfolioInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.checkUUID],
+    rules: [v.required, v.checkUUID],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   }
 ]
@@ -461,7 +461,7 @@ export const projectInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'title',
@@ -470,7 +470,7 @@ export const projectInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   },
   {
     key: 'start',
@@ -479,7 +479,7 @@ export const projectInputs: InputType[] = [
     schemaType: 'AWSDate',
     isArray: false,
     default: '',
-    rules: [validation.checkAWSDate]
+    rules: [v.checkAWSDate]
   },
   {
     key: 'end',
@@ -488,7 +488,7 @@ export const projectInputs: InputType[] = [
     schemaType: 'AWSDate',
     isArray: false,
     default: '',
-    rules: [validation.checkAWSDate]
+    rules: [v.checkAWSDate]
   },
   {
     key: 'description',
@@ -497,7 +497,7 @@ export const projectInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(300)]
+    rules: [v.required, v.maxString(300)]
   },
   {
     key: 'wanted',
@@ -524,7 +524,7 @@ export const projectInputs: InputType[] = [
     schemaType: 'S3Object',
     isArray: false,
     default: null,
-    rules: [validation.maxFileSize(5)]
+    rules: [v.maxFileSize(5)]
   }
 ]
 export const skillInputs: InputType[] = [
@@ -535,7 +535,7 @@ export const skillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'title',
@@ -544,7 +544,7 @@ export const skillInputs: InputType[] = [
     schemaType: 'String',
     isArray: false,
     default: '',
-    rules: [validation.required, validation.maxString(40)]
+    rules: [v.required, v.maxString(40)]
   }
 ]
 export const articleSkillInputs: InputType[] = [
@@ -555,7 +555,7 @@ export const articleSkillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'articleID',
@@ -564,7 +564,7 @@ export const articleSkillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listArticles', itemTitle: 'title' }
   },
   {
@@ -574,7 +574,7 @@ export const articleSkillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listSkills', itemTitle: 'title' }
   }
 ]
@@ -586,7 +586,7 @@ export const eventUserInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'eventID',
@@ -595,7 +595,7 @@ export const eventUserInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listEvents', itemTitle: 'title' }
   },
   {
@@ -605,7 +605,7 @@ export const eventUserInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   }
 ]
@@ -617,7 +617,7 @@ export const projectUserInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'projectID',
@@ -626,7 +626,7 @@ export const projectUserInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listProjects', itemTitle: 'title' }
   },
   {
@@ -636,7 +636,7 @@ export const projectUserInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   }
 ]
@@ -648,7 +648,7 @@ export const userSkillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.checkUUID]
+    rules: [v.checkUUID]
   },
   {
     key: 'skillID',
@@ -657,7 +657,7 @@ export const userSkillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listSkills', itemTitle: 'title' }
   },
   {
@@ -667,7 +667,7 @@ export const userSkillInputs: InputType[] = [
     schemaType: 'ID',
     isArray: false,
     default: '',
-    rules: [validation.required],
+    rules: [v.required],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   }
 ]

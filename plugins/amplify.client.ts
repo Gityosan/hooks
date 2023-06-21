@@ -1,7 +1,14 @@
 import { GraphQLQuery } from '@aws-amplify/api'
-import { API, Auth, Storage } from 'aws-amplify'
+import { Amplify, API, Auth, Storage, I18n } from 'aws-amplify'
+import { translations } from '@aws-amplify/ui-vue'
 import { v4 as uuidv4 } from 'uuid'
-export default defineNuxtPlugin((nuxtApp) => {
+import amplifyConfig from '~/src/aws-exports'
+
+export default defineNuxtPlugin((nuxtApp: any) => {
+  Amplify.configure(amplifyConfig)
+
+  I18n.putVocabularies(translations)
+  I18n.setLanguage('ja')
   const config = nuxtApp.$config
   const isProd = config.public.isProd
   const { isSignedIn } = useLoginState()

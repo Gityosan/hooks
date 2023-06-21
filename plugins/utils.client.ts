@@ -1,6 +1,6 @@
 import { InputType } from '~/assets/type'
 // import { InputAttr } from '~~/assets/enum'
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp: any) => {
   const { addSnackbar } = useSnackbar()
   const { setBanEdit } = useEditState()
   const setFillHeight = () => {

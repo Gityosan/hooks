@@ -15,10 +15,7 @@ export default defineNuxtConfig({
           rel: 'icon',
           href: '/favicon.png'
         }
-      ],
-      bodyAttrs: {
-        class: 'test'
-      }
+      ]
     }
   },
   components: { global: true, dirs: ['~/components'] },
