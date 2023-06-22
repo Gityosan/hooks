@@ -1,5 +1,5 @@
-import { GraphQLQuery } from '@aws-amplify/api'
 import { Amplify, API, Auth, Storage, I18n } from 'aws-amplify'
+import { GraphQLQuery } from '@aws-amplify/api'
 import { translations } from '@aws-amplify/ui-vue'
 import { v4 as uuidv4 } from 'uuid'
 import amplifyConfig from '~/src/aws-exports'

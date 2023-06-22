@@ -3,7 +3,7 @@ import { Regexp, memberInputs } from '~/assets/enum'
 import { User, ListUsersQuery } from '~/assets/API'
 import { listUsers } from '~/assets/graphql/queries'
 import { createUser } from '~/assets/graphql/mutations'
-import { useLoginState, useMyUser } from '~/composables/useStateManegment'
+import { useLoginState, useMyUser } from '~/composables/useState'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const { $listQuery, $baseMutation, $filterAttr } = useNuxtApp()
   const { isSignedIn, setSignedIn, setAdmin } = useLoginState()
