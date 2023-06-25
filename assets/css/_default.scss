@@ -19,25 +19,40 @@ html {
   outline: none !important;
 }
 .ProseMirror {
+  ul[data-type='taskList'] {
+    list-style: none;
+    & li {
+      display: flex;
+      & label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+    }
+  }
   li {
-    margin-left: 16px !important;
+    margin-left: 20px !important;
+    line-height: 1.5 !important;
   }
   :not(pre) code {
-    border: 1px solid #ddd;
-    background-color: #fff;
-    color: #ff357f;
-    margin: 0 2px;
-    padding: 2px 4px;
+    border: 1px solid #dcdcd5;
+    border-radius: 3px;
+    background-color: #efefef;
+    color: #e01e5a;
+    padding: 2px 3px 1px;
+    line-height: 1;
   }
   pre {
-    background-color: #23241f;
-    color: #f8f8f2;
+    color: #212121;
+    background-color: #efefef;
+    border: 1px solid #dcdcd5;
+    border-radius: 4px;
     overflow: visible;
     white-space: pre-wrap;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    padding: 5px 10px;
-    border-radius: 3px;
+    margin: 4px 0;
+    padding: 8px;
   }
   blockquote {
     border-left: 4px solid #ccc;
@@ -57,5 +72,21 @@ html {
   img {
     max-width: 100%;
     max-height: 300px;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 40px 0 16px;
+  }
+  p {
+    &:not(:last-child) {
+      margin-bottom: 24px;
+    }
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
   }
 }

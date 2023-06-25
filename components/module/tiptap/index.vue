@@ -7,11 +7,13 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Typography } from '@tiptap/extension-typography'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Image } from '@tiptap/extension-image'
+import { TaskItem } from '@tiptap/extension-task-item'
+import { TaskList } from '@tiptap/extension-task-list'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
 // const config = useRuntimeConfig()
 // const isProd = config.public.isProd
-const textAlignTypeIcon = ref<string>('mdi-format-align-left')
+const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
 const isLinkEditMode = ref<boolean>(false)
 const link = ref<string>('')
@@ -35,11 +37,66 @@ const editor = useEditor({
       }
     }),
     Typography,
-    TextAlign.configure({
-      types: ['heading', 'paragraph']
-    }),
-    Image
+    TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    Image,
+    TaskList,
+    TaskItem.configure({ nested: true })
   ],
+  editorProps: {
+    handleKeyDown: (view, event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'c') {
+        const { state } = view
+        const { from, to, $anchor, $head } = state.selection
+        const { parent } = $head
+        const t = parent.content.child($head.index($head.depth))
+        const dom = parent.type.spec.parseDOM
+        // console.log(parent.type.spec?.parseDOM?.[0].tag)
+        console.log($head, view, t, parent.nodeAt($head.start($head.depth)))
+        console.log(from, to)
+        // console.log($head.start($head.depth), $head.end($head.depth))
+        // console.log($head.node($head.depth))
+        console.log(dom)
+        console.log(editor.value?.getJSON())
+        // console.log(parent.content.findIndex($head.pos))
+        if (parent.type.spec?.toDOM) {
+          // console.log(parent.type.spec.toDOM(parent.content.child($head.index($head.depth))))
+          // console.log(parent.type.spec.toDOM($head.node($head.depth)))
+          console.log(parent.type.spec.toDOM(t))
+        }
+
+        // console.log(parent.content.child($head.index($head.depth)))
+        //     const lineRange = state.doc.lineAt(from);
+        //     const slice = state.doc.slice(from, to)
+        //     const text = state.doc.textBetween(from, to, '\n')
+        //     const clipboardData = new DataTransfer()
+        //     const type = "text/html";
+        // const blob = new Blob([text], { type });
+        // const data = [new ClipboardItem({ [type]: blob })];
+        //     console.log(event)
+        //     if (text) {
+        //       event.preventDefault()
+        //       event.stopPropagation()
+
+        //       // clipboardData.setData('text/html', html)
+        //       clipboardData.setData('text/plain', text)
+        //       event.clipboardData = clipboardData
+        //     }
+        return true
+      }
+      if (event.shiftKey && event.key === 'Enter') {
+        event.preventDefault()
+        const { state, dispatch } = view
+        const { tr, selection } = state
+        if (!selection.empty) return true
+        const br = state.schema.nodes.hardBreak.create()
+        console.log(selection)
+        const transaction = tr.insert(selection.anchor, br)
+        dispatch(transaction)
+        return true
+      }
+      return false
+    }
+  },
   onUpdate: () => {
     emit('update:model-value', editor.value?.getHTML())
     const selectedText = Object.assign(
@@ -48,10 +105,20 @@ const editor = useEditor({
       editor.value?.getAttributes('paragraph')
     )
     if ('textAlign' in selectedText)
-      textAlignTypeIcon.value = `mdi-format-align-${selectedText.textAlign}`
+      textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
     if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
+    else textTypeIcon.value = 'mdi-format-paragraph'
   },
   onSelectionUpdate: () => {
+    const selectedText = Object.assign(
+      {},
+      editor.value?.getAttributes('heading'),
+      editor.value?.getAttributes('paragraph')
+    )
+    if ('textAlign' in selectedText)
+      textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
+    if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
+    else textTypeIcon.value = 'mdi-format-paragraph'
     link.value = editor.value?.getAttributes('link').href
     color.value = editor.value?.getAttributes('textStyle').color
     isLinkEditMode.value = !editor.value?.getAttributes('link').href
@@ -76,37 +143,37 @@ const icons = computed(() => [
       {
         icon: 'mdi-format-paragraph',
         func: () => editor.value?.chain().focus().setParagraph().run(),
-        disabled: () => editor.value?.isActive('paragraph') || false
+        disabled: () => !!editor.value?.isActive('paragraph')
       },
       {
         icon: 'mdi-format-header-1',
         func: () => editor.value?.chain().focus().toggleHeading({ level: 1 }).run(),
-        disabled: () => editor.value?.isActive('heading', { level: 1 }) || false
+        disabled: () => !!editor.value?.isActive('heading', { level: 1 })
       },
       {
         icon: 'mdi-format-header-2',
         func: () => editor.value?.chain().focus().toggleHeading({ level: 2 }).run(),
-        disabled: () => editor.value?.isActive('heading', { level: 2 }) || false
+        disabled: () => !!editor.value?.isActive('heading', { level: 2 })
       },
       {
         icon: 'mdi-format-header-3',
         func: () => editor.value?.chain().focus().toggleHeading({ level: 3 }).run(),
-        disabled: () => editor.value?.isActive('heading', { level: 3 }) || false
+        disabled: () => !!editor.value?.isActive('heading', { level: 3 })
       },
       {
         icon: 'mdi-format-header-4',
         func: () => editor.value?.chain().focus().toggleHeading({ level: 4 }).run(),
-        disabled: () => editor.value?.isActive('heading', { level: 4 }) || false
+        disabled: () => !!editor.value?.isActive('heading', { level: 4 })
       },
       {
         icon: 'mdi-format-header-5',
         func: () => editor.value?.chain().focus().toggleHeading({ level: 5 }).run(),
-        disabled: () => editor.value?.isActive('heading', { level: 5 }) || false
+        disabled: () => !!editor.value?.isActive('heading', { level: 5 })
       },
       {
         icon: 'mdi-format-header-6',
         func: () => editor.value?.chain().focus().toggleHeading({ level: 6 }).run(),
-        disabled: () => editor.value?.isActive('heading', { level: 6 }) || false
+        disabled: () => !!editor.value?.isActive('heading', { level: 6 })
       }
     ]
   },
@@ -125,44 +192,31 @@ const icons = computed(() => [
     title: '太字',
     icon: 'mdi-format-bold',
     func: () => editor.value?.chain().focus().toggleBold().run(),
-    disabled: () => editor.value?.isActive('bold') || false
+    disabled: () => !!editor.value?.isActive('bold')
   },
   {
     title: '斜体',
     icon: 'mdi-format-italic',
     func: () => editor.value?.chain().focus().toggleItalic().run(),
-    disabled: () => editor.value?.isActive('italic') || false
+    disabled: () => !!editor.value?.isActive('italic')
   },
   {
     title: '下線',
     icon: 'mdi-format-underline',
     func: () => editor.value?.chain().focus().toggleUnderline().run(),
-    disabled: () => editor.value?.isActive('underline') || false
+    disabled: () => !!editor.value?.isActive('underline')
   },
   {
     title: '打ち消し線',
     icon: 'mdi-format-strikethrough',
     func: () => editor.value?.chain().focus().toggleStrike().run(),
-    disabled: () => editor.value?.isActive('strike') || false
+    disabled: () => !!editor.value?.isActive('strike')
   },
   {
     title: 'コード',
     icon: 'mdi-code-tags',
     func: () => editor.value?.chain().focus().toggleCode().run(),
-    disabled: () => editor.value?.isActive('code') || false
-  },
-  {},
-  {
-    title: 'リスト',
-    icon: 'mdi-format-list-bulleted',
-    func: () => editor.value?.chain().focus().toggleBulletList().run(),
-    disabled: () => editor.value?.isActive('bulletList') || false
-  },
-  {
-    title: '番号付きリスト',
-    icon: 'mdi-format-list-numbered',
-    func: () => editor.value?.chain().focus().toggleOrderedList().run(),
-    disabled: () => editor.value?.isActive('orderedList') || false
+    disabled: () => !!editor.value?.isActive('code')
   },
   {
     title: '横位置',
@@ -170,40 +224,61 @@ const icons = computed(() => [
     func: () => editor.value?.chain().focus().setTextAlign('left').run(),
     items: [
       {
-        icon: 'mdi-format-align-left',
+        icon: 'mdi-align-horizontal-left',
         func: () => editor.value?.chain().focus().setTextAlign('left').run(),
-        disabled: () => editor.value?.isActive({ textAlign: 'left' }) || false
+        disabled: () => !!editor.value?.isActive({ textAlign: 'left' })
       },
       {
-        icon: 'mdi-format-align-center',
+        icon: 'mdi-align-horizontal-center',
         func: () => editor.value?.chain().focus().setTextAlign('center').run(),
-        disabled: () => editor.value?.isActive({ textAlign: 'center' }) || false
+        disabled: () => !!editor.value?.isActive({ textAlign: 'center' })
       },
       {
-        icon: 'mdi-format-align-right',
+        icon: 'mdi-align-horizontal-right',
         func: () => editor.value?.chain().focus().setTextAlign('right').run(),
-        disabled: () => editor.value?.isActive({ textAlign: 'right' }) || false
-      },
-      {
-        icon: 'mdi-format-align-justify',
-        func: () => editor.value?.chain().focus().setTextAlign('justify').run(),
-        disabled: () => editor.value?.isActive({ textAlign: 'justify' }) || false
+        disabled: () => !!editor.value?.isActive({ textAlign: 'right' })
       }
     ]
   },
+
   {},
+  {
+    title: '区切り線',
+    icon: 'mdi-minus',
+    func: () => editor.value?.chain().focus().setHorizontalRule().run()
+  },
   {
     title: '引用',
     icon: 'mdi-format-quote-close',
     func: () => editor.value?.chain().focus().toggleBlockquote().run(),
-    disabled: () => editor.value?.isActive('blockquote') || false
+    disabled: () => !!editor.value?.isActive('blockquote')
   },
   {
     title: 'コードブロック',
     icon: 'mdi-xml',
     func: () => editor.value?.chain().focus().toggleCodeBlock().run(),
-    disabled: () => editor.value?.isActive('codeBlock') || false
+    disabled: () => !!editor.value?.isActive('codeBlock')
   },
+  {},
+  {
+    title: 'リスト',
+    icon: 'mdi-format-list-bulleted',
+    func: () => editor.value?.chain().focus().toggleBulletList().run(),
+    disabled: () => !!editor.value?.isActive('bulletList')
+  },
+  {
+    title: '番号付きリスト',
+    icon: 'mdi-format-list-numbered',
+    func: () => editor.value?.chain().focus().toggleOrderedList().run(),
+    disabled: () => !!editor.value?.isActive('orderedList')
+  },
+  {
+    title: 'タスクリスト',
+    icon: 'mdi-format-list-checks',
+    func: () => editor.value?.chain().focus().toggleTaskList().run(),
+    disabled: () => !!editor.value?.isActive('taskList')
+  },
+  {},
   {
     title: 'リンク',
     icon: 'mdi-link',
@@ -222,26 +297,26 @@ const icons = computed(() => [
   },
   {},
   {
-    title: '区切り線',
-    icon: 'mdi-minus',
-    func: () => editor.value?.chain().focus().setHorizontalRule().run()
-  },
-  {
     title: '改行',
     icon: 'mdi-keyboard-return',
     func: () => editor.value?.chain().focus().setHardBreak().run()
   },
   {
     title: '一つ前に戻る',
-    icon: 'mdi-arrow-u-left-top',
+    icon: 'mdi-undo',
     func: () => editor.value?.chain().focus().undo().run(),
-    disabled: () => !editor.value?.can().chain().focus().undo().run() || false
+    disabled: () => !editor.value?.can().chain().focus().undo().run()
   },
   {
     title: '一つ先に進む',
-    icon: 'mdi-arrow-u-right-top',
+    icon: 'mdi-redo',
     func: () => editor.value?.chain().focus().redo().run(),
-    disabled: () => !editor.value?.can().chain().focus().redo().run() || false
+    disabled: () => !editor.value?.can().chain().focus().redo().run()
+  },
+  {
+    title: '書式のクリア',
+    icon: 'mdi-format-clear',
+    func: () => editor.value?.chain().focus().clearNodes().unsetAllMarks().run()
   }
 ])
 </script>
@@ -334,6 +409,6 @@ const icons = computed(() => [
         </div>
       </div>
     </bubble-menu> -->
-    <editor-content :editor="editor" class="py-5 px-2 max-height-300 overflow-y-auto" />
+    <editor-content :editor="editor" class="pa-10 pt-6 min-height-200 overflow-y-auto" />
   </div>
 </template>

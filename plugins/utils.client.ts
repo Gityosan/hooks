@@ -134,7 +134,13 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         return str.replace(/[A-Z]/g, function (s) {
           return '_' + s.charAt(0).toLowerCase()
         })
-      }
+      },
+      reverseSanitize: (str: string): string =>
+        String(str)
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
     }
   }
 })
