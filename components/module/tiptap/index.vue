@@ -61,25 +61,30 @@ const editor = useEditor({
       if ((event.metaKey || event.ctrlKey) && event.key === 'c') {
         event.preventDefault()
         const { state } = view
-        const { from, to, $head } = state.selection
-        let dom: Node | DocumentFragment | null = null
+        const { schema, selection } = state
+        const { from, to, $head } = selection
+        let data: ClipboardItem[] | null = null
         if (from === to) {
-          dom = resolveDom(view.domAtPos($head.pos).node)
+          const dom = resolveDom(view.domAtPos($head.pos).node) as HTMLElement
+          data = [
+            new ClipboardItem({
+              'text/plain': new Blob([dom.innerText], { type: 'text/plain' }),
+              'text/html': new Blob(['<br>' + dom.outerHTML], { type: 'text/html' })
+            })
+          ]
         } else {
-          const serializer = DOMSerializer.fromSchema(state.schema)
-          dom = serializer.serializeFragment(state.selection.content().content)
+          const serializer = DOMSerializer.fromSchema(schema)
+          const dom = serializer.serializeFragment(selection.content().content)
+          if (!dom) return true
+          const element = document.createElement('div')
+          element.appendChild(dom)
+          data = [
+            new ClipboardItem({
+              'text/plain': new Blob([element.innerText], { type: 'text/plain' }),
+              'text/html': new Blob([element.innerHTML], { type: 'text/html' })
+            })
+          ]
         }
-        if (!dom) return true
-        const element = document.createElement('div')
-        element.appendChild(dom)
-        console.log(element)
-        console.log(element.innerHTML, element.innerText)
-        const data = [
-          new ClipboardItem({
-            'text/plain': new Blob([element.innerText], { type: 'text/plain' }),
-            'text/html': new Blob([element.innerHTML], { type: 'text/html' })
-          })
-        ]
         navigator.clipboard.write(data).catch((error) => {
           console.error('An error occurred while writing to clipboard:', error)
         })
@@ -88,20 +93,21 @@ const editor = useEditor({
       if (event.shiftKey && event.key === 'Enter') {
         event.preventDefault()
         const { state, dispatch } = view
-        const { tr, selection } = state
+        const { tr, selection, schema } = state
         if (!selection.empty) return true
-        const br = state.schema.nodes.hardBreak.create()
+        const br = schema.nodes.hardBreak.create()
         dispatch(tr.insert(selection.anchor, br))
         return true
       }
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault()
         const { state, dispatch } = view
-        const { tr, selection } = state
-        const target = resolveDom(view.domAtPos(selection.$head.pos).node)
+        const { tr, selection, schema } = state
+        const { anchor, $head } = selection
+        const target = resolveDom(view.domAtPos($head.pos).node)
         if (target.nodeName === 'BLOCKQUOTE') {
-          const p = state.schema.nodes.paragraph.create()
-          dispatch(tr.insert(selection.anchor, p))
+          const p = schema.nodes.paragraph.create()
+          dispatch(tr.insert(anchor, p))
         }
         return true
       }
@@ -111,31 +117,35 @@ const editor = useEditor({
       console.log(event, slice)
       event.preventDefault()
       const { state, dispatch } = view
-      const { tr, selection } = state
-      const { from, to, $head } = selection
+      const { tr, selection, schema } = state
+      const { from, to, $head, anchor } = selection
       const target = resolveDom(view.domAtPos($head.pos).node)
-      const text = slice.content.firstChild?.textContent || ''
-      console.log('dadsa')
-      if (!text) return true
-      console.log('wwww')
-      if (target.textContent && from === to) {
-        const t = slice.content.firstChild
-        if (target.nodeName === 'CODE') {
-          dispatch(tr.insert($head.end(), state.schema.text(`\n${text}`)))
+      if (
+        slice.content.childCount > 1 &&
+        slice.content.firstChild?.firstChild?.type.name === 'hardBreak'
+      ) {
+        const t = slice.content.child(1)
+        const text = t?.textContent || ''
+        if (!text) return true
+        if (target.textContent && from === to) {
+          if (target.nodeName === 'CODE') {
+            dispatch(tr.insert($head.end(), schema.text(`\n${text}`)))
+            return true
+          }
+          if (target.nodeName === 'BLOCKQUOTE') {
+            if (t?.firstChild) dispatch(tr.insert($head.end(), t.firstChild))
+            return true
+          }
+          if (t) dispatch(tr.insert($head.end(), t))
           return true
         }
-        if (target.nodeName === 'BLOCKQUOTE') {
-          if (t?.firstChild) dispatch(tr.insert($head.end(), t.firstChild))
-          return true
-        }
-        if (t) dispatch(tr.insert($head.end(), t))
         return true
       }
-      if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(text)) {
+      if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(slice.content.firstChild?.textContent || '')) {
         console.log('-------')
         const t = slice.content.firstChild
         console.log(t)
-        if (t) dispatch(tr.insert(selection.anchor, t))
+        if (t) dispatch(tr.insert(anchor, t))
         // tr.replaceSelection(slice)
         // const parser = new DOMParser()
         // const doc = parser.parseFromString(text, 'text/html')
@@ -372,7 +382,7 @@ const icons = computed(() => [
 </script>
 <template>
   <div v-if="editor" class="border-solid border-width-1 border-grey-darken-4 w-100 rounded">
-    <div class="d-flex flex-wrap pa-1 pb-0 position-sticky top-n20 bg-white z-index-8 rounded-t">
+    <div class="d-flex flex-wrap pa-1 pb-0 position-sticky top-n20 bg-white z-index-8 rounded">
       <module-tiptap-icon
         v-for="item in icons"
         :key="item.icon"
