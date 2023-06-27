@@ -19,23 +19,50 @@ html {
   outline: none !important;
 }
 .ProseMirror {
+  // for all
+  line-height: 1.5 !important;
+
+  // for heading
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 40px 0 16px;
+  }
+
+  // for text
+  p:not(li p, blockquote p) {
+    &:not(:last-child) {
+      margin-bottom: 24px;
+    }
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
+  }
+
+  // for tasklist
   ul[data-type='taskList'] {
     list-style: none;
     & li {
       display: flex;
       & label {
         flex: 0 0 auto;
-        margin-right: 0.5rem;
+        margin-right: 7px;
         -webkit-user-select: none;
         -moz-user-select: none;
         user-select: none;
       }
     }
   }
-  li {
+
+  // for list
+  li:not(ul[data-type='taskList'] li) {
     margin-left: 20px !important;
-    line-height: 1.5 !important;
   }
+
+  // for code
   :not(pre) code {
     border: 1px solid #dcdcd5;
     border-radius: 3px;
@@ -44,6 +71,8 @@ html {
     padding: 2px 3px 1px;
     line-height: 1;
   }
+
+  // for code block
   pre {
     color: #212121;
     background-color: #efefef;
@@ -54,39 +83,31 @@ html {
     margin: 4px 0;
     padding: 8px;
   }
+
+  // for divider
+  hr {
+    margin: 20px 5px;
+  }
+
+  // for quote
   blockquote {
     border-left: 4px solid #ccc;
     margin-bottom: 5px;
     margin-top: 5px;
     padding-left: 16px;
   }
+
+  // for link
   a {
     text-decoration: none;
   }
-  img.ProseMirror-selectednode {
-    outline: 3px solid #68cef8;
-  }
-  hr {
-    margin: 20px 5px;
-  }
+
+  // for image
   img {
     max-width: 100%;
     max-height: 300px;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 40px 0 16px;
-  }
-  p {
-    &:not(:last-child) {
-      margin-bottom: 24px;
-    }
-    &:not(:first-child) {
-      margin-top: 8px;
+    &.ProseMirror-selectednode {
+      outline: 3px solid #68cef8;
     }
   }
 }

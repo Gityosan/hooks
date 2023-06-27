@@ -62,7 +62,7 @@ await fetchArticle()
           </v-chip>
         </v-hover>
       </v-chip-group>
-      <div class="mt-10 ProseMirror" v-html="$reverseSanitize(article.body)"></div>
+      <div class="my-10 ProseMirror" v-html="$reverseSanitize(article.body)"></div>
     </div>
   </layout-public>
 </template>

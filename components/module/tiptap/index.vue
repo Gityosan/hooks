@@ -11,31 +11,45 @@ import { TaskItem } from '@tiptap/extension-task-item'
 import { TaskList } from '@tiptap/extension-task-list'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
-// const config = useRuntimeConfig()
-// const isProd = config.public.isProd
+import { DOMSerializer } from 'prosemirror-model'
+const { $reverseSanitize } = useNuxtApp()
 const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
 const isLinkEditMode = ref<boolean>(false)
 const link = ref<string>('')
 const color = ref<string>('')
+const pattern = /<(script|link)\b[^<]*(?:(?!<\/(script|link)>)<[^<]*)*<\/(script|link)>/gi
 const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void
 }>()
+const resolveDom = (n: Node): Node => {
+  if (!n.parentNode) return n
+  else if (
+    ['#text', 'SPAN', 'MARK', 'STRONG', 'EM', 'U', 'S'].includes(n.nodeName) ||
+    ['LI', 'BLOCKQUOTE'].includes(n.parentNode?.nodeName) ||
+    (n.nodeName === 'CODE' && n.parentNode?.nodeName !== 'PRE') ||
+    (n.nodeName === 'P' &&
+      n.parentNode?.nodeName === 'DIV' &&
+      n.parentNode?.parentNode?.nodeName === 'LI')
+  ) {
+    return resolveDom(n.parentNode)
+  } else return n
+}
 const editor = useEditor({
-  content: props.modelValue || '<p>I’m running Tiptap with Vue.js. 🎉</p>',
+  content: $reverseSanitize(props.modelValue) || '<p>今日はどんな記事を書きますか？</p>',
   extensions: [
     StarterKit,
     Underline,
     Color,
     TextStyle,
     Highlight.configure({ multicolor: true }),
-    Link.configure({
-      openOnClick: false,
-      HTMLAttributes: {
-        class: 'text-blue-darken-1 cursor-text'
-      }
-    }),
+    // Link.configure({
+    //   openOnClick: false,
+    //   HTMLAttributes: {
+    //     class: 'text-blue-darken-1 cursor-text'
+    //   }
+    // }),
     Typography,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
     Image,
@@ -45,42 +59,30 @@ const editor = useEditor({
   editorProps: {
     handleKeyDown: (view, event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'c') {
+        event.preventDefault()
         const { state } = view
-        const { from, to, $anchor, $head } = state.selection
-        const { parent } = $head
-        const t = parent.content.child($head.index($head.depth))
-        const dom = parent.type.spec.parseDOM
-        // console.log(parent.type.spec?.parseDOM?.[0].tag)
-        console.log($head, view, t, parent.nodeAt($head.start($head.depth)))
-        console.log(from, to)
-        // console.log($head.start($head.depth), $head.end($head.depth))
-        // console.log($head.node($head.depth))
-        console.log(dom)
-        console.log(editor.value?.getJSON())
-        // console.log(parent.content.findIndex($head.pos))
-        if (parent.type.spec?.toDOM) {
-          // console.log(parent.type.spec.toDOM(parent.content.child($head.index($head.depth))))
-          // console.log(parent.type.spec.toDOM($head.node($head.depth)))
-          console.log(parent.type.spec.toDOM(t))
+        const { from, to, $head } = state.selection
+        let dom: Node | DocumentFragment | null = null
+        if (from === to) {
+          dom = resolveDom(view.domAtPos($head.pos).node)
+        } else {
+          const serializer = DOMSerializer.fromSchema(state.schema)
+          dom = serializer.serializeFragment(state.selection.content().content)
         }
-
-        // console.log(parent.content.child($head.index($head.depth)))
-        //     const lineRange = state.doc.lineAt(from);
-        //     const slice = state.doc.slice(from, to)
-        //     const text = state.doc.textBetween(from, to, '\n')
-        //     const clipboardData = new DataTransfer()
-        //     const type = "text/html";
-        // const blob = new Blob([text], { type });
-        // const data = [new ClipboardItem({ [type]: blob })];
-        //     console.log(event)
-        //     if (text) {
-        //       event.preventDefault()
-        //       event.stopPropagation()
-
-        //       // clipboardData.setData('text/html', html)
-        //       clipboardData.setData('text/plain', text)
-        //       event.clipboardData = clipboardData
-        //     }
+        if (!dom) return true
+        const element = document.createElement('div')
+        element.appendChild(dom)
+        console.log(element)
+        console.log(element.innerHTML, element.innerText)
+        const data = [
+          new ClipboardItem({
+            'text/plain': new Blob([element.innerText], { type: 'text/plain' }),
+            'text/html': new Blob([element.innerHTML], { type: 'text/html' })
+          })
+        ]
+        navigator.clipboard.write(data).catch((error) => {
+          console.error('An error occurred while writing to clipboard:', error)
+        })
         return true
       }
       if (event.shiftKey && event.key === 'Enter') {
@@ -89,16 +91,64 @@ const editor = useEditor({
         const { tr, selection } = state
         if (!selection.empty) return true
         const br = state.schema.nodes.hardBreak.create()
-        console.log(selection)
-        const transaction = tr.insert(selection.anchor, br)
-        dispatch(transaction)
+        dispatch(tr.insert(selection.anchor, br))
+        return true
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault()
+        const { state, dispatch } = view
+        const { tr, selection } = state
+        const target = resolveDom(view.domAtPos(selection.$head.pos).node)
+        if (target.nodeName === 'BLOCKQUOTE') {
+          const p = state.schema.nodes.paragraph.create()
+          dispatch(tr.insert(selection.anchor, p))
+        }
+        return true
+      }
+      return false
+    },
+    handlePaste: (view, event, slice) => {
+      console.log(event, slice)
+      event.preventDefault()
+      const { state, dispatch } = view
+      const { tr, selection } = state
+      const { from, to, $head } = selection
+      const target = resolveDom(view.domAtPos($head.pos).node)
+      const text = slice.content.firstChild?.textContent || ''
+      console.log('dadsa')
+      if (!text) return true
+      console.log('wwww')
+      if (target.textContent && from === to) {
+        const t = slice.content.firstChild
+        if (target.nodeName === 'CODE') {
+          dispatch(tr.insert($head.end(), state.schema.text(`\n${text}`)))
+          return true
+        }
+        if (target.nodeName === 'BLOCKQUOTE') {
+          if (t?.firstChild) dispatch(tr.insert($head.end(), t.firstChild))
+          return true
+        }
+        if (t) dispatch(tr.insert($head.end(), t))
+        return true
+      }
+      if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(text)) {
+        console.log('-------')
+        const t = slice.content.firstChild
+        console.log(t)
+        if (t) dispatch(tr.insert(selection.anchor, t))
+        // tr.replaceSelection(slice)
+        // const parser = new DOMParser()
+        // const doc = parser.parseFromString(text, 'text/html')
+        // const iframes = doc.getElementsByTagName('iframe')
+        // if (!iframes.length) return true
+        // editor.value?.commands.insertContent(`${iframes[0].outerHTML}`)
         return true
       }
       return false
     }
   },
   onUpdate: () => {
-    emit('update:model-value', editor.value?.getHTML())
+    emit('update:model-value', editor.value?.getHTML().replace(pattern, ''))
     const selectedText = Object.assign(
       {},
       editor.value?.getAttributes('heading'),
@@ -126,7 +176,7 @@ const editor = useEditor({
 })
 watch(props, (v, c) => {
   if (editor.value?.getHTML() === c.modelValue) return
-  editor.value?.commands.setContent(c.modelValue, false)
+  editor.value?.commands.setContent($reverseSanitize(c.modelValue), false)
 })
 onBeforeUnmount(() => {
   editor.value?.destroy()
@@ -322,7 +372,7 @@ const icons = computed(() => [
 </script>
 <template>
   <div v-if="editor" class="border-solid border-width-1 border-grey-darken-4 w-100 rounded">
-    <div class="d-flex flex-wrap ma-1">
+    <div class="d-flex flex-wrap pa-1 pb-0 position-sticky top-n20 bg-white z-index-8 rounded-t">
       <module-tiptap-icon
         v-for="item in icons"
         :key="item.icon"
@@ -334,8 +384,8 @@ const icons = computed(() => [
         :func="item.func"
         :disabled="item.disabled"
       />
+      <v-divider class="text-grey-darken-4 mt-1" />
     </div>
-    <v-divider class="text-grey-darken-4"></v-divider>
     <!-- <bubble-menu
       :editor="editor"
       :tippy-options="{ duration: 0 }"
