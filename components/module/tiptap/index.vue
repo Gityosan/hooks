@@ -11,7 +11,8 @@ import { TaskItem } from '@tiptap/extension-task-item'
 import { TaskList } from '@tiptap/extension-task-list'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
-import { DOMSerializer } from 'prosemirror-model'
+import { DOMSerializer, DOMParser } from 'prosemirror-model'
+import Iframe from '@@/assets/iframe'
 const { $reverseSanitize } = useNuxtApp()
 const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
@@ -44,17 +45,19 @@ const editor = useEditor({
     Color,
     TextStyle,
     Highlight.configure({ multicolor: true }),
-    // Link.configure({
-    //   openOnClick: false,
-    //   HTMLAttributes: {
-    //     class: 'text-blue-darken-1 cursor-text'
-    //   }
-    // }),
+    Link.configure({
+      openOnClick: false,
+      linkOnPaste: false,
+      HTMLAttributes: {
+        class: 'text-blue-darken-1 cursor-text'
+      }
+    }),
     Typography,
     TextAlign.configure({ types: ['heading', 'paragraph'] }),
     Image,
     TaskList,
-    TaskItem.configure({ nested: true })
+    TaskItem.configure({ nested: true }),
+    Iframe
   ],
   editorProps: {
     handleKeyDown: (view, event) => {
@@ -63,15 +66,25 @@ const editor = useEditor({
         const { state } = view
         const { schema, selection } = state
         const { from, to, $head } = selection
+        console.log(schema.nodes)
         let data: ClipboardItem[] | null = null
         if (from === to) {
           const dom = resolveDom(view.domAtPos($head.pos).node) as HTMLElement
-          data = [
-            new ClipboardItem({
-              'text/plain': new Blob([dom.innerText], { type: 'text/plain' }),
-              'text/html': new Blob(['<br>' + dom.outerHTML], { type: 'text/html' })
-            })
-          ]
+          if (dom.nodeName === 'CODE') {
+            data = [
+              new ClipboardItem({
+                'text/plain': new Blob(['\n' + dom.innerText], { type: 'text/plain' }),
+                'text/html': new Blob([dom.outerHTML], { type: 'text/html' })
+              })
+            ]
+          } else {
+            data = [
+              new ClipboardItem({
+                'text/plain': new Blob([dom.innerText], { type: 'text/plain' }),
+                'text/html': new Blob(['<br>' + dom.outerHTML], { type: 'text/html' })
+              })
+            ]
+          }
         } else {
           const serializer = DOMSerializer.fromSchema(schema)
           const dom = serializer.serializeFragment(selection.content().content)
@@ -99,18 +112,6 @@ const editor = useEditor({
         dispatch(tr.insert(selection.anchor, br))
         return true
       }
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault()
-        const { state, dispatch } = view
-        const { tr, selection, schema } = state
-        const { anchor, $head } = selection
-        const target = resolveDom(view.domAtPos($head.pos).node)
-        if (target.nodeName === 'BLOCKQUOTE') {
-          const p = schema.nodes.paragraph.create()
-          dispatch(tr.insert(anchor, p))
-        }
-        return true
-      }
       return false
     },
     handlePaste: (view, event, slice) => {
@@ -118,7 +119,7 @@ const editor = useEditor({
       event.preventDefault()
       const { state, dispatch } = view
       const { tr, selection, schema } = state
-      const { from, to, $head, anchor } = selection
+      const { from, to, $head } = selection
       const target = resolveDom(view.domAtPos($head.pos).node)
       if (
         slice.content.childCount > 1 &&
@@ -128,10 +129,6 @@ const editor = useEditor({
         const text = t?.textContent || ''
         if (!text) return true
         if (target.textContent && from === to) {
-          if (target.nodeName === 'CODE') {
-            dispatch(tr.insert($head.end(), schema.text(`\n${text}`)))
-            return true
-          }
           if (target.nodeName === 'BLOCKQUOTE') {
             if (t?.firstChild) dispatch(tr.insert($head.end(), t.firstChild))
             return true
@@ -140,18 +137,17 @@ const editor = useEditor({
           return true
         }
         return true
-      }
-      if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(slice.content.firstChild?.textContent || '')) {
+      } else if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(slice.content.firstChild?.textContent || '')) {
         console.log('-------')
-        const t = slice.content.firstChild
-        console.log(t)
-        if (t) dispatch(tr.insert(anchor, t))
-        // tr.replaceSelection(slice)
-        // const parser = new DOMParser()
-        // const doc = parser.parseFromString(text, 'text/html')
-        // const iframes = doc.getElementsByTagName('iframe')
-        // if (!iframes.length) return true
-        // editor.value?.commands.insertContent(`${iframes[0].outerHTML}`)
+        const text = slice.content.firstChild?.textContent || ''
+        if (!text) return true
+        const element = document.createElement('div')
+        element.setAttribute('class', 'iframe-wrapper')
+        element.setAttribute('contenteditable', 'false')
+        element.innerHTML = text
+        const parser = DOMParser.fromSchema(schema)
+        const parsedContent = parser.parse(element)
+        dispatch(tr.replaceRangeWith($head.start(), $head.end(), parsedContent))
         return true
       }
       return false
@@ -186,6 +182,7 @@ const editor = useEditor({
 })
 watch(props, (v, c) => {
   if (editor.value?.getHTML() === c.modelValue) return
+  // editor.value?.commands.setContent(c.modelValue, false)
   editor.value?.commands.setContent($reverseSanitize(c.modelValue), false)
 })
 onBeforeUnmount(() => {
