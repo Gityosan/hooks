@@ -2,8 +2,8 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es2021: true,
-    node: true
+    node: true,
+    es2022: true
   },
   extends: [
     'eslint:recommended',
@@ -12,10 +12,6 @@ module.exports = {
     '@nuxtjs/eslint-config-typescript',
     'prettier'
   ],
-  plugins: [],
-  settings: {
-    'import/ignore': []
-  },
   rules: {
     // global settings
     semi: [2, 'never'],
