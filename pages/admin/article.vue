@@ -52,12 +52,12 @@ await getArticles()
           :loading="banEdit"
           text="リセット"
           class="mr-3"
-          @click-func="input = defaultInput"
+          @click="input = defaultInput"
         />
         <atom-button
           :loading="banEdit"
           :text="input.id ? '更新' : '新規作成'"
-          @click-func="mutateArticle()"
+          @click="mutateArticle()"
         />
       </div>
       <v-form ref="form">

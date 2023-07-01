@@ -9,15 +9,16 @@ import { TextAlign } from '@tiptap/extension-text-align'
 import { Image } from '@tiptap/extension-image'
 import { TaskItem } from '@tiptap/extension-task-item'
 import { TaskList } from '@tiptap/extension-task-list'
-import { BubbleMenu, EditorContent, useEditor } from '@tiptap/vue-3'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
 import { DOMSerializer, DOMParser } from 'prosemirror-model'
 import Iframe from '@@/assets/iframe'
 const { $reverseSanitize } = useNuxtApp()
 const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
-const isLinkEditMode = ref<boolean>(false)
 const link = ref<string>('')
+const linkText = ref<string>('')
+const linkTarget = ref<boolean>(false)
 const color = ref<string>('')
 const pattern = /<(script|link)\b[^<]*(?:(?!<\/(script|link)>)<[^<]*)*<\/(script|link)>/gi
 const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
@@ -47,7 +48,7 @@ const editor = useEditor({
     Highlight.configure({ multicolor: true }),
     Link.configure({
       openOnClick: false,
-      linkOnPaste: false,
+      linkOnPaste: true,
       HTMLAttributes: {
         class: 'text-blue-darken-1 cursor-text'
       }
@@ -66,7 +67,6 @@ const editor = useEditor({
         const { state } = view
         const { schema, selection } = state
         const { from, to, $head } = selection
-        console.log(schema.nodes)
         let data: ClipboardItem[] | null = null
         if (from === to) {
           const dom = resolveDom(view.domAtPos($head.pos).node) as HTMLElement
@@ -115,7 +115,6 @@ const editor = useEditor({
       return false
     },
     handlePaste: (view, event, slice) => {
-      console.log(event, slice)
       event.preventDefault()
       const { state, dispatch } = view
       const { tr, selection, schema } = state
@@ -138,7 +137,6 @@ const editor = useEditor({
         }
         return true
       } else if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(slice.content.firstChild?.textContent || '')) {
-        console.log('-------')
         const text = slice.content.firstChild?.textContent || ''
         if (!text) return true
         const element = document.createElement('div')
@@ -153,45 +151,43 @@ const editor = useEditor({
       return false
     }
   },
-  onUpdate: () => {
-    emit('update:model-value', editor.value?.getHTML().replace(pattern, ''))
+  onUpdate: (props) => {
+    const { editor } = props
+    emit('update:model-value', editor.getHTML().replace(pattern, ''))
     const selectedText = Object.assign(
       {},
-      editor.value?.getAttributes('heading'),
-      editor.value?.getAttributes('paragraph')
+      editor.getAttributes('heading'),
+      editor.getAttributes('paragraph')
     )
     if ('textAlign' in selectedText)
       textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
     if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
     else textTypeIcon.value = 'mdi-format-paragraph'
   },
-  onSelectionUpdate: () => {
+  onSelectionUpdate: (props) => {
+    const { editor } = props
     const selectedText = Object.assign(
       {},
-      editor.value?.getAttributes('heading'),
-      editor.value?.getAttributes('paragraph')
+      editor.getAttributes('heading'),
+      editor.getAttributes('paragraph')
     )
     if ('textAlign' in selectedText)
       textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
     if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
     else textTypeIcon.value = 'mdi-format-paragraph'
-    link.value = editor.value?.getAttributes('link').href
-    color.value = editor.value?.getAttributes('textStyle').color
-    isLinkEditMode.value = !editor.value?.getAttributes('link').href
+    link.value = editor.getAttributes('link').href
+    color.value = editor.getAttributes('textStyle').color
+    const target = resolveDom(editor.view.domAtPos(editor.state.selection.$head.pos).node)
+    if (target.nodeName === 'A' && target.textContent) linkText.value = target.textContent
   }
 })
 watch(props, (v, c) => {
   if (editor.value?.getHTML() === c.modelValue) return
-  // editor.value?.commands.setContent(c.modelValue, false)
   editor.value?.commands.setContent($reverseSanitize(c.modelValue), false)
 })
 onBeforeUnmount(() => {
   editor.value?.destroy()
 })
-const setLink = (link = '') => {
-  if (!link) editor.value?.chain().focus().extendMarkRange('link').unsetLink().run()
-  else editor.value?.chain().focus().extendMarkRange('link').setLink({ href: link }).run()
-}
 const icons = computed(() => [
   {
     title: '文字サイズ',
@@ -297,7 +293,6 @@ const icons = computed(() => [
       }
     ]
   },
-
   {},
   {
     title: '区切り線',
@@ -340,7 +335,25 @@ const icons = computed(() => [
     title: 'リンク',
     icon: 'mdi-link',
     func: () => {
-      setLink(link.value)
+      const e = editor.value
+      if (!e) return
+      const { state, view } = e
+      const { dispatch } = view
+      const { selection, tr, schema } = state
+      const { $head, from, to } = selection
+      const command = e.chain().focus().extendMarkRange('link')
+      if (!link.value) command.unsetLink().run()
+      else
+        command.setLink({ href: link.value, target: linkTarget.value ? '_blank' : '_self' }).run()
+      console.log(link.value, selection, state.doc.nodeAt($head.pos))
+      const target = resolveDom(view.domAtPos($head.pos).node) as HTMLElement
+      target.innerText = link.value
+      const parser = DOMParser.fromSchema(schema)
+      const parsedContent = parser.parse(target)
+      dispatch(tr.replaceRangeWith($head.start(), $head.end(), parsedContent))
+      // state.doc.nodeAt($head.pos)
+      // dispatch(tr.replaceRangeWith($head.start(), $head.end(), schema.text(link.value)))
+      console.log(target, schema.text(link.value))
     }
   },
   {
@@ -384,6 +397,8 @@ const icons = computed(() => [
         v-for="item in icons"
         :key="item.icon"
         v-model:link="link"
+        v-model:link-text="linkText"
+        v-model:link-target="linkTarget"
         v-model:color="color"
         :title="item.title"
         :icon="item.icon"
@@ -393,79 +408,12 @@ const icons = computed(() => [
       />
       <v-divider class="text-grey-darken-4 mt-1" />
     </div>
-    <!-- <bubble-menu
+    <editor-content
       :editor="editor"
-      :tippy-options="{ duration: 0 }"
-      :should-show="
-        ({ editor, view, state, oldState, from, to }) => {
-          // links = String(!!editor.getAttributes('link').href)
-          return !!editor.getAttributes('link').href
-        }
-      "
-    >
-      <div
-        class="bg-white rounded border-solid border-width-1 border-black min-width-300 px-2 py-1"
-      >
-        <div v-if="isLinkEditMode" class="d-flex">
-          <atom-text
-            text="リンク先を入力:"
-            font-size="text-caption"
-            line-height="line-height-40"
-            class="mr-2"
-          />
-          <v-text-field
-            :model-value="editor.getAttributes('link').href"
-            variant="outlined"
-            density="compact"
-            hide-details
-            @update:model-value="link = $event"
-          />
-          <atom-text
-            text="保存"
-            font-size="text-subtitle-2"
-            color="text-blue-darken-1"
-            line-height="line-height-40"
-            class="ml-2 cursor-pointer"
-            @click="setLink(link)"
-          />
-        </div>
-        <div v-else class="d-flex flex-nowrap">
-          <atom-text
-            text="リンク先:"
-            font-size="text-caption"
-            line-height="line-height-40"
-            class="mr-2 white-space-nowrap"
-          />
-          <nuxt-link :to="editor.getAttributes('link').href" target="_blank" rel="noopener">
-            <atom-text
-              :text="editor.getAttributes('link').href"
-              font-size="text-subtitle-2"
-              color="text-blue-darken-1"
-              line-height="line-height-40"
-              class="mr-4 cursor-pointer line-clamp-1 max-width-130"
-              style="flex: 1"
-            />
-          </nuxt-link>
-          <atom-text
-            text="編集"
-            font-size="text-subtitle-2"
-            color="text-blue-darken-1"
-            line-height="line-height-40"
-            class="cursor-pointer white-space-nowrap"
-            @click="isLinkEditMode = true"
-          />
-          <v-divider vertical class="my-3 mx-2" />
-          <atom-text
-            text="削除"
-            font-size="text-subtitle-2"
-            color="text-blue-darken-1"
-            line-height="line-height-40"
-            class="cursor-pointer white-space-nowrap"
-            @click="setLink('')"
-          />
-        </div>
-      </div>
-    </bubble-menu> -->
-    <editor-content :editor="editor" class="pa-10 pt-6 min-height-200 overflow-y-auto" />
+      tabindex="0"
+      class="pa-10 pt-6 min-height-200 overflow-y-auto"
+      :class="{ 'cursor-text': !editor.isFocused }"
+      @focus="!editor.isFocused && editor.commands.focus('end')"
+    />
   </div>
 </template>

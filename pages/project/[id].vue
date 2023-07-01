@@ -63,9 +63,9 @@ await fetchProject()
             v-if="!project.user?.items.map((v) => v?.userID).includes(myUser.id)"
             :loading="banEdit"
             text="参加する"
-            @click-func="enter()"
+            @click="enter()"
           />
-          <atom-button v-else :loading="banEdit" text="参加をやめる" @click-func="leave()" />
+          <atom-button v-else :loading="banEdit" text="参加をやめる" @click="leave()" />
         </template>
       </div>
       <div class="d-flex flex-nowrap justify-start bg-transparent mt-2 mb-2" style="gap: 0 10px">

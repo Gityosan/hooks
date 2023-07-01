@@ -40,7 +40,7 @@ const menu = [
         :text="item.text"
         class="my-1"
         style="border: none"
-        @click-func="navigateTo(item.path)"
+        @click="navigateTo(item.path)"
       />
     </template>
     <div class="position-relative height-48 width-72 rounded">

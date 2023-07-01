@@ -6,6 +6,8 @@ type TiptapButtonType = {
   func?: any
   items?: TiptapButtonType[]
   link?: string
+  linkText?: string
+  linkTarget?: boolean
   color?: string
 }
 const props = withDefaults(defineProps<TiptapButtonType>(), {
@@ -14,14 +16,23 @@ const props = withDefaults(defineProps<TiptapButtonType>(), {
   disabled: () => false,
   items: () => [],
   link: '',
+  linkText: '',
+  linkTarget: false,
   color: '#000000'
 })
-watch(props, (v, c) => {
-  isLinkEditMode.value = !c.link
-})
+const emit = defineEmits<{
+  (e: 'update:link', value: string): void
+}>()
 const file = ref<any>()
 const open = ref<boolean>(false)
-const isLinkEditMode = ref<boolean>(!props.link)
+const saveItem = () => {
+  open.value = false
+  props.func && props.func()
+}
+const unsetLink = () => {
+  emit('update:link', '')
+  saveItem()
+}
 </script>
 <template>
   <template v-if="icon">
@@ -61,7 +72,7 @@ const isLinkEditMode = ref<boolean>(!props.link)
           text="保存"
           text-class="text-caption"
           class="my-2 w-100"
-          @click-func="
+          @click="
             () => {
               open = false
               func && func()
@@ -74,76 +85,52 @@ const isLinkEditMode = ref<boolean>(!props.link)
       <template #activator="{ props: menu }">
         <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
       </template>
-      <div
-        class="bg-white rounded border-solid border-width-1 border-black min-width-300 px-2 py-1"
-      >
-        <div v-if="isLinkEditMode" class="d-flex">
-          <atom-text
-            text="リンク先を入力:"
-            font-size="text-caption"
-            line-height="line-height-40"
-            class="mr-2"
-          />
-          <v-text-field
-            :model-value="link"
-            variant="outlined"
+      <div class="bg-white rounded border-solid border-width-1 border-black min-width-300 pa-4">
+        <atom-text text="テキスト" line-height="line-height-lg" class="mb-2" />
+        <v-text-field
+          :model-value="linkText"
+          variant="outlined"
+          density="compact"
+          hide-details
+          @update:model-value="$emit('update:link-text', $event)"
+          class="mb-2"
+        />
+        <atom-text text="リンク" line-height="line-height-lg" class="mb-2" />
+        <v-text-field
+          :model-value="link"
+          variant="outlined"
+          density="compact"
+          hide-details
+          @update:model-value="$emit('update:link', $event)"
+          class="mb-2"
+        />
+        <div class="d-flex justify-start align-center mb-2">
+          <v-switch
+            :model-value="linkTarget"
             density="compact"
             hide-details
-            @update:model-value="$emit('update:link', $event)"
+            @update:model-value="$emit('update:link-target', $event)"
+            class="ml-2 flex-grow-0 text-main-color"
           />
-          <atom-text
-            text="保存"
-            font-size="text-subtitle-2"
-            color="text-blue-darken-1"
-            line-height="line-height-40"
-            class="ml-2 cursor-pointer"
-            @click="
-              () => {
-                open = false
-                func && func()
-              }
-            "
-          />
+          <atom-text text="別タブで開く" font-size="text-caption" class="ml-2" />
         </div>
-        <div v-else class="d-flex flex-nowrap">
-          <atom-text
-            text="リンク先:"
-            font-size="text-caption"
-            line-height="line-height-40"
-            class="mr-2 white-space-nowrap"
-          />
-          <nuxt-link :to="link" target="_blank" rel="noopener">
-            <atom-text
-              :text="link"
-              font-size="text-subtitle-2"
-              color="text-blue-darken-1"
-              line-height="line-height-40"
-              class="mr-4 cursor-pointer line-clamp-1 max-width-130"
-              style="flex: 1"
-            />
-          </nuxt-link>
-          <atom-text
-            text="編集"
-            font-size="text-subtitle-2"
-            color="text-blue-darken-1"
-            line-height="line-height-40"
-            class="cursor-pointer white-space-nowrap"
-            @click="isLinkEditMode = true"
-          />
-          <v-divider vertical class="my-3 mx-2" />
-          <atom-text
-            text="削除"
-            font-size="text-subtitle-2"
-            color="text-blue-darken-1"
-            line-height="line-height-40"
-            class="cursor-pointer white-space-nowrap"
-            @click="
-              () => {
-                open = false
-                func && func()
-              }
-            "
-          />
+        <div class="d-flex">
+          <v-btn
+            class="height-40 px-4 py-2 transition-short-ease text-main-color mr-3"
+            :ripple="false"
+            variant="outlined"
+            @click="saveItem()"
+          >
+            <atom-text text="更新" color="text-main-color" line-height="line-height-lg" />
+          </v-btn>
+          <v-btn
+            class="height-40 px-4 py-2 transition-short-ease text-red"
+            :ripple="false"
+            variant="outlined"
+            @click="unsetLink()"
+          >
+            <atom-text text="リンクを解除" color="text-red" line-height="line-height-lg" />
+          </v-btn>
         </div>
       </div>
     </v-menu>
@@ -155,7 +142,7 @@ const isLinkEditMode = ref<boolean>(!props.link)
         <div class="d-flex">
           <atom-text text="画像をアップロード" line-height="line-height-40" />
           <v-spacer />
-          <atom-button text="挿入" @click-func="func && func(file.file)" />
+          <atom-button text="挿入" @click="func && func(file.file)" />
         </div>
         <atom-input-file v-model="file" />
       </div>

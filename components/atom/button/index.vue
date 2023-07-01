@@ -22,7 +22,6 @@ const isHovering = ref<boolean>(false)
     variant="outlined"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
-    @click="$emit('click-func')"
   >
     <slot />
     <atom-text
