@@ -99,7 +99,7 @@ html {
 
   // for link
   a {
-    text-decoration: none;
+    text-decoration: underline;
   }
 
   // for image
@@ -109,5 +109,8 @@ html {
     &.ProseMirror-selectednode {
       outline: 3px solid #68cef8;
     }
+  }
+  .iframe-wrapper.ProseMirror-selectednode {
+    outline: 3px solid #68cef8;
   }
 }

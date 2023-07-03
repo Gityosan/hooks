@@ -175,8 +175,9 @@ const editor = useEditor({
       textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
     if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
     else textTypeIcon.value = 'mdi-format-paragraph'
-    link.value = editor.getAttributes('link').href
     color.value = editor.getAttributes('textStyle').color
+    link.value = editor.getAttributes('link').href
+    linkTarget.value = editor.getAttributes('link').target === '_blank'
     const target = resolveDom(editor.view.domAtPos(editor.state.selection.$head.pos).node)
     if (target.nodeName === 'A' && target.textContent) linkText.value = target.textContent
   }
@@ -338,22 +339,19 @@ const icons = computed(() => [
       const e = editor.value
       if (!e) return
       const { state, view } = e
-      const { dispatch } = view
       const { selection, tr, schema } = state
-      const { $head, from, to } = selection
-      const command = e.chain().focus().extendMarkRange('link')
-      if (!link.value) command.unsetLink().run()
-      else
-        command.setLink({ href: link.value, target: linkTarget.value ? '_blank' : '_self' }).run()
-      console.log(link.value, selection, state.doc.nodeAt($head.pos))
-      const target = resolveDom(view.domAtPos($head.pos).node) as HTMLElement
-      target.innerText = link.value
-      const parser = DOMParser.fromSchema(schema)
-      const parsedContent = parser.parse(target)
-      dispatch(tr.replaceRangeWith($head.start(), $head.end(), parsedContent))
-      // state.doc.nodeAt($head.pos)
-      // dispatch(tr.replaceRangeWith($head.start(), $head.end(), schema.text(link.value)))
-      console.log(target, schema.text(link.value))
+      const { $head } = selection
+      if (!link.value) {
+        e.chain().focus().extendMarkRange('link').unsetLink().run()
+        linkText.value = ''
+      } else {
+        const a = schema.mark('link', {
+          href: link.value,
+          target: linkTarget.value ? '_blank' : '_self'
+        })
+        const p = schema.node('paragraph', null, schema.text(linkText.value, [a]))
+        view.dispatch(tr.replaceRangeWith($head.start(), $head.end(), p))
+      }
     }
   },
   {

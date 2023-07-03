@@ -86,31 +86,34 @@ const unsetLink = () => {
         <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
       </template>
       <div class="bg-white rounded border-solid border-width-1 border-black min-width-300 pa-4">
-        <atom-text text="テキスト" line-height="line-height-lg" class="mb-2" />
-        <v-text-field
-          :model-value="linkText"
-          variant="outlined"
-          density="compact"
-          hide-details
-          @update:model-value="$emit('update:link-text', $event)"
-          class="mb-2"
-        />
+        <template v-if="link">
+          <atom-text text="テキスト" line-height="line-height-lg" class="mb-2" />
+          <v-text-field
+            :model-value="linkText"
+            variant="outlined"
+            density="compact"
+            hide-details
+            class="mb-2"
+            @update:model-value="$emit('update:link-text', $event)"
+          />
+        </template>
         <atom-text text="リンク" line-height="line-height-lg" class="mb-2" />
         <v-text-field
           :model-value="link"
           variant="outlined"
           density="compact"
           hide-details
-          @update:model-value="$emit('update:link', $event)"
           class="mb-2"
+          @update:model-value="$emit('update:link', $event)"
         />
         <div class="d-flex justify-start align-center mb-2">
           <v-switch
             :model-value="linkTarget"
             density="compact"
+            inset
             hide-details
+            class="flex-grow-0 text-main-color"
             @update:model-value="$emit('update:link-target', $event)"
-            class="ml-2 flex-grow-0 text-main-color"
           />
           <atom-text text="別タブで開く" font-size="text-caption" class="ml-2" />
         </div>
@@ -121,9 +124,14 @@ const unsetLink = () => {
             variant="outlined"
             @click="saveItem()"
           >
-            <atom-text text="更新" color="text-main-color" line-height="line-height-lg" />
+            <atom-text
+              :text="link ? '更新' : '保存'"
+              color="text-main-color"
+              line-height="line-height-lg"
+            />
           </v-btn>
           <v-btn
+            v-if="link"
             class="height-40 px-4 py-2 transition-short-ease text-red"
             :ripple="false"
             variant="outlined"
@@ -138,7 +146,7 @@ const unsetLink = () => {
       <template #activator="{ props: menu }">
         <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
       </template>
-      <div class="bg-white rounded border-solid border-width-1 border-black width-300 pa-2">
+      <div class="bg-white rounded border-solid border-width-1 border-black width-300 pa-4">
         <div class="d-flex">
           <atom-text text="画像をアップロード" line-height="line-height-40" />
           <v-spacer />
