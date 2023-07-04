@@ -40,58 +40,51 @@ const input = ref<FileInput<Partial<UpdateArticleInput>>>(defaultInput)
 await getArticles()
 </script>
 <template>
-  <layout-admin>
-    <div>
-      <div class="d-flex my-2">
-        <atom-text
-          :text="input.id ? input.id + 'の更新' : '新規作成'"
-          font-size="text-h6"
-          class="my-2"
-        />
-        <v-spacer />
-        <atom-button
-          :loading="banEdit"
-          text="リセット"
-          class="mr-3"
-          @click="input = defaultInput"
-        />
-        <atom-button
-          :loading="banEdit"
-          :text="input.id ? '更新' : '新規作成'"
-          @click="mutateArticle()"
-        />
-      </div>
-      <v-form ref="form">
-        <atom-input
-          v-for="item in articleInputs"
-          :key="item.key"
-          v-model="input[item.key]"
-          :input="item"
-        />
-      </v-form>
+  <div>
+    <div class="d-flex my-2">
+      <atom-text
+        :text="input.id ? input.id + 'の更新' : '新規作成'"
+        font-size="text-h6"
+        class="my-2"
+      />
+      <v-spacer />
+      <atom-button :loading="banEdit" text="リセット" class="mr-3" @click="input = defaultInput" />
+      <atom-button
+        :loading="banEdit"
+        :text="input.id ? '更新' : '新規作成'"
+        @click="mutateArticle()"
+      />
     </div>
-    <module-data-table
-      :headers="
-        ['oparation', ...Object.keys(defaultInput)].map((v) => {
-          return { title: v, key: v }
+    <v-form ref="form">
+      <atom-input
+        v-for="item in articleInputs"
+        :key="item.key"
+        v-model="input[item.key]"
+        :input="item"
+      />
+    </v-form>
+  </div>
+  <module-data-table
+    :headers="
+      ['oparation', ...Object.keys(defaultInput)].map((v) => {
+        return { title: v, key: v }
+      })
+    "
+    :items="articles"
+    @fetch-func="getArticles()"
+    @edit-func="
+      (item) => {
+        input = $filterAttr(articles[articles.indexOf(item.raw)], articleInputs)
+      }
+    "
+    @delete-func="
+      (id) =>
+        $extendMutation({
+          type: 'delete',
+          key: input.file?.key || '',
+          query: deleteArticle,
+          input: { id }
         })
-      "
-      :items="articles"
-      @fetch-func="getArticles()"
-      @edit-func="
-        (item) => {
-          input = $filterAttr(articles[articles.indexOf(item.raw)], articleInputs)
-        }
-      "
-      @delete-func="
-        (id) =>
-          $extendMutation({
-            type: 'delete',
-            key: input.file?.key || '',
-            query: deleteArticle,
-            input: { id }
-          })
-      "
-    />
-  </layout-admin>
+    "
+  />
 </template>

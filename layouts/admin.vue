@@ -115,7 +115,7 @@ const menu = [
     >
       <atom-text font-size="text-h6" line-height="line-height-lg" text="Hooks Admin" />
       <atom-breadcrumbs class="mb-5" />
-      <slot />
+      <NuxtPage />
     </div>
     <div
       class="d-flex position-absolute top-0 right-0 z-index-10 transition-medium-ease-out"

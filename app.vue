@@ -26,5 +26,5 @@ onUnmounted(() => {
 <template>
   <atom-snackbar-list />
   <atom-modal-error />
-  <NuxtLayout />
+  <NuxtLayout :name="$route.path.includes('admin') ? 'admin' : 'default'" />
 </template>

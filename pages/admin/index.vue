@@ -19,18 +19,16 @@ const fetchUser = async () => {
 await fetchUser()
 </script>
 <template>
-  <layout-admin>
-    <div class="d-flex">
-      <v-img src="mushimegane_man.png" class="width-42 height-64 mx-3 flex-grow-0" />
-      <div class="ma-2 pa-3 rounded-lg bg-grey-darken-3">
-        <atom-text
-          :text="Greetings(user?.name || '')[randomIndex]"
-          color="text-white"
-          line-height="line-height-lg"
-        />
-      </div>
-      <v-spacer />
+  <div class="d-flex">
+    <v-img src="mushimegane_man.png" class="width-42 height-64 mx-3 flex-grow-0" />
+    <div class="ma-2 pa-3 rounded-lg bg-grey-darken-3">
+      <atom-text
+        :text="Greetings(user?.name || '')[randomIndex]"
+        color="text-white"
+        line-height="line-height-lg"
+      />
     </div>
-    <module-user-large :user="user" class="ma-5" />
-  </layout-admin>
+    <v-spacer />
+  </div>
+  <module-user-large :user="user" class="ma-5" />
 </template>

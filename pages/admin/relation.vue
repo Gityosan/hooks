@@ -62,15 +62,13 @@ const relations = [
 useHead({ title: '中間テーブル編集' })
 </script>
 <template>
-  <layout-admin>
-    <atom-input-relation
-      v-for="i in relations"
-      :key="i.title"
-      :title="i.title"
-      :inputs="i.inputs"
-      :create-mutation="i.createMutation"
-      :update-mutation="i.updateMutation"
-      :delete-mutation="i.deleteMutation"
-    />
-  </layout-admin>
+  <atom-input-relation
+    v-for="i in relations"
+    :key="i.title"
+    :title="i.title"
+    :inputs="i.inputs"
+    :create-mutation="i.createMutation"
+    :update-mutation="i.updateMutation"
+    :delete-mutation="i.deleteMutation"
+  />
 </template>

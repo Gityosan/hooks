@@ -10,15 +10,13 @@ const { isSignedIn } = useLoginState()
 useHead({ title: 'ログイン' })
 </script>
 <template>
-  <layout-public>
-    <Authenticator class="mt-16">
-      <template #default="{ signOut }">
-        <h1 class="ma-5">ログイン済みです</h1>
-        <v-btn variant="outlined" class="ma-5" @click="navigateTo('/admin')">
-          管理画面トップへ
-        </v-btn>
-        <v-btn variant="outlined" class="ma-5" @click="signOut"> ログアウト </v-btn>
-      </template>
-    </Authenticator>
-  </layout-public>
+  <Authenticator class="mt-16">
+    <template #default="{ signOut }">
+      <h1 class="ma-5">ログイン済みです</h1>
+      <v-btn variant="outlined" class="ma-5" @click="navigateTo('/admin')">
+        管理画面トップへ
+      </v-btn>
+      <v-btn variant="outlined" class="ma-5" @click="signOut"> ログアウト </v-btn>
+    </template>
+  </Authenticator>
 </template>

@@ -37,30 +37,28 @@ const input = ref<FileInput<UpdateUserInput>>(JSON.parse(JSON.stringify(myUser.v
 await getUsers()
 </script>
 <template>
-  <layout-admin>
-    <div>
-      <div class="d-flex my-2">
-        <atom-text text="プロフィール変更" font-size="text-h6" class="my-2" />
-        <v-spacer />
-        <atom-button :loading="banEdit" text="更新" @click="updateMyUser()" />
-      </div>
-      <v-form ref="form">
-        <atom-input
-          v-for="item in memberInputs"
-          :key="item.key"
-          v-model="input[item.key]"
-          :input="item"
-        />
-      </v-form>
+  <div>
+    <div class="d-flex my-2">
+      <atom-text text="プロフィール変更" font-size="text-h6" class="my-2" />
+      <v-spacer />
+      <atom-button :loading="banEdit" text="更新" @click="updateMyUser()" />
     </div>
-    <module-data-table
-      :headers="
-        memberInputs.map((v) => {
-          return { title: v.key, key: v.key }
-        })
-      "
-      :items="users"
-      @fetch-func="getUsers()"
-    />
-  </layout-admin>
+    <v-form ref="form">
+      <atom-input
+        v-for="item in memberInputs"
+        :key="item.key"
+        v-model="input[item.key]"
+        :input="item"
+      />
+    </v-form>
+  </div>
+  <module-data-table
+    :headers="
+      memberInputs.map((v) => {
+        return { title: v.key, key: v.key }
+      })
+    "
+    :items="users"
+    @fetch-func="getUsers()"
+  />
 </template>

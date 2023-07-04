@@ -12,15 +12,13 @@ const getUsers = async () => {
 await getUsers()
 </script>
 <template>
-  <layout-public>
-    <atom-text font-size="text-h4" text="Member" class="py-10" />
-    <div class="d-flex flex-wrap mb-10" style="gap: 60px 0">
-      <module-user-medium
-        v-for="item in users"
-        :key="item.id"
-        :user="item"
-        class="pa-5 v-col-12 v-col-sm-6 v-col-md-4"
-      />
-    </div>
-  </layout-public>
+  <atom-text font-size="text-h4" text="Member" class="py-10" />
+  <div class="d-flex flex-wrap mb-10" style="gap: 60px 0">
+    <module-user-medium
+      v-for="item in users"
+      :key="item.id"
+      :user="item"
+      class="pa-5 v-col-12 v-col-sm-6 v-col-md-4"
+    />
+  </div>
 </template>
