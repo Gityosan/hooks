@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'トップページ' })
+useHead({ title: 'トップ' })
 const explains = [
   { title: 'Lumosって？', explain: 'Lumosはインカレプログラミングサークルです' },
   {

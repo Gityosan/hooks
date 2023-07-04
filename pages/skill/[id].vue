@@ -11,6 +11,7 @@ const fetchSkill = async () => {
       id: params.id || null
     }
   })
+  useHead({ title: skill.value.title })
 }
 await fetchSkill()
 </script>

@@ -41,6 +41,7 @@ const fetchEvent = async () => {
     }
   })
   imageUrl.value = await $getImage(event.value.file?.key, event.value.file?.identityId)
+  useHead({ title: event.value.title })
 }
 const tabs = ['参加メンバー', '記事']
 const tab = ref<string>('')

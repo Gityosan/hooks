@@ -4,6 +4,7 @@ import { listEvents } from '~/assets/graphql/queries'
 const { $listQuery } = useNuxtApp()
 const { isSignedIn } = useLoginState()
 const events = ref<Event[]>([])
+useHead({ title: 'イベント一覧' })
 const getEvents = async () => {
   events.value = await $listQuery<ListEventsQuery, Event>({
     query: listEvents,

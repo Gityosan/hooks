@@ -9,6 +9,7 @@ const { banEdit } = useEditState()
 const { setExistError, setErrorMessages } = useErrorState()
 const events = ref<Event[]>([])
 const form = ref<any>()
+useHead({ title: 'イベント編集' })
 const getEvents = async () => {
   events.value = await $listQuery<ListEventsQuery, Event>({ query: listEvents })
 }

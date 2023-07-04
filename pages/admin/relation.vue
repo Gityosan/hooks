@@ -59,6 +59,7 @@ const relations = [
     deleteMutation: deleteUserSkills
   }
 ]
+useHead({ title: '中間テーブル編集' })
 </script>
 <template>
   <layout-admin>

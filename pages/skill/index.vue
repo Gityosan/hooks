@@ -3,6 +3,7 @@ import { ListSkillsQuery, Skill } from '~/assets/API'
 import { listSkills } from '~/assets/graphql/queries'
 const { $listQuery } = useNuxtApp()
 const skills = ref<Skill[]>([])
+useHead({ title: 'スキル一覧' })
 const getSkills = async () => {
   skills.value = await $listQuery<ListSkillsQuery, Skill>({
     query: listSkills

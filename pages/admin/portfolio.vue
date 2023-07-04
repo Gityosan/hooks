@@ -9,6 +9,7 @@ const { banEdit } = useEditState()
 const { setExistError, setErrorMessages } = useErrorState()
 const portfolios = ref<Portfolio[]>([])
 const form = ref<any>()
+useHead({ title: 'ポートフォリオ編集' })
 const getPortfolios = async () => {
   portfolios.value = await $listQuery<ListPortfoliosQuery, Portfolio>({
     query: listPortfolios

@@ -9,6 +9,7 @@ const fetchArticle = async () => {
     query: getArticle,
     variables: { id: params.id || null }
   })
+  useHead({ title: article.value.title })
 }
 await fetchArticle()
 </script>

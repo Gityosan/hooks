@@ -9,6 +9,7 @@ const { setExistError, setErrorMessages } = useErrorState()
 const { banEdit } = useEditState()
 const form = ref<any>()
 const skills = ref<Skill[]>([])
+useHead({ title: 'スキル編集' })
 const getSkills = async () => {
   skills.value = await $listQuery<ListSkillsQuery, Skill>({ query: listSkills })
 }

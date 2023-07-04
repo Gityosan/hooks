@@ -7,6 +7,7 @@ const { isSignedIn } = useLoginState()
 // const password = ref<string>('')
 // const totp = ref<string>('')
 // const status = ref<'signUp' | 'signIn' | 'confirmSignUp' | 'totp'>('signIn')
+useHead({ title: 'ログイン' })
 </script>
 <template>
   <layout-public>

@@ -4,6 +4,7 @@ import { listProjects } from '~/assets/graphql/queries'
 const { $listQuery } = useNuxtApp()
 const { isSignedIn } = useLoginState()
 const projects = ref<Project[]>([])
+useHead({ title: 'プロジェクト一覧' })
 const getProjects = async () => {
   projects.value = await $listQuery<ListProjectsQuery, Project>({
     query: listProjects,

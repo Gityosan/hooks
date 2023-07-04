@@ -9,6 +9,7 @@ const { setExistError, setErrorMessages } = useErrorState()
 const { banEdit } = useEditState()
 const form = ref<any>()
 const projects = ref<Project[]>([])
+useHead({ title: 'プロジェクト編集' })
 const getProjects = async () => {
   projects.value = await $listQuery<ListProjectsQuery, Project>({
     query: listProjects

@@ -41,6 +41,7 @@ const fetchProject = async () => {
     }
   })
   imageUrl.value = await $getImage(project.value.file?.key, project.value.file?.identityId)
+  useHead({ title: project.value.title })
 }
 const tabs = ['参加メンバー', '記事']
 const tab = ref<string>('')

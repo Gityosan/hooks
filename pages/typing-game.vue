@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker/locale/ja'
+useHead({ title: 'タイピングゲーム' })
 
 // status = ['beforePlay','playing','afterPlay']
 const status = ref<any>('beforePlay')

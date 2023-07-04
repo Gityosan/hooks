@@ -19,6 +19,7 @@ const fetchUser = async () => {
       id: params.id || null
     }
   })
+  useHead({ title: user.value.name })
 }
 const submit = async () => {
   const validate = await form.value?.validate()

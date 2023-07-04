@@ -6,6 +6,7 @@ const { $getQuery } = useNuxtApp()
 const { myUser } = useMyUser()
 const user = ref<User>({} as User)
 const randomIndex = Math.floor(Math.random() * Greetings().length)
+useHead({ title: 'Admin Top' })
 const fetchUser = async () => {
   if (!myUser.value.id) return
   user.value = await $getQuery<GetUserQuery, User>({

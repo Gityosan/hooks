@@ -10,6 +10,7 @@ const { banEdit } = useEditState()
 const { setExistError, setErrorMessages } = useErrorState()
 const users = ref<User[]>([])
 const form = ref<any>()
+useHead({ title: 'メンバー編集' })
 const getUsers = async () => {
   users.value = await $listQuery<ListUsersQuery, User>({ query: listUsers })
 }

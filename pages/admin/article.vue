@@ -9,6 +9,7 @@ const { banEdit } = useEditState()
 const { setExistError, setErrorMessages } = useErrorState()
 const articles = ref<Article[]>([])
 const form = ref<any>()
+useHead({ title: '記事編集' })
 const getArticles = async () => {
   articles.value = await $listQuery<ListArticlesQuery, Article>({
     query: listArticles

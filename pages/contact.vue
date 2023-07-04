@@ -7,6 +7,7 @@ const config = useRuntimeConfig()
 const name = ref<string>('')
 const body = ref<string>('')
 const form = ref<any>(null)
+useHead({ title: 'お問い合わせ' })
 const submit = async () => {
   const validate = await form.value?.validate()
   if (!validate.valid) {

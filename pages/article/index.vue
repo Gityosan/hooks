@@ -4,6 +4,7 @@ import { listArticles } from '~/assets/graphql/queries'
 const { $listQuery } = useNuxtApp()
 const { isSignedIn } = useLoginState()
 const articles = ref<Article[]>([])
+useHead({ title: '記事一覧' })
 const getArticles = async () => {
   articles.value = await $listQuery<ListArticlesQuery, Article>({
     query: listArticles,
