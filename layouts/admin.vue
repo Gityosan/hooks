@@ -29,7 +29,7 @@ const menu = [
 </script>
 <template>
   <div
-    class="d-flex flex-nowrap bg-grey-color position-relative overflow-x-hidden"
+    class="d-flex flex-nowrap bg-grey-lighten-5 text-black position-relative overflow-x-hidden"
     :style="{ width: '100vw', 'min-height': 'calc(var(--vh, 1vh) * 100)' }"
   >
     <!-- NOTE: 画面左側メニュバー -->

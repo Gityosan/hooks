@@ -1,3 +1,5 @@
+import { AsyncDataOptions } from 'nuxt/app'
+import { NitroFetchOptions } from 'nitropack'
 import { S3ObjectInput } from '~/assets/API'
 export type IndexSignature<T> = T & { [key: string]: any }
 export type FileInput<T> = IndexSignature<{
@@ -50,3 +52,6 @@ export type InputType = {
   default: any
   props?: any
 }
+export type FetchOptionArgsType<T> = AsyncDataOptions<T> &
+  NitroFetchOptions<'GET' | 'POST' | 'PUT' | 'DELETE'>
+export type FetchOptionResponseType = NitroFetchOptions<'GET' | 'POST' | 'PUT' | 'DELETE'>

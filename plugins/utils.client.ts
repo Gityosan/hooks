@@ -1,8 +1,10 @@
-import { InputType } from '~/assets/type'
+import { S3Object } from '~~/assets/API'
+import { InputType, FetchOptionArgsType, FetchOptionResponseType } from '~/assets/type'
 // import { InputAttr } from '~~/assets/enum'
 export default defineNuxtPlugin((nuxtApp: any) => {
   const { addSnackbar } = useSnackbar()
   const { setBanEdit } = useEditState()
+  const { setExistError, addErrorMessages, setErrorMessages } = useErrorState()
   const setFillHeight = () => {
     const vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
@@ -14,56 +16,56 @@ export default defineNuxtPlugin((nuxtApp: any) => {
   // 初期化
   setFillHeight()
 
-  const config = nuxtApp.$config
-  const isProd = config.public.isProd
   return {
     provide: {
-      options: ({
-        key,
+      options: <T>({
+        query = {},
         method = 'GET',
         headers = {
           'Content-Type': 'application/json; charset=utf-8',
           'Access-Control-Allow-Origin': '*'
         },
-        body = null,
-        lazy = true,
-        cache = true
-      }: {
-        key?: string
-        method?: string
-        headers?: { [key: string]: string }
-        body?: string | null | FormData
-        lazy?: boolean
-        cache?: boolean
-      } = {}) => ({
-        key,
-        baseURL: config.public.baseUrl || '',
         body,
-        method,
-        headers: {
-          ...headers
-        },
-        lazy,
-        initialCache: cache
-      }),
-      baseFetch: async <T>(path: string, options = nuxtApp.$options()) => {
-        setBanEdit(true)
-        if (!isProd) console.log(options)
-        const { data, error, refresh } = await useFetch(path, {
-          ...options,
-          onResponseError({ request, response, options }) {
-            if (!isProd) console.log(response)
-            if (options.method !== 'GET') {
-              addSnackbar({ type: 'alert', text: '送信に失敗しました' })
+        onResponse,
+        onResponseError,
+        ...args
+      }: FetchOptionArgsType<T> = {}): FetchOptionResponseType => {
+        body = body ? { body } : {}
+        query = Object.keys(query).length ? { query } : {}
+        return {
+          ...body,
+          ...query,
+          method,
+          headers,
+          async onResponse(v) {
+            await nuxtApp.$convertResponse(v.response._data)
+            onResponse && onResponse(v)
+          },
+          onResponseError(v) {
+            const s = v.response.status
+            if (s > 400 && s < 500) showError({ statusCode: s })
+            else {
+              clearError()
+              setExistError(true)
+              addErrorMessages(`${v.response.status}:${v.response.statusText}`)
             }
-          }
-        })
-        if (error.value) clearError()
-        else if (options.method !== 'GET') {
-          addSnackbar({ type: 'success', text: '送信が完了しました' })
+            onResponseError && onResponseError(v)
+          },
+          ...args
         }
-        setBanEdit(false)
-        return { data: data.value as T, error: error.value as any }
+      },
+      baseFetch: async <T>(path: string, options: () => FetchOptionArgsType<T> = () => ({})) => {
+        const { lazy, watch } = { lazy: false, watch: [], ...options() }
+        return await useAsyncData(path, () => $fetch<T>(path, nuxtApp.$options(options())), {
+          lazy,
+          watch
+        })
+      },
+      typeSafetyImage: async (file: S3Object | string | File | null): Promise<string> => {
+        if (!file) return ''
+        else if (typeof file === 'string') return file
+        else if (file instanceof File) return URL.createObjectURL(file)
+        else return await nuxtApp.$getImage(file.key, file.identityId)
       },
       itemsSort: (items: any[], prop: string, order: 'asc' | 'desc' = 'asc'): any[] => {
         const extract = items.map((v, i) => {
@@ -95,9 +97,6 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           separator +
           ('0' + date.getDate()).slice(-2)
         )
-      },
-      isObject: (v: object) => {
-        return v !== null && typeof v === 'object' && !Array.isArray(v)
       },
       findItem: (array: any[], key: string, value: any) => {
         const item = array.find((v) => v[key] === value)
@@ -134,6 +133,35 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         return str.replace(/[A-Z]/g, function (s) {
           return '_' + s.charAt(0).toLowerCase()
         })
+      },
+      snakeToLowerCamel: (string = ''): string =>
+        string
+          .split('_')
+          .reduce(
+            (pre, cur, i) => pre + (i ? cur[0].toUpperCase() : cur[0].toLowerCase()) + cur.slice(1),
+            ''
+          ),
+      isObject: (v: unknown): v is object => v !== null && typeof v === 'object',
+      isFile: (v: unknown): v is File => v instanceof File,
+      isEmptyObject: (v: any) =>
+        nuxtApp.$isObject(v) && !nuxtApp.$isFile(v) && !Object.keys(v).length,
+      changeKeyCase: (obj: any) => {
+        if (nuxtApp.$isObject(obj))
+          Object.keys(obj).forEach((key) => {
+            const newKey = nuxtApp.$snakeToLowerCamel(key)
+            if (newKey !== key) {
+              obj[newKey] = obj[key]
+              delete obj[key]
+            }
+            nuxtApp.$convertResponse(obj[newKey])
+          })
+      },
+      convertResponse: (res: any) => {
+        if (Array.isArray(res)) {
+          for (let i = 0, len = res.length; i < len; i++) {
+            nuxtApp.$changeKeyCase(res[i])
+          }
+        } else nuxtApp.$changeKeyCase(res)
       },
       reverseSanitize: (str?: string | null): string => {
         if (!str) return ''
