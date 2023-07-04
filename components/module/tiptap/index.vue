@@ -12,6 +12,7 @@ import { TaskList } from '@tiptap/extension-task-list'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
 import { DOMSerializer, DOMParser } from 'prosemirror-model'
+// import { TextSelection } from 'prosemirror-state'
 import Iframe from '@@/assets/iframe'
 const { $reverseSanitize } = useNuxtApp()
 const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
@@ -67,23 +68,16 @@ const editor = useEditor({
         const { state } = view
         const { schema, selection } = state
         const { from, to, $head } = selection
-        let data: ClipboardItem[] | null = null
+        let textPlain = ''
+        let textHtml = ''
         if (from === to) {
           const dom = resolveDom(view.domAtPos($head.pos).node) as HTMLElement
           if (dom.nodeName === 'CODE') {
-            data = [
-              new ClipboardItem({
-                'text/plain': new Blob(['\n' + dom.innerText], { type: 'text/plain' }),
-                'text/html': new Blob([dom.outerHTML], { type: 'text/html' })
-              })
-            ]
+            textPlain = '\n' + dom.innerText
+            textHtml = dom.outerHTML
           } else {
-            data = [
-              new ClipboardItem({
-                'text/plain': new Blob([dom.innerText], { type: 'text/plain' }),
-                'text/html': new Blob(['<br>' + dom.outerHTML], { type: 'text/html' })
-              })
-            ]
+            textPlain = dom.innerText
+            textHtml = '<br>' + dom.outerHTML
           }
         } else {
           const serializer = DOMSerializer.fromSchema(schema)
@@ -91,13 +85,15 @@ const editor = useEditor({
           if (!dom) return true
           const element = document.createElement('div')
           element.appendChild(dom)
-          data = [
-            new ClipboardItem({
-              'text/plain': new Blob([element.innerText], { type: 'text/plain' }),
-              'text/html': new Blob([element.innerHTML], { type: 'text/html' })
-            })
-          ]
+          textPlain = element.innerText
+          textHtml = element.innerHTML
         }
+        const data = [
+          new ClipboardItem({
+            'text/plain': new Blob([textPlain], { type: 'text/plain' }),
+            'text/html': new Blob([textHtml], { type: 'text/html' })
+          })
+        ]
         navigator.clipboard.write(data).catch((error) => {
           console.error('An error occurred while writing to clipboard:', error)
         })
@@ -120,13 +116,9 @@ const editor = useEditor({
       const { tr, selection, schema } = state
       const { from, to, $head } = selection
       const target = resolveDom(view.domAtPos($head.pos).node)
-      if (
-        slice.content.childCount > 1 &&
-        slice.content.firstChild?.firstChild?.type.name === 'hardBreak'
-      ) {
-        const t = slice.content.child(1)
-        const text = t?.textContent || ''
-        if (!text) return true
+      const content = slice.content
+      if (content.childCount > 1 && content.firstChild?.firstChild?.type.name === 'hardBreak') {
+        const t = content.child(1)
         if (target.textContent && from === to) {
           if (target.nodeName === 'BLOCKQUOTE') {
             if (t?.firstChild) dispatch(tr.insert($head.end(), t.firstChild))
@@ -136,8 +128,8 @@ const editor = useEditor({
           return true
         }
         return true
-      } else if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(slice.content.firstChild?.textContent || '')) {
-        const text = slice.content.firstChild?.textContent || ''
+      } else if (/<iframe.*?<\/iframe>/i.test(content.firstChild?.textContent || '')) {
+        const text = content.firstChild?.textContent || ''
         if (!text) return true
         const element = document.createElement('div')
         element.setAttribute('class', 'iframe-wrapper')
@@ -151,8 +143,7 @@ const editor = useEditor({
       return false
     }
   },
-  onUpdate: (props) => {
-    const { editor } = props
+  onUpdate: ({ editor }) => {
     emit('update:model-value', editor.getHTML().replace(pattern, ''))
     const selectedText = Object.assign(
       {},
@@ -164,8 +155,7 @@ const editor = useEditor({
     if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
     else textTypeIcon.value = 'mdi-format-paragraph'
   },
-  onSelectionUpdate: (props) => {
-    const { editor } = props
+  onSelectionUpdate: ({ editor }) => {
     const selectedText = Object.assign(
       {},
       editor.getAttributes('heading'),
@@ -182,6 +172,19 @@ const editor = useEditor({
     if (target.nodeName === 'A' && target.textContent) linkText.value = target.textContent
   }
 })
+// const onClick = (event: MouseEvent) => {
+//   const e = editor.value
+//   if (!e) return
+//   const { view, state } = e
+//   const { dispatch } = view
+//   const { tr } = state
+//   const contentRect = view.dom.getBoundingClientRect()
+//   const relativeX = event.clientX - contentRect.left
+//   const relativeY = event.clientY - contentRect.top
+//   const pos = view.posAtCoords({ left: relativeX, top: relativeY })
+//   if (!e.isFocused) view.focus()
+//   if (pos) dispatch(tr.setSelection(TextSelection.create(tr.doc, pos.pos)))
+// }
 watch(props, (v, c) => {
   if (editor.value?.getHTML() === c.modelValue) return
   editor.value?.commands.setContent($reverseSanitize(c.modelValue), false)
@@ -408,10 +411,7 @@ const icons = computed(() => [
     </div>
     <editor-content
       :editor="editor"
-      tabindex="0"
-      class="pa-10 pt-6 min-height-200 overflow-y-auto"
-      :class="{ 'cursor-text': !editor.isFocused }"
-      @focus="!editor.isFocused && editor.commands.focus('end')"
+      class="ma-10 mt-6 min-height-200 overflow-y-auto bg-white cursor-text"
     />
   </div>
 </template>
