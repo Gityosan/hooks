@@ -125,7 +125,24 @@ $line-height: (
     line-height: $v !important;
   }
 }
-
+$border-style: none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset;
+@each $i in $border-style {
+  .border-#{$i} {
+    border-style: $i;
+  }
+  .border-top-#{$i} {
+    border-top-style: $i;
+  }
+  .border-right-#{$i} {
+    border-right-style: $i;
+  }
+  .border-left-#{$i} {
+    border-left-style: $i;
+  }
+  .border-bottom-#{$i} {
+    border-bottom-style: $i;
+  }
+}
 /*
 数量系の単一プロパティを表す責務を負うclass
 */
