@@ -412,7 +412,7 @@ const icons = computed(() => [
     <editor-content
       :editor="editor"
       tabindex="0"
-      class="pa-10 pt-6 min-height-200 overflow-y-auto bg-white cursor-text"
+      class="pa-10 pt-6 min-height-200 overflow-y-auto bg-white cursor-text rounded"
       @focus="editor.commands.focus()"
     />
   </div>

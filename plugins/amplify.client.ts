@@ -1,4 +1,5 @@
 import { Amplify, API, Auth, Storage, I18n } from 'aws-amplify'
+import { StorageAccessLevel } from '@aws-amplify/storage'
 import { GraphQLQuery } from '@aws-amplify/api'
 import { translations } from '@aws-amplify/ui-vue'
 import { v4 as uuidv4 } from 'uuid'
@@ -149,15 +150,6 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           return null
         }
       },
-      getImage: async (key = '', identityId = ''): Promise<string> => {
-        // NOTE: keyは{random uuid}.{extension}の形式
-        // NOTE: 返り値はデフォルト15分の有効期限付き署名付きURL(String)
-        if (!key) return '/no_image.png'
-        return await Storage.get(key, {
-          level: 'protected',
-          identityId
-        })
-      },
       makeS3Object: async (file: File) => {
         if (!file) return
         const { name, type, size } = file
@@ -173,20 +165,28 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           file
         }
       },
-      putImage: async (key: string, file: File) => {
+      getImage: async (
+        key = '',
+        identityId = '',
+        level: StorageAccessLevel = 'protected'
+      ): Promise<string> => {
+        // NOTE: keyは{random uuid}.{extension}の形式
+        // NOTE: 返り値はデフォルト15分の有効期限付き署名付きURL(String)
+        if (!key) return '/no_image.png'
+        return await Storage.get(key, { level, identityId })
+      },
+      putImage: async (key: string, file: File, level: StorageAccessLevel = 'protected') => {
         if (!file || !key) return
         return await Storage.put(key, file, {
-          level: 'protected',
+          level,
           contentType: file.type
         }).catch((e) => {
           if (!isProd) console.log('createImage', e)
         })
       },
-      removeImage: async (key: string) => {
+      removeImage: async (key: string, level: StorageAccessLevel = 'protected') => {
         if (!key) return
-        return await Storage.remove(key, {
-          level: 'protected'
-        }).catch((e) => {
+        return await Storage.remove(key, { level }).catch((e) => {
           console.log('deleteImage', e)
         })
       },

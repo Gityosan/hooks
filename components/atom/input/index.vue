@@ -20,7 +20,15 @@ const onChange = ({ index = 0, event }: { index?: number; event?: Event | File[]
 }
 </script>
 <template>
-  <atom-text :text="input.title" line-height="line-height-lg" class="pb-2 pl-1" />
+  <div class="d-flex">
+    <atom-text :text="input.title" line-height="line-height-lg" class="pb-2 pl-1" />
+    <v-icon
+      v-if="input.rules?.some((v) => v.name === 'required')"
+      icon="mdi-asterisk"
+      size="12"
+      class="text-red-darken-4 height-24 ml-1"
+    />
+  </div>
   <template v-if="input.isArray">
     <component
       :is="resolveComponent(InputComponents()[input.type].comp)"
