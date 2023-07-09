@@ -129,21 +129,17 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           setBanEdit(true)
           const { data }: any = await API.graphql<GraphQLQuery<T>>({
             query,
-            variables: { input: Object.fromEntries(Object.entries(input).filter((v) => !!v[1])) },
+            variables: { input },
             authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
           })
           const name = Object.keys(data).length && Object.keys(data)[0]
-          if (!isProd && name) console.log(data[name])
-          if (key && file) {
-            if (type === 'delete' || type === 'update') await nuxtApp.$removeImage(key)
-            if (type === 'create' || type === 'update') await nuxtApp.$putImage(key, file)
-          }
+          if (type === 'delete' || type === 'update') await nuxtApp.$removeImage(key)
+          if (type === 'create' || type === 'update') await nuxtApp.$putImage(key, file)
           addSnackbar({ text: '保存が完了しました' })
           setBanEdit(false)
           if (name) return data[name]
           else return null
         } catch (e) {
-          if (!isProd) console.log(e)
           addSnackbar({ type: 'alert', text: '保存に失敗しました' })
           clearError()
           setBanEdit(false)
@@ -175,7 +171,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         if (!key) return '/no_image.png'
         return await Storage.get(key, { level, identityId })
       },
-      putImage: async (key: string, file: File, level: StorageAccessLevel = 'protected') => {
+      putImage: async (key?: string, file?: File, level: StorageAccessLevel = 'protected') => {
         if (!file || !key) return
         return await Storage.put(key, file, {
           level,
@@ -184,7 +180,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           if (!isProd) console.log('createImage', e)
         })
       },
-      removeImage: async (key: string, level: StorageAccessLevel = 'protected') => {
+      removeImage: async (key?: string, level: StorageAccessLevel = 'protected') => {
         if (!key) return
         return await Storage.remove(key, { level }).catch((e) => {
           console.log('deleteImage', e)

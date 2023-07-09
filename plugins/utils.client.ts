@@ -98,11 +98,6 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           ('0' + date.getDate()).slice(-2)
         )
       },
-      findItem: (array: any[], key: string, value: any) => {
-        const item = array.find((v) => v[key] === value)
-        if (item) return item
-        return null
-      },
       filterAttr: (
         object: { [key: string]: any },
         inputs: InputType[] = [],
