@@ -11,7 +11,7 @@ import { TaskItem } from '@tiptap/extension-task-item'
 import { TaskList } from '@tiptap/extension-task-list'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { StarterKit } from '@tiptap/starter-kit'
-import { DOMSerializer, DOMParser } from 'prosemirror-model'
+import { DOMSerializer, DOMParser, Mark } from 'prosemirror-model'
 // import { TextSelection } from 'prosemirror-state'
 import Iframe from '@@/assets/iframe'
 const { $reverseSanitize } = useNuxtApp()
@@ -20,6 +20,7 @@ const textTypeIcon = ref<string>('mdi-format-paragraph')
 const link = ref<string>('')
 const linkText = ref<string>('')
 const linkTarget = ref<boolean>(false)
+const isLink = ref<boolean>(false)
 const color = ref<string>('')
 const pattern = /<(script|link)\b[^<]*(?:(?!<\/(script|link)>)<[^<]*)*<\/(script|link)>/gi
 const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
@@ -29,7 +30,7 @@ const emit = defineEmits<{
 const resolveDom = (n: Node): Node => {
   if (!n.parentNode) return n
   else if (
-    ['#text', 'SPAN', 'MARK', 'STRONG', 'EM', 'U', 'S'].includes(n.nodeName) ||
+    ['#text', 'SPAN', 'MARK', 'STRONG', 'EM', 'U', 'S', 'A'].includes(n.nodeName) ||
     ['LI', 'BLOCKQUOTE'].includes(n.parentNode?.nodeName) ||
     (n.nodeName === 'CODE' && n.parentNode?.nodeName !== 'PRE') ||
     (n.nodeName === 'P' &&
@@ -145,31 +146,25 @@ const editor = useEditor({
   },
   onUpdate: ({ editor }) => {
     emit('update:model-value', editor.getHTML().replace(pattern, ''))
-    const selectedText = Object.assign(
-      {},
-      editor.getAttributes('heading'),
-      editor.getAttributes('paragraph')
-    )
-    if ('textAlign' in selectedText)
-      textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
-    if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
-    else textTypeIcon.value = 'mdi-format-paragraph'
+    const attr = Object.assign(editor.getAttributes('heading'), editor.getAttributes('paragraph'))
+    textAlignTypeIcon.value = `mdi-align-horizontal-${attr.textAlign || 'left'}`
+    textTypeIcon.value = `mdi-format-${attr.level ? `header-${attr.level}` : 'paragraph'}`
   },
-  onSelectionUpdate: ({ editor }) => {
-    const selectedText = Object.assign(
-      {},
-      editor.getAttributes('heading'),
-      editor.getAttributes('paragraph')
-    )
-    if ('textAlign' in selectedText)
-      textAlignTypeIcon.value = `mdi-align-horizontal-${selectedText.textAlign}`
-    if ('level' in selectedText) textTypeIcon.value = `mdi-format-header-${selectedText.level}`
-    else textTypeIcon.value = 'mdi-format-paragraph'
+  onSelectionUpdate: ({ editor, transaction }) => {
+    const { selection, doc } = transaction
+    const { from, to } = selection
+    const attr = Object.assign(editor.getAttributes('heading'), editor.getAttributes('paragraph'))
+    textAlignTypeIcon.value = `mdi-align-horizontal-${attr.textAlign || 'left'}`
+    textTypeIcon.value = `mdi-format-${attr.level ? `header-${attr.level}` : 'paragraph'}`
     color.value = editor.getAttributes('textStyle').color
     link.value = editor.getAttributes('link').href
     linkTarget.value = editor.getAttributes('link').target === '_blank'
-    const target = resolveDom(editor.view.domAtPos(editor.state.selection.$head.pos).node)
-    if (target.nodeName === 'A' && target.textContent) linkText.value = target.textContent
+    linkText.value = doc.textBetween(from, to)
+    const marks: Mark[] = []
+    doc.nodesBetween(from, to, (node, pos) => {
+      marks.push(...node.marks)
+    })
+    isLink.value = marks.some((v) => v.type.name === 'link')
   }
 })
 // const onClick = (event: MouseEvent) => {
@@ -343,7 +338,7 @@ const icons = computed(() => [
       if (!e) return
       const { state, view } = e
       const { selection, tr, schema } = state
-      const { $head } = selection
+      const { from, to } = selection
       if (!link.value) {
         e.chain().focus().extendMarkRange('link').unsetLink().run()
         linkText.value = ''
@@ -352,8 +347,7 @@ const icons = computed(() => [
           href: link.value,
           target: linkTarget.value ? '_blank' : '_self'
         })
-        const p = schema.node('paragraph', null, schema.text(linkText.value, [a]))
-        view.dispatch(tr.replaceRangeWith($head.start(), $head.end(), p))
+        view.dispatch(tr.replaceRangeWith(from, to, schema.text(linkText.value, [a])))
       }
     }
   },
@@ -400,6 +394,7 @@ const icons = computed(() => [
         v-model:link="link"
         v-model:link-text="linkText"
         v-model:link-target="linkTarget"
+        v-model:is-link="isLink"
         v-model:color="color"
         :title="item.title"
         :icon="item.icon"

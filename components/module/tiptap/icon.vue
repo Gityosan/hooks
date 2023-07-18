@@ -8,6 +8,7 @@ type TiptapButtonType = {
   link?: string
   linkText?: string
   linkTarget?: boolean
+  isLink?: boolean
   color?: string
 }
 const props = withDefaults(defineProps<TiptapButtonType>(), {
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<TiptapButtonType>(), {
   link: '',
   linkText: '',
   linkTarget: false,
+  isLink: false,
   color: '#000000'
 })
 const emit = defineEmits<{
@@ -68,17 +70,7 @@ const unsetLink = () => {
           :model-value="color"
           @update:model-value="$emit('update:color', $event)"
         />
-        <atom-button
-          text="保存"
-          text-class="text-caption"
-          class="my-2 w-100"
-          @click="
-            () => {
-              open = false
-              func && func()
-            }
-          "
-        />
+        <atom-button text="保存" text-class="text-caption" class="my-2 w-100" @click="saveItem()" />
       </div>
     </v-menu>
     <v-menu v-else-if="icon === 'mdi-link'" v-model="open" :close-on-content-click="false">
@@ -86,17 +78,15 @@ const unsetLink = () => {
         <atom-button-icon :title="title" :icon="icon" :disabled="disabled()" :props="menu" />
       </template>
       <div class="bg-white rounded border-solid border-width-1 border-black min-width-300 pa-4">
-        <template v-if="link">
-          <atom-text text="テキスト" line-height="line-height-lg" class="mb-2" />
-          <v-text-field
-            :model-value="linkText"
-            variant="outlined"
-            density="compact"
-            hide-details
-            class="mb-2"
-            @update:model-value="$emit('update:link-text', $event)"
-          />
-        </template>
+        <atom-text text="テキスト" line-height="line-height-lg" class="mb-2" />
+        <v-text-field
+          :model-value="linkText"
+          variant="outlined"
+          density="compact"
+          hide-details
+          class="mb-2"
+          @update:model-value="$emit('update:link-text', $event)"
+        />
         <atom-text text="リンク" line-height="line-height-lg" class="mb-2" />
         <v-text-field
           :model-value="link"
@@ -125,13 +115,13 @@ const unsetLink = () => {
             @click="saveItem()"
           >
             <atom-text
-              :text="link ? '更新' : '保存'"
+              :text="isLink ? '更新' : '保存'"
               color="text-main-color"
               line-height="line-height-lg"
             />
           </v-btn>
           <v-btn
-            v-if="link"
+            v-if="isLink"
             class="height-40 px-4 py-2 transition-short-ease text-red"
             :ripple="false"
             variant="outlined"
