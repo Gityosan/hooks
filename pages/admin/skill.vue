@@ -61,7 +61,7 @@ await getSkills()
   </div>
   <module-data-table
     :headers="
-      ['oparation', ...Object.keys(defaultInput)].map((v) => {
+      ['action', ...Object.keys(defaultInput)].map((v) => {
         return { title: v, key: v }
       })
     "

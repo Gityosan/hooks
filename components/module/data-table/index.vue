@@ -1,64 +1,161 @@
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
+const { mdAndUp, sm } = useDisplay()
 const { banEdit } = useEditState()
 const open = ref<boolean>(false)
-const deleteId = ref<string>('')
+const selectedIds = ref<string[]>([])
+const search = ref<string>('')
 withDefaults(
   defineProps<{
     headers: { title: string; key: string }[]
     items: any[]
+    customColumns: string[]
+    page: number
+    perPage: number
+    totalPageCount: number
+    showExpand: boolean
   }>(),
   {
     headers: () => [],
-    items: () => []
+    items: () => [],
+    customColumns: () => [],
+    page: 1,
+    perPage: 10,
+    totalPageCount: 1,
+    showExpand: false
   }
 )
 const emit = defineEmits<{
   (e: 'fetch-func'): void
-  (e: 'edit-func', item: any): void
+  (e: 'show-func', id: string): void
+  (e: 'edit-func', id: string): void
   (e: 'delete-func', id: string): void
 }>()
-const deleteReady = (item: any) => {
+const deleteReady = (id = '') => {
+  if (!id) return
   open.value = true
-  if (!('id' in item)) return
-  deleteId.value = item.id
+  selectedIds.value = [id]
 }
-const deleteItem = async () => {
-  if (deleteId.value) await emit('delete-func', deleteId.value)
+const deleteItems = async () => {
+  if (selectedIds.value.length) {
+    for (let i = 0, len = selectedIds.value.length; i < len; i++) {
+      await emit('delete-func', selectedIds.value[i])
+    }
+  }
   await emit('fetch-func')
   open.value = false
 }
 </script>
 <template>
   <v-data-table
+    v-model="selectedIds"
     :headers="headers"
     :items="items"
+    :search="search"
+    no-data-text="ローディング中..."
+    item-title="name"
+    item-value="id"
     density="compact"
-    :style="{ '--v-table-header-height': '40px' }"
+    multi-sort
+    hide-default-footer
+    show-select
+    :show-expand="showExpand"
+    :style="{ '--v-table-row-height': '86px' }"
     class="white-space-nowrap my-5"
+    :page="1"
+    :items-per-page="perPage"
+    @update:page="$emit('update:page', $event)"
+    @update:items-per-page="$emit('update:per-page', $event)"
   >
     <template #top>
-      <div class="d-flex my-2">
-        <atom-text text="一括取得" font-size="text-h6" class="my-2" />
-        <v-spacer />
-        <atom-button :loading="banEdit" text="再取得" @click="$emit('fetch-func')" />
-      </div>
+      <slot name="top">
+        <div class="d-flex my-2">
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            label="Search"
+            variant="underlined"
+            clearable
+            single-line
+            hide-details
+          />
+          <v-spacer />
+          <v-select
+            :items="[5, 10, 30, 50, 100, 200]"
+            type="number"
+            variant="outlined"
+            density="compact"
+            hide-details
+            class="mr-5 rounded-lg"
+            :model-value="perPage"
+            @update:model-value="$emit('update:per-page', $event)"
+          />
+          <atom-button
+            v-if="selectedIds.length > 1"
+            :loading="banEdit"
+            text="選択したアイテムの削除"
+            color="red-darken-3"
+            class="mr-5"
+            @click="open = true"
+          />
+          <atom-button :loading="banEdit" text="再取得" color="blue" @click="$emit('fetch-func')" />
+        </div>
+      </slot>
     </template>
-    <template #item.oparation="{ item }">
-      <div class="d-flex flex-nowrap">
-        <v-icon size="24" class="ma-2" @click="$emit('edit-func', item)">mdi-pencil</v-icon>
-        <v-icon size="24" class="ma-2" @click="deleteReady(item.raw)">mdi-delete</v-icon>
-      </div>
+    <template v-for="c in customColumns" :key="c" #[`item.${c}`]="{ item }">
+      <slot :name="c" :item="item" />
+    </template>
+    <template #item.action="{ item }">
+      <slot name="action" :item="item">
+        <div class="d-flex flex-nowrap">
+          <v-icon
+            icon="mdi-eye"
+            size="24"
+            class="ma-2 text-blue"
+            @click="$emit('show-func', item.value)"
+          />
+          <v-icon
+            icon="mdi-pencil"
+            size="24"
+            class="ma-2 text-green"
+            @click="$emit('edit-func', item.value)"
+          />
+          <v-icon
+            icon="mdi-delete"
+            size="24"
+            class="ma-2 text-red-darken-3"
+            @click="deleteReady(item.value)"
+          />
+        </div>
+      </slot>
+    </template>
+    <template #expanded-row="{ columns, item }">
+      <slot name="expanded-row" :item="item" :columns="columns"> </slot>
+    </template>
+    <template #bottom>
+      <slot name="bottom">
+        <v-pagination
+          :length="totalPageCount"
+          :total-visible="mdAndUp ? 10 : sm ? 5 : 1"
+          :model-value="page"
+          @update:model-value="$emit('update:page', $event)"
+          class="overflow-x-auto"
+        />
+      </slot>
     </template>
   </v-data-table>
   <v-dialog v-model="open" persistent>
     <v-card flat class="rounded-lg py-6 px-10" min-width="370">
-      <atom-text text="本当に削除しますか？" class="w-100 mt-5 mb-10 text-center" />
+      <atom-text
+        :text="selectedIds.length + '件のデータを本当に削除しますか？'"
+        class="w-100 mt-5 mb-10 text-center"
+      />
       <div class="d-flex justify-space-around">
         <atom-button
           text="削除します"
           :loading="banEdit"
           class="rounded-pill width-200"
-          @click="deleteItem()"
+          @click="deleteItems()"
         />
         <atom-button
           text="キャンセル"

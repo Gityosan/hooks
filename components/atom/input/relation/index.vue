@@ -84,7 +84,7 @@ await getRelation()
       <v-window-item :value="tabs[1]">
         <module-data-table
           :headers="
-            ['oparation', ...Object.keys(defaultInput)].map((v) => {
+            ['action', ...Object.keys(defaultInput)].map((v) => {
               return { title: v, key: v }
             })
           "
