@@ -99,10 +99,11 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         )
       },
       filterAttr: (
-        object: { [key: string]: any },
+        object?: { [key: string]: any },
         inputs: InputType[] = [],
         excludeAttr: string[] = []
       ): any => {
+        if (!object) return {}
         const attr = inputs.map((v) => v.key).filter((v) => !excludeAttr.includes(v))
         const fileAttr = inputs.filter((v) => v.type === 'fileinput').map((v) => v.key)
         return attr.reduce((v: object, c) => {
