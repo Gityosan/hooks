@@ -11,6 +11,16 @@ const { setExistError, setErrorMessages } = useErrorState()
 const users = ref<User[]>([])
 const form = ref<any>()
 useHead({ title: 'メンバー編集' })
+const headers = [
+  { title: 'アイコン', key: 'file' },
+  { title: '名前', key: 'name' },
+  { title: 'Eメール', key: 'email' },
+  { title: '大学・学校', key: 'university' },
+  { title: '学部・学科', key: 'faculty' },
+  { title: '就活中', key: 'jobHunting' },
+  { title: '加入日', key: 'join' },
+  { title: '卒業日', key: 'leave' }
+]
 const getUsers = async () => {
   users.value = await $listQuery<ListUsersQuery, User>({ query: listUsers })
 }
@@ -53,12 +63,16 @@ await getUsers()
     </v-form>
   </div>
   <module-data-table
-    :headers="
-      memberInputs.map((v) => {
-        return { title: v.key, key: v.key }
-      })
-    "
+    :headers="headers"
     :items="users"
+    :custom-columns="['file', 'jobHunting']"
     @fetch-func="getUsers()"
-  />
+  >
+    <template #file="{ item }">
+      <atom-icon-img :file="item.columns.file" width="48" class="mx-auto" />
+    </template>
+    <template #jobHunting="{ item }">
+      {{ item.columns.jobHunting ? '就活中' : '未就活' }}
+    </template>
+  </module-data-table>
 </template>

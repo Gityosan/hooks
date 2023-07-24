@@ -50,7 +50,9 @@ await getRelation()
 </script>
 <template>
   <v-card class="rounded-lg mb-16">
-    <v-tabs v-model="tab" class="bg-main-color text-white" :items="tabs"></v-tabs>
+    <v-tabs v-model="tab" class="bg-main-color">
+      <v-tab v-for="t in tabs" :key="t" :title="t" :value="t" class="text-white" />
+    </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="tabs[0]">
         <div class="d-flex my-2 px-5">
@@ -91,8 +93,11 @@ await getRelation()
           :items="items"
           @fetch-func="getRelation()"
           @edit-func="
-            (item) => {
-              input = $filterAttr(items[items.indexOf(item.raw)], inputs)
+            (id) => {
+              input = $filterAttr(
+                items.find((v: any) => v.id === id),
+                inputs
+              )
             }
           "
           @delete-func="(id) => $baseMutation({ query: deleteMutation, input: { id } })"

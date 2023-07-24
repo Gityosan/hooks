@@ -10,6 +10,10 @@ const { banEdit } = useEditState()
 const form = ref<any>()
 const skills = ref<Skill[]>([])
 useHead({ title: 'スキル編集' })
+const headers = [
+  { title: '操作', key: 'action' },
+  { title: 'タイトル', key: 'title' }
+]
 const getSkills = async () => {
   skills.value = await $listQuery<ListSkillsQuery, Skill>({ query: listSkills })
 }
@@ -60,18 +64,18 @@ await getSkills()
     </v-form>
   </div>
   <module-data-table
-    :headers="
-      ['action', ...Object.keys(defaultInput)].map((v) => {
-        return { title: v, key: v }
-      })
-    "
+    :headers="headers"
     :items="skills"
     @fetch-func="getSkills()"
     @edit-func="
-      (item) => {
-        input = $filterAttr(skills[skills.indexOf(item.raw)], skillInputs)
+      (id) => {
+        input = $filterAttr(
+          skills.find((v: any) => v.id === id),
+          skillInputs
+        )
       }
     "
     @delete-func="(id) => $baseMutation({ query: deleteSkill, input: { id } })"
-  />
+  >
+  </module-data-table>
 </template>

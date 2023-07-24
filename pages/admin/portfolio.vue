@@ -10,6 +10,12 @@ const { setExistError, setErrorMessages } = useErrorState()
 const portfolios = ref<Portfolio[]>([])
 const form = ref<any>()
 useHead({ title: 'ポートフォリオ編集' })
+const headers = [
+  { title: '操作', key: 'action' },
+  { title: 'タイトル', key: 'title' },
+  { title: '公開・下書き', key: 'published' },
+  { title: '作者', key: 'user' }
+]
 const getPortfolios = async () => {
   portfolios.value = await $listQuery<ListPortfoliosQuery, Portfolio>({
     query: listPortfolios
@@ -65,16 +71,16 @@ await getPortfolios()
     </v-form>
   </div>
   <module-data-table
-    :headers="
-      ['action', ...Object.keys(defaultInput)].map((v) => {
-        return { title: v, key: v }
-      })
-    "
+    :headers="headers"
     :items="portfolios"
+    :custom-columns="['title', 'published', 'user']"
     @fetch-func="getPortfolios()"
     @edit-func="
-      (item) => {
-        input = $filterAttr(portfolios[portfolios.indexOf(item.raw)], portfolioInputs)
+      (id) => {
+        input = $filterAttr(
+          portfolios.find((v: any) => v.id === id),
+          portfolioInputs
+        )
       }
     "
     @delete-func="
@@ -86,5 +92,13 @@ await getPortfolios()
           input: { id }
         })
     "
-  />
+  >
+    <template #title="{ item }">
+      <nuxt-link :href="item.columns.url" target="_blank">{{ item.columns.title }}</nuxt-link>
+    </template>
+    <template #published="{ item }">
+      {{ item.columns.published ? '公開済み' : '下書き' }}
+    </template>
+    <template #user="{ item }"> {{ item.columns.user.name }}</template>
+  </module-data-table>
 </template>

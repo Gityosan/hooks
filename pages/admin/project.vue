@@ -10,6 +10,15 @@ const { banEdit } = useEditState()
 const form = ref<any>()
 const projects = ref<Project[]>([])
 useHead({ title: 'プロジェクト編集' })
+const headers = [
+  { title: '操作', key: 'action' },
+  { title: 'タイトル', key: 'title' },
+  { title: '募集・停止', key: 'wanted' },
+  { title: '公開・下書き', key: 'published' },
+  { title: '開始(予定)日', key: 'start' },
+  { title: '終了(予定)日', key: 'end' },
+  { title: '参加者', key: 'user' }
+]
 const getProjects = async () => {
   projects.value = await $listQuery<ListProjectsQuery, Project>({
     query: listProjects
@@ -65,16 +74,16 @@ await getProjects()
     </v-form>
   </div>
   <module-data-table
-    :headers="
-      ['action', ...Object.keys(defaultInput)].map((v) => {
-        return { title: v, key: v }
-      })
-    "
+    :headers="headers"
     :items="projects"
+    :custom-columns="['wanted', 'published', 'user']"
     @fetch-func="getProjects()"
     @edit-func="
-      (item) => {
-        input = $filterAttr(projects[projects.indexOf(item.raw)], projectInputs)
+      (id) => {
+        input = $filterAttr(
+          projects.find((v: any) => v.id === id),
+          projectInputs
+        )
       }
     "
     @delete-func="
@@ -86,5 +95,15 @@ await getProjects()
           input: { id }
         })
     "
-  />
+  >
+    <template #wanted="{ item }">
+      {{ item.columns.wanted ? '募集中' : '募集停止' }}
+    </template>
+    <template #published="{ item }">
+      {{ item.columns.published ? '公開済み' : '下書き' }}
+    </template>
+    <template #user="{ item }">
+      {{ item.columns.user.items.map((v: any) => v?.user.name).join(' / ') }}
+    </template>
+  </module-data-table>
 </template>

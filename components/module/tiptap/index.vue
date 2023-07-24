@@ -381,7 +381,7 @@ const icons = computed(() => [
   {
     title: '書式のクリア',
     icon: 'mdi-format-clear',
-    func: () => editor.value?.chain().focus().clearNodes().unsetAllMarks().run()
+    func: () => editor.value?.chain().focus().unsetAllMarks().run()
   }
 ])
 </script>

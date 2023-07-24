@@ -10,6 +10,14 @@ const { setExistError, setErrorMessages } = useErrorState()
 const events = ref<Event[]>([])
 const form = ref<any>()
 useHead({ title: 'イベント編集' })
+const headers = [
+  { title: '操作', key: 'action' },
+  { title: 'タイトル', key: 'title' },
+  { title: '募集・停止', key: 'wanted' },
+  { title: '公開・下書き', key: 'published' },
+  { title: '日付', key: 'date' },
+  { title: '参加者', key: 'user' }
+]
 const getEvents = async () => {
   events.value = await $listQuery<ListEventsQuery, Event>({ query: listEvents })
 }
@@ -63,16 +71,16 @@ await getEvents()
     </v-form>
   </div>
   <module-data-table
-    :headers="
-      ['action', ...Object.keys(defaultInput)].map((v) => {
-        return { title: v, key: v }
-      })
-    "
+    :headers="headers"
     :items="events"
+    :custom-columns="['wanted', 'published', 'date', 'user']"
     @fetch-func="getEvents()"
     @edit-func="
-      (item) => {
-        input = $filterAttr(events[events.indexOf(item.raw)], eventInputs)
+      (id) => {
+        input = $filterAttr(
+          events.find((v: any) => v.id === id),
+          eventInputs
+        )
       }
     "
     @delete-func="
@@ -84,5 +92,18 @@ await getEvents()
           input: { id }
         })
     "
-  />
+  >
+    <template #wanted="{ item }">
+      {{ item.columns.wanted ? '募集中' : '募集停止' }}
+    </template>
+    <template #published="{ item }">
+      {{ item.columns.published ? '公開済み' : '下書き' }}
+    </template>
+    <template #date="{ item }">
+      {{ item.columns.date.join(' / ') }}
+    </template>
+    <template #user="{ item }">
+      {{ item.columns.user.items.map((v: any) => v?.user.name).join(' / ') }}
+    </template>
+  </module-data-table>
 </template>

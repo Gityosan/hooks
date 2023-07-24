@@ -10,6 +10,12 @@ const { setExistError, setErrorMessages } = useErrorState()
 const articles = ref<Article[]>([])
 const form = ref<any>()
 useHead({ title: '記事編集' })
+const headers = [
+  { title: '操作', key: 'action' },
+  { title: 'タイトル', key: 'title' },
+  { title: '公開・下書き', key: 'published' },
+  { title: '筆者', key: 'user' }
+]
 const getArticles = async () => {
   articles.value = await $listQuery<ListArticlesQuery, Article>({
     query: listArticles
@@ -65,16 +71,16 @@ await getArticles()
     </v-form>
   </div>
   <module-data-table
-    :headers="
-      ['action', ...Object.keys(defaultInput)].map((v) => {
-        return { title: v, key: v }
-      })
-    "
+    :headers="headers"
     :items="articles"
+    :custom-columns="['published', 'user']"
     @fetch-func="getArticles()"
     @edit-func="
-      (item) => {
-        input = $filterAttr(articles[articles.indexOf(item.raw)], articleInputs)
+      (id) => {
+        input = $filterAttr(
+          articles.find((v: any) => v.id === id),
+          articleInputs
+        )
       }
     "
     @delete-func="
@@ -86,5 +92,10 @@ await getArticles()
           input: { id }
         })
     "
-  />
+  >
+    <template #published="{ item }">
+      {{ item.columns.published ? '公開済み' : '下書き' }}
+    </template>
+    <template #user="{ item }">{{ item.columns.user.name }}</template>
+  </module-data-table>
 </template>

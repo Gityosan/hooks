@@ -27,7 +27,6 @@ withDefaults(
 )
 const emit = defineEmits<{
   (e: 'fetch-func'): void
-  (e: 'show-func', id: string): void
   (e: 'edit-func', id: string): void
   (e: 'delete-func', id: string): void
 }>()
@@ -109,12 +108,6 @@ const deleteItems = async () => {
       <slot name="action" :item="item">
         <div class="d-flex flex-nowrap">
           <v-icon
-            icon="mdi-eye"
-            size="24"
-            class="ma-2 text-blue"
-            @click="$emit('show-func', item.value)"
-          />
-          <v-icon
             icon="mdi-pencil"
             size="24"
             class="ma-2 text-green"
@@ -138,8 +131,8 @@ const deleteItems = async () => {
           :length="totalPageCount"
           :total-visible="mdAndUp ? 10 : sm ? 5 : 1"
           :model-value="page"
-          @update:model-value="$emit('update:page', $event)"
           class="overflow-x-auto"
+          @update:model-value="$emit('update:page', $event)"
         />
       </slot>
     </template>
