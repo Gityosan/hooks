@@ -14,7 +14,7 @@ import { StarterKit } from '@tiptap/starter-kit'
 import { DOMSerializer, DOMParser, Mark } from 'prosemirror-model'
 // import { TextSelection } from 'prosemirror-state'
 import Iframe from '@@/assets/iframe'
-const { $reverseSanitize } = useNuxtApp()
+const { $sanitize, $reverseSanitize } = useNuxtApp()
 const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
 const link = ref<string>('')
@@ -145,7 +145,7 @@ const editor = useEditor({
     }
   },
   onUpdate: ({ editor }) => {
-    emit('update:model-value', editor.getHTML().replace(pattern, ''))
+    emit('update:model-value', $sanitize(editor.getHTML().replace(pattern, '')))
     const attr = Object.assign(editor.getAttributes('heading'), editor.getAttributes('paragraph'))
     textAlignTypeIcon.value = `mdi-align-horizontal-${attr.textAlign || 'left'}`
     textTypeIcon.value = `mdi-format-${attr.level ? `header-${attr.level}` : 'paragraph'}`
