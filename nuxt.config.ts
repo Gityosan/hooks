@@ -52,6 +52,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      isDev: false,
       limit: 100,
       discordWebhook: ''
     }

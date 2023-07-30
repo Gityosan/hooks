@@ -5,6 +5,7 @@ const props = withDefaults(
     icon: string
     color: string
     size: string | number
+    loading: boolean
     class: string
     style: object
   }>(),
@@ -13,6 +14,7 @@ const props = withDefaults(
     icon: '',
     color: 'text-black',
     size: '24',
+    loading: false,
     class: 'ma-2',
     style: () => ({})
   }
@@ -21,14 +23,16 @@ const props = withDefaults(
 <template>
   <v-tooltip :text="text">
     <template #activator="{ props: tooltip }">
-      <v-icon
-        v-bind="tooltip"
-        :icon="icon"
-        :size="size"
-        :class="[color, props.class]"
-        :style="style"
-        @click="$emit('click')"
-      />
+      <v-btn icon :ripple="false" variant="text" :loading="loading">
+        <v-icon
+          v-bind="tooltip"
+          :icon="icon"
+          :size="size"
+          :class="[color, props.class]"
+          :style="style"
+          @click="$emit('click')"
+        />
+      </v-btn>
     </template>
   </v-tooltip>
 </template>

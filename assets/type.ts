@@ -1,12 +1,11 @@
 import { AsyncDataOptions } from 'nuxt/app'
 import { NitroFetchOptions } from 'nitropack'
 import { S3ObjectInput } from '~/assets/API'
-export type IndexSignature<T> = T & { [key: string]: any }
-export type FileInput<T> = IndexSignature<{
+export type FileInput<T> = {
   [P in keyof T]: T[P] extends S3ObjectInput | null | undefined
     ? (S3ObjectInput & { file?: File }) | null
     : T[P]
-}>
+}
 export type SnackbarTypeList = 'info' | 'warning' | 'alert' | 'success'
 export type SnackbarType = {
   id?: number

@@ -9,14 +9,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const { isSignedIn, setSignedIn, setAdmin } = useLoginState()
   const { setCognitoUser, setMyUser } = useMyUser()
   const config = useRuntimeConfig()
-  const isProd = config.public.isProd
-  if (!isProd) console.log(from.path + '=>' + to.path)
+  const isDev = config.public.isDev
+  if (!isDev) console.log(from.path + '=>' + to.path)
   if (to.name !== 'index' && Regexp.normalize.test(to.path)) {
     return navigateTo(to.path.substring(0, to.path.length - 1))
   }
   if (!Regexp.whiteList.test(to.path)) return navigateTo('/')
   const user = await Auth.currentUserPoolUser().catch(() => clearError())
-  if (!isProd) console.log('currentUserPoolUser', user)
+  if (!isDev) console.log('currentUserPoolUser', user)
   setSignedIn(!!user)
   if (user) {
     setCognitoUser(user)
@@ -30,7 +30,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         query: createUser,
         input: { email: user.attributes.email }
       })
-      if (!isProd) console.log('新規User作成', res)
+      if (!isDev) console.log('新規User作成', res)
     } else {
       setMyUser($filterAttr(self[0], memberInputs))
     }

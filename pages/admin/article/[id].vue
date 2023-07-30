@@ -1,24 +1,20 @@
 <script setup lang="ts">
-import { Article, UpdateArticleInput, ListArticlesQuery } from '~/assets/API'
+import { Article, UpdateArticleInput, GetArticleQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
 import { articleInputs } from '~/assets/enum'
 import { createArticle, deleteArticle, updateArticle } from '~/assets/graphql/mutations'
 import { listArticles } from '~/assets/graphql/queries'
-const { $listQuery, $extendMutation, $filterAttr } = useNuxtApp()
+const { $getQuery, $extendMutation, $filterAttr } = useNuxtApp()
+const { params } = useRoute()
 const { banEdit } = useEditState()
 const { setExistError, setErrorMessages } = useErrorState()
-const articles = ref<Article[]>([])
+const article = ref<Article>()
 const form = ref<any>()
 useHead({ title: '記事編集' })
-const headers = [
-  { title: '操作', key: 'action' },
-  { title: 'タイトル', key: 'title' },
-  { title: '公開・下書き', key: 'published' },
-  { title: '筆者', key: 'user' }
-]
-const getArticles = async () => {
-  articles.value = await $listQuery<ListArticlesQuery, Article>({
-    query: listArticles
+const getArticle = async () => {
+  article.value = await $getQuery<GetArticleQuery, Article>({
+    query: listArticles,
+    variables: { id: params.id }
   })
 }
 const mutateArticle = async () => {
@@ -39,15 +35,15 @@ const mutateArticle = async () => {
       : $filterAttr(input.value, articleInputs, ['id']),
     file: input.value.file?.file
   })
-  await getArticles()
+  await getArticle()
 }
 const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
 const input = ref<FileInput<Partial<UpdateArticleInput>>>(defaultInput)
-await getArticles()
+await getArticle()
 </script>
 <template>
-  <div>
-    <div class="d-flex my-2">
+  <div class="position-relative">
+    <div class="d-flex py-5 position-sticky top-0 right-0 bg-white z-index-2">
       <atom-text
         :text="input.id ? input.id + 'の更新' : '新規作成'"
         font-size="text-h6"
@@ -58,6 +54,7 @@ await getArticles()
       <atom-button
         :loading="banEdit"
         :text="input.id ? '更新' : '新規作成'"
+        class="mr-4"
         @click="mutateArticle()"
       />
     </div>
@@ -70,32 +67,4 @@ await getArticles()
       />
     </v-form>
   </div>
-  <module-data-table
-    :headers="headers"
-    :items="articles"
-    :custom-columns="['published', 'user']"
-    @fetch-func="getArticles()"
-    @edit-func="
-      (id) => {
-        input = $filterAttr(
-          articles.find((v: any) => v.id === id),
-          articleInputs
-        )
-      }
-    "
-    @delete-func="
-      (id) =>
-        $extendMutation({
-          type: 'delete',
-          key: input.file?.key || '',
-          query: deleteArticle,
-          input: { id }
-        })
-    "
-  >
-    <template #published="{ item }">
-      {{ item.columns.published ? '公開済み' : '下書き' }}
-    </template>
-    <template #user="{ item }">{{ item.columns.user.name }}</template>
-  </module-data-table>
 </template>

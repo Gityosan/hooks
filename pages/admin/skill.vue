@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Skill, UpdateSkillInput, ListSkillsQuery } from '~/assets/API'
-import { IndexSignature } from '~/assets/type'
 import { skillInputs } from '~/assets/enum'
 import { createSkill, deleteSkill, updateSkill } from '~/assets/graphql/mutations'
 import { listSkills } from '~/assets/graphql/queries'
@@ -35,7 +34,7 @@ const mutateSkill = async () => {
   await getSkills()
 }
 const defaultInput = Object.fromEntries(skillInputs.map((v) => [v.key, v.default]))
-const input = ref<IndexSignature<Partial<UpdateSkillInput>>>(defaultInput)
+const input = ref<UpdateSkillInput>(defaultInput as UpdateSkillInput)
 await getSkills()
 </script>
 <template>
@@ -51,6 +50,7 @@ await getSkills()
       <atom-button
         :loading="banEdit"
         :text="input.id ? '更新' : '新規作成'"
+        class="mr-4"
         @click="mutateSkill()"
       />
     </div>
@@ -58,7 +58,7 @@ await getSkills()
       <atom-input
         v-for="item in skillInputs"
         :key="item.key"
-        v-model="input[item.key]"
+        v-model="input[item.key as keyof typeof input]"
         :input="item"
       />
     </v-form>

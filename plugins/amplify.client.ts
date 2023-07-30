@@ -11,7 +11,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
   I18n.putVocabularies(translations)
   I18n.setLanguage('ja')
   const config = nuxtApp.$config
-  const isProd = config.public.isProd
+  const isDev = config.public.isDev
   const { isSignedIn } = useLoginState()
   const { addSnackbar } = useSnackbar()
   const { setBanEdit } = useEditState()
@@ -33,12 +33,12 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           .then((res: any) => {
             const name = Object.keys(res.data).length && Object.keys(res.data)[0]
             if (!name) return
-            if (!isProd) console.log(res.data[name])
+            if (!isDev) console.log(res.data[name])
             setBanEdit(false)
             return res.data[name]
           })
           .catch((e) => {
-            if (!isProd) console.log(e)
+            if (!isDev) console.log(e)
             clearError()
             setBanEdit(false)
           })
@@ -75,12 +75,12 @@ export default defineNuxtPlugin((nuxtApp: any) => {
               await callbackQuery()
             }
           } catch (e) {
-            if (!isProd) console.log(e)
+            if (!isDev) console.log(e)
             clearError()
           }
         }
         await callbackQuery()
-        if (!isProd) console.log(items)
+        if (!isDev) console.log(items)
         setBanEdit(false)
         return items
       },
@@ -100,13 +100,13 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           .then((res: any) => {
             const name = Object.keys(res.data).length && Object.keys(res.data)[0]
             if (!name) return
-            if (!isProd) console.log(res.data[name])
+            if (!isDev) console.log(res.data[name])
             addSnackbar({ text: '保存が完了しました' })
             setBanEdit(false)
             return res.data[name]
           })
           .catch((e) => {
-            if (!isProd) console.log(e)
+            if (!isDev) console.log(e)
             addSnackbar({ type: 'alert', text: '保存に失敗しました' })
             clearError()
             setBanEdit(false)
@@ -177,7 +177,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           level,
           contentType: file.type
         }).catch((e) => {
-          if (!isProd) console.log('createImage', e)
+          if (!isDev) console.log('createImage', e)
         })
       },
       removeImage: async (key?: string, level: StorageAccessLevel = 'protected') => {

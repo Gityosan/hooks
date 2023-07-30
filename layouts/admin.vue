@@ -110,10 +110,10 @@ const menu = [
       </v-btn>
     </v-card>
     <div
-      class="pt-5 px-5 bg-white overflow-y-auto scrollbar-hidden position-relative"
+      class="pl-5 pr-10 pb-10 bg-white overflow-y-auto scrollbar-hidden position-relative"
       :style="{ flex: '1', height: 'calc(var(--vh, 1vh) * 100)' }"
     >
-      <atom-text font-size="text-h6" line-height="line-height-lg" text="Hooks Admin" />
+      <atom-text font-size="text-h6" line-height="line-height-lg" text="Hooks Admin" class="mt-5" />
       <atom-breadcrumbs class="mb-5" />
       <NuxtPage />
     </div>

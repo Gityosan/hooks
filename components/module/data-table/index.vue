@@ -46,6 +46,48 @@ const deleteItems = async () => {
 }
 </script>
 <template>
+  <div class="d-flex align-center mb-5">
+    <v-text-field
+      v-model="search"
+      prepend-inner-icon="mdi-magnify"
+      label="Search"
+      variant="underlined"
+      clearable
+      single-line
+      hide-details
+      :style="{ '--v-input-padding-top': '9px' }"
+    />
+    <v-spacer />
+    <v-select
+      :items="[5, 10, 30, 50, 100, 200]"
+      type="number"
+      variant="outlined"
+      density="compact"
+      hide-details
+      class="mr-5 rounded-lg max-width-120"
+      :style="{
+        '--v-field-padding-bottom': 0,
+        '--v-input-chips-margin-bottom': 0
+      }"
+      :model-value="perPage"
+      @update:model-value="$emit('update:per-page', $event)"
+    />
+    <atom-button
+      v-if="selectedIds.length > 1"
+      :loading="banEdit"
+      text="選択したアイテムの削除"
+      color="red-darken-3"
+      class="mr-5"
+      @click="open = true"
+    />
+    <atom-icon-tooltip
+      text="再取得"
+      icon="mdi-reload"
+      color="text-blue"
+      :loading="banEdit"
+      @click="$emit('fetch-func')"
+    />
+  </div>
   <v-data-table
     v-model="selectedIds"
     :headers="headers"
@@ -59,47 +101,15 @@ const deleteItems = async () => {
     hide-default-footer
     show-select
     :show-expand="showExpand"
-    :style="{ '--v-table-row-height': '86px' }"
-    class="white-space-nowrap my-5"
+    :style="{ '--v-table-row-height': '64px' }"
+    class="white-space-nowrap my-5 py-5"
     :page="1"
     :items-per-page="perPage"
     @update:page="$emit('update:page', $event)"
     @update:items-per-page="$emit('update:per-page', $event)"
   >
     <template #top>
-      <slot name="top">
-        <div class="d-flex my-2">
-          <v-text-field
-            v-model="search"
-            prepend-inner-icon="mdi-magnify"
-            label="Search"
-            variant="underlined"
-            clearable
-            single-line
-            hide-details
-          />
-          <v-spacer />
-          <v-select
-            :items="[5, 10, 30, 50, 100, 200]"
-            type="number"
-            variant="outlined"
-            density="compact"
-            hide-details
-            class="mr-5 rounded-lg"
-            :model-value="perPage"
-            @update:model-value="$emit('update:per-page', $event)"
-          />
-          <atom-button
-            v-if="selectedIds.length > 1"
-            :loading="banEdit"
-            text="選択したアイテムの削除"
-            color="red-darken-3"
-            class="mr-5"
-            @click="open = true"
-          />
-          <atom-button :loading="banEdit" text="再取得" color="blue" @click="$emit('fetch-func')" />
-        </div>
-      </slot>
+      <slot name="top"></slot>
     </template>
     <template v-for="c in customColumns" :key="c" #[`item.${c}`]="{ item }">
       <slot :name="c" :item="item" />
@@ -131,6 +141,7 @@ const deleteItems = async () => {
           :length="totalPageCount"
           :total-visible="mdAndUp ? 10 : sm ? 5 : 1"
           :model-value="page"
+          density="compact"
           class="overflow-x-auto"
           @update:model-value="$emit('update:page', $event)"
         />

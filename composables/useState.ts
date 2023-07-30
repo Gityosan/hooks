@@ -1,3 +1,4 @@
+import { CognitoUser } from 'amazon-cognito-identity-js'
 import { User } from '~/assets/API'
 import { SnackbarType, SnackbarTypeList } from '~/assets/type'
 import { iconTypes } from '~/assets/enum'
@@ -22,11 +23,11 @@ export const useLoginState = () => {
 
 // マイプロフィールの管理
 export const useMyUser = () => {
-  const cognitoUser = useState<any>('cognitoUser', () => ({}))
-  const setCognitoUser = (cognitoUser: Ref<any>) => (v: any) => {
+  const cognitoUser = useState<CognitoUser | null>('cognitoUser', () => null)
+  const setCognitoUser = (cognitoUser: Ref<CognitoUser | null>) => (v: CognitoUser) => {
     cognitoUser.value = v
   }
-  const myUser = useState<User>('myUser', () => ({} as User))
+  const myUser = useState<User>('myUser', () => ({}) as User)
   const setMyUser = (myUser: Ref<User>) => (v: User) => {
     myUser.value = v
   }

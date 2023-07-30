@@ -74,15 +74,6 @@ export const InputComponents = (key?: string, v?: any): InputComponentsType => {
 }
 export const articleInputs: InputType[] = [
   {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
-  {
     key: 'title',
     title: 'タイトル',
     type: 'textfield',
@@ -121,7 +112,7 @@ export const articleInputs: InputType[] = [
   },
   {
     key: 'projectArticleId',
-    title: '関連するプロジェクト（任意）',
+    title: '関連するプロジェクト',
     type: 'select',
     schemaType: 'ID',
     isArray: false,
@@ -131,7 +122,7 @@ export const articleInputs: InputType[] = [
   },
   {
     key: 'eventArticleId',
-    title: '関連するイベント（任意）',
+    title: '関連するイベント',
     type: 'select',
     schemaType: 'ID',
     isArray: false,
@@ -150,15 +141,6 @@ export const articleInputs: InputType[] = [
   }
 ]
 export const eventInputs: InputType[] = [
-  {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
   {
     key: 'title',
     title: 'タイトル',
@@ -216,15 +198,6 @@ export const eventInputs: InputType[] = [
 ]
 export const memberInputs: InputType[] = [
   {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
-  {
     key: 'name',
     title: 'お名前',
     type: 'textfield',
@@ -280,7 +253,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'join',
-    title: '加入日（任意）',
+    title: '加入日',
     type: 'textfield',
     schemaType: 'AWSDate',
     isArray: false,
@@ -289,7 +262,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'leave',
-    title: '卒業日（任意）',
+    title: '卒業日',
     type: 'textfield',
     schemaType: 'AWSDate',
     isArray: false,
@@ -316,7 +289,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'forRecruitment',
-    title: '就活用長めの自己紹介（任意）',
+    title: '就活用長めの自己紹介',
     type: 'textarea',
     schemaType: 'String',
     isArray: false,
@@ -325,7 +298,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'history',
-    title: 'これまでの経歴（任意）',
+    title: 'これまでの経歴',
     type: 'textarea',
     schemaType: 'String',
     isArray: false,
@@ -334,7 +307,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'github',
-    title: 'GithubのURL（任意）',
+    title: 'GithubのURL',
     type: 'textfield',
     schemaType: 'String',
     isArray: false,
@@ -343,7 +316,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'zenn',
-    title: 'ZennのURL（任意）',
+    title: 'ZennのURL',
     type: 'textfield',
     schemaType: 'String',
     isArray: false,
@@ -352,7 +325,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'qiita',
-    title: 'QiitaのURL（任意）',
+    title: 'QiitaのURL',
     type: 'textfield',
     schemaType: 'String',
     isArray: false,
@@ -361,7 +334,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'twitter',
-    title: 'TwitterのURL（任意）',
+    title: 'TwitterのURL',
     type: 'textfield',
     schemaType: 'String',
     isArray: false,
@@ -370,7 +343,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'slide',
-    title: 'SlideshareのURL（任意）',
+    title: 'SlideshareのURL',
     type: 'textfield',
     schemaType: 'String',
     isArray: false,
@@ -379,7 +352,7 @@ export const memberInputs: InputType[] = [
   },
   {
     key: 'file',
-    title: 'アイコン画像（任意）',
+    title: 'アイコン画像',
     type: 'fileinput',
     schemaType: 'S3Object',
     isArray: false,
@@ -388,15 +361,6 @@ export const memberInputs: InputType[] = [
   }
 ]
 export const portfolioInputs: InputType[] = [
-  {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
   {
     key: 'title',
     title: 'タイトル',
@@ -454,15 +418,6 @@ export const portfolioInputs: InputType[] = [
   }
 ]
 export const projectInputs: InputType[] = [
-  {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
   {
     key: 'title',
     title: 'タイトル',
@@ -529,15 +484,6 @@ export const projectInputs: InputType[] = [
 ]
 export const skillInputs: InputType[] = [
   {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
-  {
     key: 'title',
     title: 'スキルタグ名',
     type: 'textfield',
@@ -548,15 +494,6 @@ export const skillInputs: InputType[] = [
   }
 ]
 export const articleSkillInputs: InputType[] = [
-  {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
   {
     key: 'articleID',
     title: '紐づける記事',
@@ -580,15 +517,6 @@ export const articleSkillInputs: InputType[] = [
 ]
 export const eventUserInputs: InputType[] = [
   {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
-  {
     key: 'eventID',
     title: '紐づけるイベント',
     type: 'select',
@@ -611,15 +539,6 @@ export const eventUserInputs: InputType[] = [
 ]
 export const projectUserInputs: InputType[] = [
   {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
-  {
     key: 'projectID',
     title: '紐づけるプロジェクト',
     type: 'select',
@@ -641,15 +560,6 @@ export const projectUserInputs: InputType[] = [
   }
 ]
 export const userSkillInputs: InputType[] = [
-  {
-    key: 'id',
-    title: 'id',
-    type: 'textfield',
-    schemaType: 'ID',
-    isArray: false,
-    default: '',
-    rules: [v.checkUUID]
-  },
   {
     key: 'skillID',
     title: '紐づけるスキルタグ',

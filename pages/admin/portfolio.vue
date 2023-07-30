@@ -58,6 +58,7 @@ await getPortfolios()
       <atom-button
         :loading="banEdit"
         :text="input.id ? '更新' : '新規作成'"
+        class="mr-4"
         @click="mutatePortfolio()"
       />
     </div>

@@ -38,10 +38,9 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           method,
           headers,
           async onResponse(v) {
-            await nuxtApp.$convertResponse(v.response._data)
-            onResponse && onResponse(v)
+            onResponse && (await onResponse(v))
           },
-          onResponseError(v) {
+          async onResponseError(v) {
             const s = v.response.status
             if (s > 400 && s < 500) showError({ statusCode: s })
             else {
@@ -49,7 +48,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
               setExistError(true)
               addErrorMessages(`${v.response.status}:${v.response.statusText}`)
             }
-            onResponseError && onResponseError(v)
+            onResponseError && (await onResponseError(v))
           },
           ...args
         }
@@ -60,6 +59,19 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           lazy,
           watch
         })
+      },
+      checkValidation: async (form: any): Promise<boolean> => {
+        if (!form?.validate) return false
+        const validate = await form?.validate()
+        if (!validate.valid) {
+          setExistError(true)
+          setErrorMessages(
+            validate.errors
+              .map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`))
+              .flat()
+          )
+        }
+        return validate.valid
       },
       typeSafetyImage: async (file: S3Object | string | File | null): Promise<string> => {
         if (!file) return ''
@@ -81,11 +93,6 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           })
         }
         return extract.map((v) => items[v.i])
-      },
-      copyToClipboard: (text: string) => {
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text)
-        }
       },
       getYMD: (string: string | null = '', separator = '/') => {
         if (!string) return ''
@@ -125,40 +132,10 @@ export default defineNuxtPlugin((nuxtApp: any) => {
             }
         }, {})
       },
-      snakeCase: (str: string): string => {
-        return str.replace(/[A-Z]/g, function (s) {
-          return '_' + s.charAt(0).toLowerCase()
-        })
-      },
-      snakeToLowerCamel: (string = ''): string =>
-        string
-          .split('_')
-          .reduce(
-            (pre, cur, i) => pre + (i ? cur[0].toUpperCase() : cur[0].toLowerCase()) + cur.slice(1),
-            ''
-          ),
       isObject: (v: unknown): v is object => v !== null && typeof v === 'object',
       isFile: (v: unknown): v is File => v instanceof File,
       isEmptyObject: (v: any) =>
         nuxtApp.$isObject(v) && !nuxtApp.$isFile(v) && !Object.keys(v).length,
-      changeKeyCase: (obj: any) => {
-        if (nuxtApp.$isObject(obj))
-          Object.keys(obj).forEach((key) => {
-            const newKey = nuxtApp.$snakeToLowerCamel(key)
-            if (newKey !== key) {
-              obj[newKey] = obj[key]
-              delete obj[key]
-            }
-            nuxtApp.$convertResponse(obj[newKey])
-          })
-      },
-      convertResponse: (res: any) => {
-        if (Array.isArray(res)) {
-          for (let i = 0, len = res.length; i < len; i++) {
-            nuxtApp.$changeKeyCase(res[i])
-          }
-        } else nuxtApp.$changeKeyCase(res)
-      },
       sanitize: (str?: string | null): string => {
         if (!str) return ''
         return String(str)

@@ -180,10 +180,10 @@ const editor = useEditor({
 //   if (!e.isFocused) view.focus()
 //   if (pos) dispatch(tr.setSelection(TextSelection.create(tr.doc, pos.pos)))
 // }
-watch(props, (v, c) => {
-  if (editor.value?.getHTML() === c.modelValue) return
-  editor.value?.commands.setContent($reverseSanitize(c.modelValue), false)
+onMounted(() => {
+  editor.value?.commands.setContent($reverseSanitize(props.modelValue), false)
 })
+
 onBeforeUnmount(() => {
   editor.value?.destroy()
 })

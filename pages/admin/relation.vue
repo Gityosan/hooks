@@ -70,5 +70,6 @@ useHead({ title: '中間テーブル編集' })
     :create-mutation="i.createMutation"
     :update-mutation="i.updateMutation"
     :delete-mutation="i.deleteMutation"
+    class="mr-4"
   />
 </template>
