@@ -62,7 +62,7 @@ await getArticle()
       <atom-input
         v-for="item in articleInputs"
         :key="item.key"
-        v-model="input[item.key]"
+        v-model="input[item.key as keyof typeof input]"
         :input="item"
       />
     </v-form>
