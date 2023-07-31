@@ -13,7 +13,7 @@
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix && yarn lint:style --fix"
   },
   "devDependencies": {
-    "@aws-amplify/ui-vue": "^3.1.21",
+    "@aws-amplify/ui-vue": "^3.1.22",
     "@faker-js/faker": "^8.0.2",
     "@mdi/font": "^7.2.96",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
@@ -33,11 +33,11 @@
     "@tiptap/starter-kit": "^2.0.4",
     "@tiptap/vue-3": "^2.0.4",
     "@types/uuid": "^9.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
-    "@typescript-eslint/parser": "^6.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
     "aws-amplify": "^5.3.5",
     "eslint": "^8.45.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^8.9.0",
     "nuxt": "^3.6.5",
     "postcss-html": "^1.5.0",
     "prettier": "^3.0.0",
@@ -47,6 +47,6 @@
     "stylelint-config-standard-scss": "^10.0.0",
     "typescript": "^5.1.6",
     "vite-plugin-vuetify": "^1.0.2",
-    "vuetify": "^3.3.9"
+    "vuetify": "^3.3.10"
   }
 }
