@@ -46,7 +46,7 @@ await getItems()
     <atom-text text="記事一覧" line-height="line-height-lg" />
     <v-spacer />
     <atom-button text="アイテムの追加" :disabled="banEdit" @click="open = true">
-      <v-icon icon="mdi-plus-circle" size="18" class="mr-1" />
+      <v-icon icon="mdi-plus-circle" size="18" class="mr-1" style="margin-bottom: 2px" />
     </atom-button>
   </div>
   <module-data-table
