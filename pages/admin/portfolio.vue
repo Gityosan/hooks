@@ -11,10 +11,10 @@ const portfolios = ref<Portfolio[]>([])
 const form = ref<any>()
 useHead({ title: 'ポートフォリオ編集' })
 const headers = [
-  { title: '操作', key: 'action' },
   { title: 'タイトル', key: 'title' },
   { title: '公開・下書き', key: 'published' },
-  { title: '作者', key: 'user' }
+  { title: '作者', key: 'user' },
+  { title: '操作', key: 'action' }
 ]
 const getPortfolios = async () => {
   portfolios.value = await $listQuery<ListPortfoliosQuery, Portfolio>({
@@ -75,8 +75,8 @@ await getPortfolios()
     :headers="headers"
     :items="portfolios"
     :custom-columns="['title', 'published', 'user']"
-    @fetch-func="getPortfolios()"
-    @edit-func="
+    @fetch="getPortfolios()"
+    @edit="
       (id) => {
         input = $filterAttr(
           portfolios.find((v: any) => v.id === id),
@@ -84,7 +84,7 @@ await getPortfolios()
         )
       }
     "
-    @delete-func="
+    @delete="
       (id) =>
         $extendMutation({
           type: 'delete',

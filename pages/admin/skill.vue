@@ -10,8 +10,8 @@ const form = ref<any>()
 const skills = ref<Skill[]>([])
 useHead({ title: 'スキル編集' })
 const headers = [
-  { title: '操作', key: 'action' },
-  { title: 'タイトル', key: 'title' }
+  { title: 'タイトル', key: 'title' },
+  { title: '操作', key: 'action' }
 ]
 const getSkills = async () => {
   skills.value = await $listQuery<ListSkillsQuery, Skill>({ query: listSkills })
@@ -66,8 +66,8 @@ await getSkills()
   <module-data-table
     :headers="headers"
     :items="skills"
-    @fetch-func="getSkills()"
-    @edit-func="
+    @fetch="getSkills()"
+    @edit="
       (id) => {
         input = $filterAttr(
           skills.find((v: any) => v.id === id),
@@ -75,7 +75,7 @@ await getSkills()
         )
       }
     "
-    @delete-func="(id) => $baseMutation({ query: deleteSkill, input: { id } })"
+    @delete="(id) => $baseMutation({ query: deleteSkill, input: { id } })"
   >
   </module-data-table>
 </template>

@@ -1,21 +1,25 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    text: string | null
+    comp?: string
+    text?: string | null
     fontSize?: string
     fontWeight?: string
     color?: string
     lineHeight?: string
   }>(),
   {
-    text: '',
+    comp: 'p',
     fontSize: 'text-subtitle-1',
     fontWeight: 'font-weight-bold',
-    color: 'text-grey-darken-4',
+    color: 'text-black',
     lineHeight: 'line-height-sm'
   }
 )
 </script>
 <template>
-  <p :class="[fontSize, fontWeight, color, lineHeight]"><slot />{{ text }}</p>
+  <component :is="comp" :class="[fontSize, fontWeight, color, lineHeight]">
+    {{ text }}
+    <slot />
+  </component>
 </template>

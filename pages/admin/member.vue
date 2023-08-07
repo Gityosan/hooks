@@ -19,7 +19,8 @@ const headers = [
   { title: '学部・学科', key: 'faculty' },
   { title: '就活中', key: 'jobHunting' },
   { title: '加入日', key: 'join' },
-  { title: '卒業日', key: 'leave' }
+  { title: '卒業日', key: 'leave' },
+  { title: '操作', key: 'action' }
 ]
 const getUsers = async () => {
   users.value = await $listQuery<ListUsersQuery, User>({ query: listUsers })
@@ -66,7 +67,7 @@ await getUsers()
     :headers="headers"
     :items="users"
     :custom-columns="['file', 'jobHunting']"
-    @fetch-func="getUsers()"
+    @fetch="getUsers()"
   >
     <template #file="{ item }">
       <atom-icon-img :file="item.columns.file" width="48" class="mx-auto" />

@@ -11,12 +11,12 @@ const events = ref<Event[]>([])
 const form = ref<any>()
 useHead({ title: 'イベント編集' })
 const headers = [
-  { title: '操作', key: 'action' },
   { title: 'タイトル', key: 'title' },
   { title: '募集・停止', key: 'wanted' },
   { title: '公開・下書き', key: 'published' },
   { title: '日付', key: 'date' },
-  { title: '参加者', key: 'user' }
+  { title: '参加者', key: 'user' },
+  { title: '操作', key: 'action' }
 ]
 const getEvents = async () => {
   events.value = await $listQuery<ListEventsQuery, Event>({ query: listEvents })
@@ -75,8 +75,8 @@ await getEvents()
     :headers="headers"
     :items="events"
     :custom-columns="['wanted', 'published', 'date', 'user']"
-    @fetch-func="getEvents()"
-    @edit-func="
+    @fetch="getEvents()"
+    @edit="
       (id) => {
         input = $filterAttr(
           events.find((v: any) => v.id === id),
@@ -84,7 +84,7 @@ await getEvents()
         )
       }
     "
-    @delete-func="
+    @delete="
       (id) =>
         $extendMutation({
           type: 'delete',

@@ -387,7 +387,7 @@ const icons = computed(() => [
 </script>
 <template>
   <div v-if="editor" class="border-solid border-width-1 border-grey-darken-4 w-100 rounded">
-    <div class="d-flex flex-wrap pa-1 pb-0 position-sticky top-n20 bg-white z-index-8 rounded">
+    <div class="d-flex flex-wrap pa-1 pb-0 position-sticky top-n20 bg-white z-index-2 rounded">
       <module-tiptap-icon
         v-for="item in icons"
         :key="item.icon"

@@ -91,8 +91,8 @@ await getRelation()
             })
           "
           :items="items"
-          @fetch-func="getRelation()"
-          @edit-func="
+          @fetch="getRelation()"
+          @edit="
             (id) => {
               input = $filterAttr(
                 items.find((v: any) => v.id === id),
@@ -100,7 +100,7 @@ await getRelation()
               )
             }
           "
-          @delete-func="(id) => $baseMutation({ query: deleteMutation, input: { id } })"
+          @delete="(id) => $baseMutation({ query: deleteMutation, input: { id } })"
         />
       </v-window-item>
     </v-window>

@@ -11,13 +11,13 @@ const form = ref<any>()
 const projects = ref<Project[]>([])
 useHead({ title: 'プロジェクト編集' })
 const headers = [
-  { title: '操作', key: 'action' },
   { title: 'タイトル', key: 'title' },
   { title: '募集・停止', key: 'wanted' },
   { title: '公開・下書き', key: 'published' },
   { title: '開始(予定)日', key: 'start' },
   { title: '終了(予定)日', key: 'end' },
-  { title: '参加者', key: 'user' }
+  { title: '参加者', key: 'user' },
+  { title: '操作', key: 'action' }
 ]
 const getProjects = async () => {
   projects.value = await $listQuery<ListProjectsQuery, Project>({
@@ -78,8 +78,8 @@ await getProjects()
     :headers="headers"
     :items="projects"
     :custom-columns="['wanted', 'published', 'user']"
-    @fetch-func="getProjects()"
-    @edit-func="
+    @fetch="getProjects()"
+    @edit="
       (id) => {
         input = $filterAttr(
           projects.find((v: any) => v.id === id),
@@ -87,7 +87,7 @@ await getProjects()
         )
       }
     "
-    @delete-func="
+    @delete="
       (id) =>
         $extendMutation({
           type: 'delete',

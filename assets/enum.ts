@@ -106,7 +106,7 @@ export const articleInputs: InputType[] = [
     type: 'select',
     schemaType: 'ID',
     isArray: false,
-    default: '',
+    default: null,
     rules: [v.required, v.checkUUID],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   },
@@ -116,7 +116,7 @@ export const articleInputs: InputType[] = [
     type: 'select',
     schemaType: 'ID',
     isArray: false,
-    default: '',
+    default: null,
     rules: [v.checkUUID],
     props: { queryName: 'listProjects', itemTitle: 'title' }
   },
@@ -126,7 +126,7 @@ export const articleInputs: InputType[] = [
     type: 'select',
     schemaType: 'ID',
     isArray: false,
-    default: '',
+    default: null,
     rules: [v.checkUUID],
     props: { queryName: 'listEvents', itemTitle: 'title' }
   },
@@ -412,7 +412,7 @@ export const portfolioInputs: InputType[] = [
     type: 'select',
     schemaType: 'ID',
     isArray: false,
-    default: '',
+    default: null,
     rules: [v.required, v.checkUUID],
     props: { queryName: 'listUsers', itemTitle: 'name' }
   }

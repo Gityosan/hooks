@@ -33,12 +33,12 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           .then((res: any) => {
             const name = Object.keys(res.data).length && Object.keys(res.data)[0]
             if (!name) return
-            if (!isDev) console.log(res.data[name])
+            if (isDev) console.log(res.data[name])
             setBanEdit(false)
             return res.data[name]
           })
           .catch((e) => {
-            if (!isDev) console.log(e)
+            if (isDev) console.log(e)
             clearError()
             setBanEdit(false)
           })
@@ -60,27 +60,27 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           filter
         }
         const callbackQuery = async () => {
-          try {
-            // NOTE: DynamoDBのscanの1MB制限に達するとnextTokenが返される
-            const res: any = await API.graphql<GraphQLQuery<T>>({
-              query,
-              variables,
-              authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
-            })
-            const name = Object.keys(res.data).length && Object.keys(res.data)[0]
-            if (!name) return
-            items.push(...(res.data[name]?.items || []))
-            if (res.data[name]?.nextToken) {
-              variables.nextToken = res.data[name].nextToken
-              await callbackQuery()
-            }
-          } catch (e) {
-            if (!isDev) console.log(e)
+          // NOTE: DynamoDBのscanの1MB制限に達するとnextTokenが返される
+          const { data, errors } = await API.graphql<GraphQLQuery<T>>({
+            query,
+            variables,
+            authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
+          })
+          if (errors?.length) {
+            if (isDev) console.log(errors)
             clearError()
+          }
+          if (!data || !Object.keys(data).length) return
+          const rawData = Object.getOwnPropertyDescriptor(data, Object.keys(data)[0])?.value
+          if (!rawData) return
+          if (Array.isArray(rawData.items)) items.push(...rawData.items)
+          if (rawData.nextToken) {
+            variables.nextToken = rawData.nextToken
+            await callbackQuery()
           }
         }
         await callbackQuery()
-        if (!isDev) console.log(items)
+        if (isDev) console.log(items)
         setBanEdit(false)
         return items
       },
@@ -100,13 +100,13 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           .then((res: any) => {
             const name = Object.keys(res.data).length && Object.keys(res.data)[0]
             if (!name) return
-            if (!isDev) console.log(res.data[name])
+            if (isDev) console.log(res.data[name])
             addSnackbar({ text: '保存が完了しました' })
             setBanEdit(false)
             return res.data[name]
           })
           .catch((e) => {
-            if (!isDev) console.log(e)
+            if (isDev) console.log(e)
             addSnackbar({ type: 'alert', text: '保存に失敗しました' })
             clearError()
             setBanEdit(false)
@@ -177,7 +177,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           level,
           contentType: file.type
         }).catch((e) => {
-          if (!isDev) console.log('createImage', e)
+          if (isDev) console.log('createImage', e)
         })
       },
       removeImage: async (key?: string, level: StorageAccessLevel = 'protected') => {
