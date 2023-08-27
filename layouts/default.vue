@@ -3,10 +3,7 @@
     class="bg-grey-lighten-5 text-black overflow-hidden designed-scrollbar"
     style="min-height: 100vh"
   >
-    <div
-      :style="{ maxWidth: '920px', minHeight: 'calc(var(--vh, 1vh) * 100 - 104px)' }"
-      class="mx-5 mx-md-auto"
-    >
+    <div :style="{ maxWidth: '920px', minHeight: 'calc(100dvh- 104px)' }" class="mx-5 mx-md-auto">
       <module-header />
       <NuxtPage />
     </div>

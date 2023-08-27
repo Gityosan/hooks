@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-const { mdAndUp, sm } = useDisplay()
-const { banEdit } = useEditState()
-const open = ref<boolean>(false)
-const selectedIds = ref<string[]>([])
-const search = ref<string>('')
-withDefaults(
+const props = withDefaults(
   defineProps<{
     headers: { title: string; key: string }[]
     items: any[]
@@ -30,18 +25,27 @@ const emit = defineEmits<{
   (e: 'edit', id: string): void
   (e: 'delete', id: string): void
 }>()
+const { mdAndUp, sm } = useDisplay()
+const { banEdit } = useEditState()
+const records = ref<any[]>(props.items)
+const open = ref<boolean>(false)
+const selectedIds = ref<string[]>([])
+const search = ref<string>('')
+watch(props, (_, c) => {
+  records.value = c.items
+})
 const deleteReady = (id = '') => {
   if (!id) return
   open.value = true
   selectedIds.value = [id]
 }
 const deleteItems = async () => {
-  if (selectedIds.value.length) {
-    for (let i = 0, len = selectedIds.value.length; i < len; i++) {
-      await emit('delete', selectedIds.value[i])
-    }
+  if (!selectedIds.value.length) return
+  for (let i = 0, len = selectedIds.value.length; i < len; i++) {
+    await emit('delete', selectedIds.value[i])
   }
-  await emit('fetch')
+  records.value = records.value.filter((v) => !selectedIds.value.includes(v.id))
+  selectedIds.value = []
   open.value = false
 }
 </script>
@@ -88,7 +92,7 @@ const deleteItems = async () => {
     <v-data-table
       v-model="selectedIds"
       :headers="headers"
-      :items="items"
+      :items="records"
       :search="search"
       :loading="banEdit"
       no-data-text="表示できるデータがありません"

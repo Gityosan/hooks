@@ -14,7 +14,6 @@ import { StarterKit } from '@tiptap/starter-kit'
 import { DOMSerializer, DOMParser, Mark } from 'prosemirror-model'
 // import { TextSelection } from 'prosemirror-state'
 import Iframe from '@@/assets/iframe'
-const { $sanitize, $reverseSanitize } = useNuxtApp()
 const textAlignTypeIcon = ref<string>('mdi-align-horizontal-left')
 const textTypeIcon = ref<string>('mdi-format-paragraph')
 const link = ref<string>('')
@@ -41,7 +40,7 @@ const resolveDom = (n: Node): Node => {
   } else return n
 }
 const editor = useEditor({
-  content: $reverseSanitize(props.modelValue) || '<p>今日はどんな記事を書きますか？</p>',
+  content: reverseSanitize(props.modelValue) || '<p>今日はどんな記事を書きますか？</p>',
   extensions: [
     StarterKit,
     Underline,
@@ -145,7 +144,7 @@ const editor = useEditor({
     }
   },
   onUpdate: ({ editor }) => {
-    emit('update:model-value', $sanitize(editor.getHTML().replace(pattern, '')))
+    emit('update:model-value', sanitize(editor.getHTML().replace(pattern, '')))
     const attr = Object.assign(editor.getAttributes('heading'), editor.getAttributes('paragraph'))
     textAlignTypeIcon.value = `mdi-align-horizontal-${attr.textAlign || 'left'}`
     textTypeIcon.value = `mdi-format-${attr.level ? `header-${attr.level}` : 'paragraph'}`
@@ -181,7 +180,7 @@ const editor = useEditor({
 //   if (pos) dispatch(tr.setSelection(TextSelection.create(tr.doc, pos.pos)))
 // }
 onMounted(() => {
-  editor.value?.commands.setContent($reverseSanitize(props.modelValue), false)
+  editor.value?.commands.setContent(reverseSanitize(props.modelValue), false)
 })
 
 onBeforeUnmount(() => {

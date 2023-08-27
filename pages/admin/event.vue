@@ -4,9 +4,8 @@ import { FileInput } from '~/assets/type'
 import { eventInputs } from '~/assets/enum'
 import { createEvent, deleteEvent, updateEvent } from '~/assets/graphql/mutations'
 import { listEvents } from '~/assets/graphql/queries'
-const { $listQuery, $extendMutation, $filterAttr } = useNuxtApp()
+const { $listQuery, $extendMutation } = useNuxtApp()
 const { banEdit } = useEditState()
-const { setExistError, setErrorMessages } = useErrorState()
 const events = ref<Event[]>([])
 const form = ref<any>()
 useHead({ title: 'イベント編集' })
@@ -22,21 +21,15 @@ const getEvents = async () => {
   events.value = await $listQuery<ListEventsQuery, Event>({ query: listEvents })
 }
 const mutateEvent = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-    return
-  }
+  if (!(await checkValidation(form.value))) return
+  const excludeAttr = Object.entries(input.value)
+    .filter(([_, v]) => v === null)
+    .map(([k, _]) => k)
   await $extendMutation({
     type: input.value.id ? 'update' : 'create',
     key: input.value.file?.key || '',
     query: input.value.id ? updateEvent : createEvent,
-    input: input.value.id
-      ? $filterAttr(input.value, eventInputs)
-      : $filterAttr(input.value, eventInputs, ['id']),
+    input: filterAttr({ ...input.value }, input.value.id ? ['id'] : excludeAttr),
     file: input.value.file?.file
   })
   await getEvents()
@@ -66,7 +59,7 @@ await getEvents()
       <atom-input
         v-for="item in eventInputs"
         :key="item.key"
-        v-model="input[item.key]"
+        v-model="input[item.key as keyof typeof input]"
         :input="item"
       />
     </v-form>
@@ -78,9 +71,9 @@ await getEvents()
     @fetch="getEvents()"
     @edit="
       (id) => {
-        input = $filterAttr(
-          events.find((v: any) => v.id === id),
-          eventInputs
+        input = filterAttr(
+          { ...events.find((v: any) => v.id === id) },
+          Object.keys(events[0]).filter((v) => !Object.keys(defaultInput).includes(v))
         )
       }
     "

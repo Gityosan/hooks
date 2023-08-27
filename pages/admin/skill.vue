@@ -3,8 +3,7 @@ import { Skill, UpdateSkillInput, ListSkillsQuery } from '~/assets/API'
 import { skillInputs } from '~/assets/enum'
 import { createSkill, deleteSkill, updateSkill } from '~/assets/graphql/mutations'
 import { listSkills } from '~/assets/graphql/queries'
-const { $listQuery, $baseMutation, $filterAttr } = useNuxtApp()
-const { setExistError, setErrorMessages } = useErrorState()
+const { $listQuery, $baseMutation } = useNuxtApp()
 const { banEdit } = useEditState()
 const form = ref<any>()
 const skills = ref<Skill[]>([])
@@ -17,19 +16,13 @@ const getSkills = async () => {
   skills.value = await $listQuery<ListSkillsQuery, Skill>({ query: listSkills })
 }
 const mutateSkill = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-    return
-  }
+  if (!(await checkValidation(form.value))) return
+  const excludeAttr = Object.entries(input.value)
+    .filter(([_, v]) => v === null)
+    .map(([k, _]) => k)
   await $baseMutation({
     query: input.value.id ? updateSkill : createSkill,
-    input: input.value.id
-      ? $filterAttr(input.value, skillInputs)
-      : $filterAttr(input.value, skillInputs, ['id'])
+    input: filterAttr(input.value, input.value.id ? ['id'] : excludeAttr)
   })
   await getSkills()
 }
@@ -69,7 +62,7 @@ await getSkills()
     @fetch="getSkills()"
     @edit="
       (id) => {
-        input = $filterAttr(
+        input = filterAttr(
           skills.find((v: any) => v.id === id),
           skillInputs
         )

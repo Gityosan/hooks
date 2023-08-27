@@ -7,5 +7,6 @@ const { snackbars } = useSnackbar()
     :key="item.id"
     :index="snackbars.length - (i + 1)"
     :item="item"
+    style="z-index: 9999"
   />
 </template>

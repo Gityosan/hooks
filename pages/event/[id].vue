@@ -71,13 +71,13 @@ await fetchEvent()
     <div class="d-flex flex-nowrap justify-start bg-transparent my-2" style="gap: 0 10px">
       <atom-text
         font-size="text-caption"
-        :text="$getYMD(event.createdAt)"
+        :text="getYMD(event.createdAt)"
         font-weight="font-weight-regular"
         ><v-icon size="14" class="mr-1 align-text-bottom"> mdi-cloud-upload-outline </v-icon>
       </atom-text>
       <atom-text
         font-size="text-caption"
-        :text="$getYMD(event.updatedAt)"
+        :text="getYMD(event.updatedAt)"
         font-weight="font-weight-regular"
         ><v-icon size="14" class="mr-1 align-text-bottom"> mdi-autorenew </v-icon>
       </atom-text>

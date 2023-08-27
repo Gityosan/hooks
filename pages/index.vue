@@ -20,7 +20,7 @@ const explains = [
 ]
 </script>
 <template>
-  <div class="d-flex align-center" style="height: calc(var(--vh, 1vh) * 90 - 88px)">
+  <div class="d-flex align-center" style="height: calc(90dvh - 88px)">
     <div style="flex: 3" class="mr-sm-16">
       <atom-text text="プログラミングは" font-size="text-h3" class="mb-2 letter-spacing-30" />
       <atom-text text="一人よりみんなで" font-size="text-h3" class="mb-2 letter-spacing-30" />
@@ -42,7 +42,7 @@ const explains = [
     </div>
     <div style="flex: 2"><v-img src="/top-view.svg" /></div>
   </div>
-  <div class="w-100 text-center" style="height: calc(var(--vh, 1vh) * 10)">
+  <div class="w-100 text-center" style="height: 10dvh">
     <atom-text text="scroll" class="mb-1" />
     <atom-text text="↓" />
   </div>

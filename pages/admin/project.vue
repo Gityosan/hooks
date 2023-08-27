@@ -4,8 +4,7 @@ import { FileInput } from '~/assets/type'
 import { projectInputs } from '~/assets/enum'
 import { createProject, deleteProject, updateProject } from '~/assets/graphql/mutations'
 import { listProjects } from '~/assets/graphql/queries'
-const { $listQuery, $extendMutation, $filterAttr } = useNuxtApp()
-const { setExistError, setErrorMessages } = useErrorState()
+const { $listQuery, $extendMutation } = useNuxtApp()
 const { banEdit } = useEditState()
 const form = ref<any>()
 const projects = ref<Project[]>([])
@@ -25,21 +24,15 @@ const getProjects = async () => {
   })
 }
 const mutateProject = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-    return
-  }
+  if (!(await checkValidation(form.value))) return
+  const excludeAttr = Object.entries(input.value)
+    .filter(([_, v]) => v === null)
+    .map(([k, _]) => k)
   await $extendMutation({
     type: input.value.id ? 'update' : 'create',
     key: input.value.file?.key || '',
     query: input.value.id ? updateProject : createProject,
-    input: input.value.id
-      ? $filterAttr(input.value, projectInputs)
-      : $filterAttr(input.value, projectInputs, ['id']),
+    input: filterAttr({ ...input.value }, input.value.id ? ['id'] : excludeAttr),
     file: input.value.file?.file
   })
   await getProjects()
@@ -69,7 +62,7 @@ await getProjects()
       <atom-input
         v-for="item in projectInputs"
         :key="item.key"
-        v-model="input[item.key]"
+        v-model="input[item.key as keyof typeof input]"
         :input="item"
       />
     </v-form>
@@ -81,9 +74,9 @@ await getProjects()
     @fetch="getProjects()"
     @edit="
       (id) => {
-        input = $filterAttr(
-          projects.find((v: any) => v.id === id),
-          projectInputs
+        input = filterAttr(
+          projects.find((v: any) => v.id === id) || {},
+          Object.keys(projects[0]).filter((v) => !Object.keys(defaultInput).includes(v))
         )
       }
     "

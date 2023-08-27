@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { InputType } from '~/assets/type'
-const { $listQuery, $baseMutation, $filterAttr } = useNuxtApp()
+const { $listQuery, $baseMutation } = useNuxtApp()
 const { setExistError, setErrorMessages } = useErrorState()
 const { banEdit } = useEditState()
 const items = ref<any>([])
@@ -39,8 +39,8 @@ const mutateRelation = async () => {
   await $baseMutation({
     query: input.value.id ? props.updateMutation : props.createMutation,
     input: input.value.id
-      ? $filterAttr(input.value, props.inputs)
-      : $filterAttr(input.value, props.inputs, ['id'])
+      ? filterAttr(input.value, props.inputs)
+      : filterAttr(input.value, props.inputs, ['id'])
   })
   await getRelation()
 }
@@ -94,7 +94,7 @@ await getRelation()
           @fetch="getRelation()"
           @edit="
             (id) => {
-              input = $filterAttr(
+              input = filterAttr(
                 items.find((v: any) => v.id === id),
                 inputs
               )

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { validation } from '~/assets/validation'
-const { $baseFetch, $options } = useNuxtApp()
 const { setExistError, setErrorMessages } = useErrorState()
 const { banEdit } = useEditState()
 const config = useRuntimeConfig()
@@ -20,20 +19,14 @@ const submit = async () => {
   const content =
     '「' + name.value + '」さんからお問い合わせがありました！\n\nお問い合わせ内容\n' + body.value
   if (!config.public.discordWebhook) return
-  await $baseFetch(
-    config.public.discordWebhook,
-    $options({
-      key: content,
-      method: 'POST',
-      body: JSON.stringify({
-        username: 'Hooksからのお問い合わせ',
-        content
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  )
+  await baseFetch(config.public.discordWebhook, () => ({
+    method: 'POST',
+    body: JSON.stringify({
+      username: 'Hooksからのお問い合わせ',
+      content
+    }),
+    headers: { 'Content-Type': 'application/json' }
+  }))
 }
 </script>
 <template>

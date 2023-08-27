@@ -5,7 +5,7 @@ import { listUsers } from '~/assets/graphql/queries'
 import { createUser } from '~/assets/graphql/mutations'
 import { useLoginState, useMyUser } from '~/composables/useState'
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const { $listQuery, $baseMutation, $filterAttr } = useNuxtApp()
+  const { $listQuery, $baseMutation } = useNuxtApp()
   const { isSignedIn, setSignedIn, setAdmin } = useLoginState()
   const { setCognitoUser, setMyUser } = useMyUser()
   const config = useRuntimeConfig()
@@ -32,7 +32,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       })
       if (isDev) console.log('新規User作成', res)
     } else {
-      setMyUser($filterAttr(self[0], memberInputs))
+      setMyUser(filterAttr(self[0], memberInputs))
     }
   }
   if (to.path.includes('login') && isSignedIn.value) return navigateTo('/admin')

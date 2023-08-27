@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { S3Object } from '~~/assets/API'
-const { $makeS3Object, $typeSafetyImage } = useNuxtApp()
+const { $makeS3Object } = useNuxtApp()
 const props = withDefaults(
   defineProps<{
     modelValue: S3Object | null
@@ -27,10 +27,10 @@ const onImagePicked = async () => {
 }
 const files = ref<File[]>([])
 const imageURL = ref<string>('')
-imageURL.value = await $typeSafetyImage(props.modelValue)
+imageURL.value = await typeSafetyImage(props.modelValue)
 await setFileObject(props.modelValue)
 watch(props, async (_, c) => {
-  imageURL.value = await $typeSafetyImage(c.modelValue)
+  imageURL.value = await typeSafetyImage(c.modelValue)
   await setFileObject(c.modelValue)
 })
 </script>

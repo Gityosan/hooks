@@ -1,62 +1,61 @@
 <script setup lang="ts">
-import { Article, UpdateArticleInput, GetArticleQuery } from '~/assets/API'
+import { UpdateArticleInput, GetArticleQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
 import { articleInputs } from '~/assets/enum'
-import { createArticle, deleteArticle, updateArticle } from '~/assets/graphql/mutations'
-import { listArticles } from '~/assets/graphql/queries'
-const { $getQuery, $extendMutation, $filterAttr } = useNuxtApp()
+import { deleteArticle, updateArticle } from '~/assets/graphql/mutations'
+import { getArticle } from '~/assets/graphql/queries'
+const { $extendMutation } = useNuxtApp()
 const { params } = useRoute()
 const { banEdit } = useEditState()
-const { setExistError, setErrorMessages } = useErrorState()
-const article = ref<Article>()
+const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
+const input = ref<FileInput<Partial<UpdateArticleInput>>>(
+  defaultInput as FileInput<Partial<UpdateArticleInput>>
+)
 const form = ref<any>()
+const open = ref<boolean>(false)
 useHead({ title: '記事編集' })
-const getArticle = async () => {
-  article.value = await $getQuery<GetArticleQuery, Article>({
-    query: listArticles,
+const getItem = async () => {
+  const { data } = await getQuery<GetArticleQuery, UpdateArticleInput>({
+    query: getArticle,
+    queryName: 'getArticle',
     variables: { id: params.id }
   })
+  if (data.value) input.value = data.value
+  console.log(input.value)
 }
-const mutateArticle = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-    return
-  }
+const updateItem = async () => {
+  if (!(await checkValidation(form.value))) return
   await $extendMutation({
-    type: input.value.id ? 'update' : 'create',
+    type: 'update',
     key: input.value.file?.key || '',
-    query: input.value.id ? updateArticle : createArticle,
-    input: input.value.id
-      ? $filterAttr(input.value, articleInputs)
-      : $filterAttr(input.value, articleInputs, ['id']),
+    query: updateArticle,
+    input: filterAttr({ ...input.value }, ['id']),
     file: input.value.file?.file
   })
-  await getArticle()
+  await getItem()
 }
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
-const input = ref<FileInput<Partial<UpdateArticleInput>>>(defaultInput)
-await getArticle()
+const deleteItem = async () => {
+  await $extendMutation({
+    type: 'delete',
+    key: input.value.file?.key || '',
+    query: deleteArticle,
+    input: { id: input.value.id }
+  })
+  navigateTo('/admin/article')
+}
+await getItem()
 </script>
 <template>
   <div class="position-relative">
     <div class="d-flex py-5 position-sticky top-0 right-0 bg-white z-index-2">
-      <atom-text
-        :text="input.id ? input.id + 'の更新' : '新規作成'"
-        font-size="text-h6"
-        class="my-2"
-      />
+      <atom-text :text="input.id + 'の更新'" font-size="text-h6" class="my-2" />
       <v-spacer />
-      <atom-button :loading="banEdit" text="リセット" class="mr-3" @click="input = defaultInput" />
-      <atom-button
-        :loading="banEdit"
-        :text="input.id ? '更新' : '新規作成'"
-        class="mr-4"
-        @click="mutateArticle()"
-      />
+      <atom-button :loading="banEdit" text="保存する" class="mr-4" @click="updateItem()">
+        <v-icon icon="mdi-content-save" size="18" class="mr-1" style="margin-bottom: 2px" />
+      </atom-button>
+      <atom-button :loading="banEdit" text="削除する" class="mr-4" @click="open = true">
+        <v-icon icon="mdi-delete" size="18" class="mr-1" style="margin-bottom: 2px" />
+      </atom-button>
     </div>
     <v-form ref="form">
       <atom-input
@@ -66,5 +65,24 @@ await getArticle()
         :input="item"
       />
     </v-form>
+    <v-dialog v-model="open" persistent>
+      <v-card flat class="rounded-lg py-6 px-10" min-width="370">
+        <atom-text text="このデータを本当に削除しますか？" class="w-100 mt-5 mb-10 text-center" />
+        <div class="d-flex justify-space-around">
+          <atom-button-switch
+            text="削除します"
+            :loading="banEdit"
+            class="rounded-pill width-200"
+            @click="deleteItem()"
+          />
+          <atom-button-switch
+            text="キャンセル"
+            :loading="banEdit"
+            class="rounded-pill width-200"
+            @click="open = false"
+          />
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>

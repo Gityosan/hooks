@@ -17,6 +17,7 @@ const isHovering = ref<boolean>(false)
 </script>
 <template>
   <button
+    type="button"
     class="transition-short-ease bg-white border-solid border-width-1 border-grey-lighten-1 rounded d-flex align-center py-2"
     :class="[
       variant === 'medium' ? 'px-4 height-37' : 'px-2 height-34',

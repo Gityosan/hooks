@@ -4,7 +4,7 @@ import { FileInput } from '~/assets/type'
 import { memberInputs } from '~/assets/enum'
 import { updateUser } from '~/assets/graphql/mutations'
 import { listUsers } from '~/assets/graphql/queries'
-const { $listQuery, $extendMutation, $filterAttr } = useNuxtApp()
+const { $listQuery, $extendMutation } = useNuxtApp()
 const { myUser, setMyUser } = useMyUser()
 const { banEdit } = useEditState()
 const { setExistError, setErrorMessages } = useErrorState()
@@ -38,10 +38,10 @@ const updateMyUser = async () => {
     type: 'update',
     key: input.value.file?.key || '',
     query: updateUser,
-    input: $filterAttr(input.value, memberInputs),
+    input: filterAttr({ ...input.value }, memberInputs),
     file: input.value.file?.file
   })
-  await setMyUser($filterAttr(res as User, memberInputs))
+  await setMyUser(filterAttr({ ...res.value } as User, memberInputs))
   await getUsers()
 }
 const input = ref<FileInput<UpdateUserInput>>(JSON.parse(JSON.stringify(myUser.value)))

@@ -12,20 +12,20 @@ const props = withDefaults(
     items: () => []
   }
 )
-const { path } = useRoute()
+const route = useRoute()
 const breadcrumbs = computed(() => {
   return props.items.length
-    ? [{ title: 'top', to: '/', disabled: path === '/' }, ...props.items]
+    ? [{ title: 'top', to: '/', disabled: route.path === '/' }, ...props.items]
     : [
-        { title: 'top', to: '/', disabled: path === '/' },
-        ...path
+        { title: 'top', to: '/', disabled: route.path === '/' },
+        ...route.path
           .slice(1)
           .split('/')
-          .map((v) => {
+          .map((v, i, a) => {
             return {
               title: v,
-              to: '/' + v,
-              disabled: path.endsWith(v)
+              to: '/' + a.slice(0, i + 1).join('/'),
+              disabled: route.path.endsWith(v)
             }
           })
       ]

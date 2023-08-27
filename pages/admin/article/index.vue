@@ -4,16 +4,17 @@ import { FileInput } from '~/assets/type'
 import { articleInputs } from '~/assets/enum'
 import { createArticle, deleteArticle } from '~/assets/graphql/mutations'
 import { listArticles } from '~/assets/graphql/queries'
-const { $listQuery, $extendMutation, $checkValidation, $filterAttr } = useNuxtApp()
+const { $listQuery, $extendMutation } = useNuxtApp()
 const { isAdmin } = useLoginState()
 const { banEdit } = useEditState()
 const { myUser } = useMyUser()
 const articles = ref<Article[]>([])
 const open = ref<boolean>(false)
 const form = ref<any>()
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
-const input = ref<FileInput<UpdateArticleInput>>(defaultInput as UpdateArticleInput)
-
+const defaultInput = Object.fromEntries(
+  articleInputs.map((v) => [v.key, v.default])
+) as UpdateArticleInput
+const input = ref<FileInput<UpdateArticleInput>>(defaultInput)
 useHead({ title: '記事一覧' })
 const headers = [
   { title: 'タイトル', key: 'title' },
@@ -28,22 +29,26 @@ const getItems = async () => {
   })
 }
 const createItem = async () => {
-  if (!(await $checkValidation(form.value))) return
-  await $extendMutation({
+  if (!(await checkValidation(form.value))) return
+  const excludeAttr = Object.entries(input.value)
+    .filter(([_, v]) => v === null)
+    .map(([k, _]) => k)
+  const res = await $extendMutation({
     type: 'create',
     key: input.value.file?.key || '',
     query: createArticle,
-    input: $filterAttr(input.value, articleInputs),
+    input: filterAttr({ ...input.value }, excludeAttr),
     file: input.value.file?.file
   })
+  input.value = defaultInput
   await getItems()
+  open.value = false
 }
-
 await getItems()
 </script>
 <template>
   <div class="d-flex align-center py-3">
-    <atom-text text="記事一覧" line-height="line-height-lg" />
+    <atom-text text="記事" line-height="line-height-lg" />
     <v-spacer />
     <atom-button text="アイテムの追加" :disabled="banEdit" @click="open = true">
       <v-icon icon="mdi-plus-circle" size="18" class="mr-1" style="margin-bottom: 2px" />

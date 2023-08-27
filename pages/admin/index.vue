@@ -14,6 +14,7 @@ const fetchUser = async () => {
     variables: { id: myUser.value.id }
   })
 }
+console.log(myUser.value)
 await fetchUser()
 console.log(cognitoUser.value)
 </script>
@@ -22,12 +23,12 @@ console.log(cognitoUser.value)
     <v-img src="mushimegane_man.png" class="width-42 height-64 mx-3 flex-grow-0" />
     <div class="ma-2 pa-3 rounded-lg bg-grey-darken-3">
       <atom-text
-        :text="Greetings(user?.name || '')[randomIndex]"
+        :text="Greetings(myUser?.name || '')[randomIndex]"
         color="text-white"
         line-height="line-height-lg"
       />
     </div>
     <v-spacer />
   </div>
-  <module-user-large :user="user" class="ma-5" />
+  <module-user-large :user="myUser as User" class="ma-5" />
 </template>

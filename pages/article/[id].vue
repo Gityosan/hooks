@@ -26,13 +26,13 @@ await fetchArticle()
     <div class="d-flex flex-nowrap justify-start bg-transparent mt-2 mb-2" style="gap: 0 10px">
       <atom-text
         font-size="text-caption"
-        :text="$getYMD(article.createdAt)"
+        :text="getYMD(article.createdAt)"
         font-weight="font-weight-regular"
         ><v-icon size="14" class="mr-1 align-text-bottom"> mdi-cloud-upload-outline </v-icon>
       </atom-text>
       <atom-text
         font-size="text-caption"
-        :text="$getYMD(article.updatedAt)"
+        :text="getYMD(article.updatedAt)"
         font-weight="font-weight-regular"
         ><v-icon size="14" class="mr-1 align-text-bottom"> mdi-autorenew </v-icon>
       </atom-text>
@@ -62,6 +62,6 @@ await fetchArticle()
         </v-chip>
       </v-hover>
     </v-chip-group>
-    <div class="my-10 ProseMirror" v-html="$reverseSanitize(article.body)"></div>
+    <div class="my-10 ProseMirror" v-html="reverseSanitize(article.body)"></div>
   </div>
 </template>

@@ -30,7 +30,7 @@ const menu = [
 <template>
   <div
     class="d-flex flex-nowrap bg-grey-lighten-5 text-black position-relative overflow-x-hidden"
-    :style="{ width: '100vw', 'min-height': 'calc(var(--vh, 1vh) * 100)' }"
+    :style="{ width: '100vw', 'min-height': '100dvh' }"
   >
     <!-- NOTE: 画面左側メニュバー -->
     <v-card
@@ -71,7 +71,7 @@ const menu = [
           class="width-20 transition-medium-ease-out"
           :class="[
             route.path === page.path ? 'text-accent-color' : 'text-white',
-            expand ? 'mr-2' : 'mr-0'
+            { 'mr-2': expand }
           ]"
         >
           {{ page.icon }}
@@ -95,10 +95,10 @@ const menu = [
         @click="$signOut()"
       >
         <v-icon
+          icon="mdi-logout"
           class="width-20 text-white transition-medium-ease-out"
           :class="expand ? 'mr-2' : 'mr-0'"
-          >mdi-logout
-        </v-icon>
+        />
         <atom-text
           font-size="text-caption"
           class="one-line-reader transition-medium-ease-out"
@@ -111,7 +111,7 @@ const menu = [
     </v-card>
     <div
       class="pl-5 pr-10 pb-10 bg-white overflow-y-auto scrollbar-hidden position-relative"
-      :style="{ flex: '1', height: 'calc(var(--vh, 1vh) * 100)' }"
+      :style="{ flex: '1', height: '100dvh' }"
     >
       <atom-text font-size="text-h6" line-height="line-height-lg" text="Hooks Admin" class="mt-5" />
       <atom-breadcrumbs class="mb-5" />
@@ -120,7 +120,7 @@ const menu = [
     <div
       class="d-flex position-absolute top-0 right-0 z-index-10 transition-medium-ease-out"
       :class="open ? 'right-0' : 'right-n200'"
-      :style="{ width: '232px', height: 'calc(var(--vh, 1vh) * 100)' }"
+      :style="{ width: '232px', height: '100dvh' }"
     >
       <div class="width-32 h-100">
         <div class="w-100 height-48"></div>
@@ -135,10 +135,10 @@ const menu = [
             @click="open = !open"
           >
             <v-icon
+              icon="mdi-menu"
               class="height-24 mx-1 my-3 transition-medium-ease-out"
               :class="isHovering ? 'text-accent-color' : 'text-white'"
-              >mdi-menu
-            </v-icon>
+            />
           </v-card>
         </v-hover>
       </div>

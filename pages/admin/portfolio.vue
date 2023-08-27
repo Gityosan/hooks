@@ -4,9 +4,8 @@ import { FileInput } from '~/assets/type'
 import { portfolioInputs } from '~/assets/enum'
 import { createPortfolio, deletePortfolio, updatePortfolio } from '~/assets/graphql/mutations'
 import { listPortfolios } from '~/assets/graphql/queries'
-const { $listQuery, $extendMutation, $filterAttr } = useNuxtApp()
+const { $listQuery, $extendMutation } = useNuxtApp()
 const { banEdit } = useEditState()
-const { setExistError, setErrorMessages } = useErrorState()
 const portfolios = ref<Portfolio[]>([])
 const form = ref<any>()
 useHead({ title: 'ポートフォリオ編集' })
@@ -22,21 +21,15 @@ const getPortfolios = async () => {
   })
 }
 const mutatePortfolio = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-    return
-  }
+  if (!(await checkValidation(form.value))) return
+  const excludeAttr = Object.entries(input.value)
+    .filter(([_, v]) => v === null)
+    .map(([k, _]) => k)
   await $extendMutation({
     type: input.value.id ? 'update' : 'create',
     key: input.value.file?.key || '',
     query: input.value.id ? updatePortfolio : createPortfolio,
-    input: input.value.id
-      ? $filterAttr(input.value, portfolioInputs)
-      : $filterAttr(input.value, portfolioInputs, ['id']),
+    input: filterAttr({ ...input.value }, input.value.id ? ['id'] : excludeAttr),
     file: input.value.file?.file
   })
   await getPortfolios()
@@ -66,7 +59,7 @@ await getPortfolios()
       <atom-input
         v-for="item in portfolioInputs"
         :key="item.key"
-        v-model="input[item.key]"
+        v-model="input[item.key as keyof typeof input]"
         :input="item"
       />
     </v-form>
@@ -78,9 +71,9 @@ await getPortfolios()
     @fetch="getPortfolios()"
     @edit="
       (id) => {
-        input = $filterAttr(
-          portfolios.find((v: any) => v.id === id),
-          portfolioInputs
+        input = filterAttr(
+          portfolios.find((v: any) => v.id === id) || {},
+          Object.keys(portfolios[0]).filter((v) => !Object.keys(defaultInput).includes(v))
         )
       }
     "

@@ -2,7 +2,7 @@
 import { validation } from '~/assets/validation'
 import { User, GetUserQuery } from '~/assets/API'
 import { getUser } from '~/assets/graphql/queries'
-const { $baseFetch, $options, $getQuery } = useNuxtApp()
+const { $getQuery } = useNuxtApp()
 const { setExistError, setErrorMessages } = useErrorState()
 const config = useRuntimeConfig()
 const { banEdit } = useEditState()
@@ -38,20 +38,14 @@ const submit = async () => {
     '」さんからお問い合わせがありました！\n\nお問い合わせ内容\n' +
     body.value
   if (!config.public.discordWebhook) return
-  await $baseFetch(
-    config.public.discordWebhook,
-    $options({
-      key: content,
-      method: 'POST',
-      body: JSON.stringify({
-        username: 'Hooksからのお問い合わせ',
-        content
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  )
+  await baseFetch(config.public.discordWebhook, () => ({
+    method: 'POST',
+    body: JSON.stringify({
+      username: 'Hooksからのお問い合わせ',
+      content
+    }),
+    headers: { 'Content-Type': 'application/json' }
+  }))
 }
 const tabs = [
   '就活プロフィール',

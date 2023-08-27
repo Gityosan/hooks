@@ -52,7 +52,7 @@ const menu = [
           :style="{
             'max-width': '960px',
             width: active ? 'calc(100vw - 40px)' : '72px',
-            height: active ? 'calc(var(--vh) * 100 - 104px)' : '48px'
+            height: active ? 'calc(100dvh - 104px)' : '48px'
           }"
         >
           <v-icon
