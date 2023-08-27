@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import * as q from '~/assets/graphql/queries'
-const { $listQuery } = useNuxtApp()
 const items = ref<any[]>([])
 const props = withDefaults(
   defineProps<{
-    queryName: keyof typeof q
-    itemTitle: string
-    modelValue: any
+    queryName?: keyof typeof q
+    itemTitle?: string
+    modelValue?: any
   }>(),
   {
     queryName: 'listUsers',
@@ -14,7 +13,11 @@ const props = withDefaults(
     modelValue: null
   }
 )
-items.value = await $listQuery({ query: new Map(Object.entries(q)).get(props.queryName) || '' })
+const { data } = await listQuery({
+  query: new Map(Object.entries(q)).get(props.queryName) || '',
+  queryName: props.queryName
+})
+if (data.value) items.value = data.value
 </script>
 <template>
   <v-select

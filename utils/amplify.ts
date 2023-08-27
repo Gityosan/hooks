@@ -53,36 +53,33 @@ export const listQuery = async <S, T>({
   const { setBanEdit } = useEditState()
   const { setExistError, addErrorMessages } = useErrorState()
   setBanEdit(true)
-  const items: T[] = []
-  const variables = {
-    limit: config.public.limit,
-    nextToken: null,
-    filter
-  }
-  const callbackQuery = async () => {
-    // NOTE: DynamoDBのscanの1MB制限に達するとnextTokenが返される
-    const { data, errors } = await API.graphql<GraphQLQuery<S>>({
-      query,
-      variables,
-      authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
-    })
-    if (errors?.length) {
-      console.debug(errors)
-      clearError()
-    }
-    if (!data || !Object.keys(data).length) return
-    const rawData = Object.getOwnPropertyDescriptor(data, Object.keys(data)[0])?.value
-    if (!rawData) return
-    if (Array.isArray(rawData.items)) items.push(...rawData.items)
-    if (rawData.nextToken) {
-      variables.nextToken = rawData.nextToken
-      await callbackQuery()
-    }
-  }
-  const result = await useAsyncData<T | null>(
+  const result = await useAsyncData<T[] | null>(
     queryName,
-    async (): Promise<T | null> => {
+    async (): Promise<T[] | null> => {
+      const items: T[] = []
+      const variables = {
+        limit: config.public.limit,
+        nextToken: null,
+        filter
+      }
+      const callbackQuery = async () => {
+        // NOTE: DynamoDBのscanの1MB制限に達するとnextTokenが返される
+        const res = await API.graphql<GraphQLQuery<S>>({
+          query,
+          variables,
+          authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
+        })
+        if (!res.data) return null
+        const rawData = Object.getOwnPropertyDescriptor(res.data, queryName)?.value
+        if (!rawData) return null
+        else if (Array.isArray(rawData.items)) items.push(...rawData.items)
+        if (rawData.nextToken) {
+          variables.nextToken = rawData.nextToken
+          await callbackQuery()
+        }
+      }
       await callbackQuery()
+      return items
     },
     { lazy: false, watch: [] }
   )
