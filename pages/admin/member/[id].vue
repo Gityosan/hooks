@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { UpdateArticleInput, GetArticleQuery } from '~/assets/API'
+import { UpdateUserInput, GetUserQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
-import { articleInputs } from '~/assets/enum'
-import { deleteArticle, updateArticle } from '~/assets/graphql/mutations'
-import { getArticle } from '~/assets/graphql/queries'
+import { userInputs } from '~/assets/enum'
+import { deleteUser, updateUser } from '~/assets/graphql/mutations'
+import { getUser } from '~/assets/graphql/queries'
 const { $extendMutation } = useNuxtApp()
 const { params } = useRoute()
 const { banEdit } = useEditState()
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
-const input = ref<FileInput<Partial<UpdateArticleInput>>>(
-  defaultInput as FileInput<Partial<UpdateArticleInput>>
+const defaultInput = Object.fromEntries(userInputs.map((v) => [v.key, v.default]))
+const input = ref<FileInput<Partial<UpdateUserInput>>>(
+  defaultInput as FileInput<Partial<UpdateUserInput>>
 )
 const form = ref<any>()
 const open = ref<boolean>(false)
-useHead({ title: '記事編集' })
+useHead({ title: 'メンバー編集' })
 const getItem = async () => {
-  const { data } = await getQuery<GetArticleQuery, UpdateArticleInput>({
-    query: getArticle,
-    queryName: 'getArticle',
+  const { data } = await getQuery<GetUserQuery, UpdateUserInput>({
+    query: getUser,
+    queryName: 'getUser',
     variables: { id: params.id }
   })
   if (data.value) input.value = data.value
@@ -31,7 +31,7 @@ const updateItem = async () => {
   await $extendMutation({
     type: 'update',
     key: input.value.file?.key || '',
-    query: updateArticle,
+    query: updateUser,
     input: filterAttr({ ...input.value }, excludeAttr),
     file: input.value.file?.file
   })
@@ -41,10 +41,10 @@ const deleteItem = async () => {
   await $extendMutation({
     type: 'delete',
     key: input.value.file?.key || '',
-    query: deleteArticle,
+    query: deleteUser,
     input: { id: input.value.id }
   })
-  navigateTo('/admin/article')
+  navigateTo('/admin/user')
 }
 await getItem()
 </script>
@@ -70,7 +70,7 @@ await getItem()
     </div>
     <v-form ref="form">
       <atom-input
-        v-for="item in articleInputs"
+        v-for="item in userInputs"
         :key="item.key"
         v-model="input[item.key as keyof typeof input]"
         :input="item"

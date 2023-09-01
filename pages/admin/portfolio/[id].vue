@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { UpdateArticleInput, GetArticleQuery } from '~/assets/API'
+import { UpdatePortfolioInput, GetPortfolioQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
-import { articleInputs } from '~/assets/enum'
-import { deleteArticle, updateArticle } from '~/assets/graphql/mutations'
-import { getArticle } from '~/assets/graphql/queries'
+import { portfolioInputs } from '~/assets/enum'
+import { deletePortfolio, updatePortfolio } from '~/assets/graphql/mutations'
+import { getPortfolio } from '~/assets/graphql/queries'
 const { $extendMutation } = useNuxtApp()
 const { params } = useRoute()
 const { banEdit } = useEditState()
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
-const input = ref<FileInput<Partial<UpdateArticleInput>>>(
-  defaultInput as FileInput<Partial<UpdateArticleInput>>
+const defaultInput = Object.fromEntries(portfolioInputs.map((v) => [v.key, v.default]))
+const input = ref<FileInput<Partial<UpdatePortfolioInput>>>(
+  defaultInput as FileInput<Partial<UpdatePortfolioInput>>
 )
 const form = ref<any>()
 const open = ref<boolean>(false)
-useHead({ title: '記事編集' })
+useHead({ title: 'ポートフォリオ編集' })
 const getItem = async () => {
-  const { data } = await getQuery<GetArticleQuery, UpdateArticleInput>({
-    query: getArticle,
-    queryName: 'getArticle',
+  const { data } = await getQuery<GetPortfolioQuery, UpdatePortfolioInput>({
+    query: getPortfolio,
+    queryName: 'getPortfolio',
     variables: { id: params.id }
   })
   if (data.value) input.value = data.value
@@ -31,7 +31,7 @@ const updateItem = async () => {
   await $extendMutation({
     type: 'update',
     key: input.value.file?.key || '',
-    query: updateArticle,
+    query: updatePortfolio,
     input: filterAttr({ ...input.value }, excludeAttr),
     file: input.value.file?.file
   })
@@ -41,10 +41,10 @@ const deleteItem = async () => {
   await $extendMutation({
     type: 'delete',
     key: input.value.file?.key || '',
-    query: deleteArticle,
+    query: deletePortfolio,
     input: { id: input.value.id }
   })
-  navigateTo('/admin/article')
+  navigateTo('/admin/portfolio')
 }
 await getItem()
 </script>
@@ -70,7 +70,7 @@ await getItem()
     </div>
     <v-form ref="form">
       <atom-input
-        v-for="item in articleInputs"
+        v-for="item in portfolioInputs"
         :key="item.key"
         v-model="input[item.key as keyof typeof input]"
         :input="item"

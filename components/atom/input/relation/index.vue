@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { InputType } from '~/assets/type'
 const { $listQuery, $baseMutation } = useNuxtApp()
-const { setExistError, setErrorMessages } = useErrorState()
 const { banEdit } = useEditState()
 const items = ref<any>([])
 const tabs = ['新規作成・編集', '一覧']
@@ -29,13 +28,7 @@ const getRelation = async () => {
   items.value = await $listQuery({ query: props.query })
 }
 const mutateRelation = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-  }
+  if (!(await checkValidation(form.value))) return
   await $baseMutation({
     query: input.value.id ? props.updateMutation : props.createMutation,
     input: input.value.id
@@ -62,13 +55,13 @@ await getRelation()
             class="my-2 line-clamp-1"
           />
           <v-spacer />
-          <atom-button
+          <atom-button-outlined
             :loading="banEdit"
             text="リセット"
             class="mr-3"
             @click="input = defaultInput"
           />
-          <atom-button
+          <atom-button-outlined
             :loading="banEdit"
             :text="input.id ? '更新' : '新規作成'"
             @click="mutateRelation()"

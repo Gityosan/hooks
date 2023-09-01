@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { UpdateArticleInput, GetArticleQuery } from '~/assets/API'
+import { UpdateProjectInput, GetProjectQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
-import { articleInputs } from '~/assets/enum'
-import { deleteArticle, updateArticle } from '~/assets/graphql/mutations'
-import { getArticle } from '~/assets/graphql/queries'
+import { projectInputs } from '~/assets/enum'
+import { deleteProject, updateProject } from '~/assets/graphql/mutations'
+import { getProject } from '~/assets/graphql/queries'
 const { $extendMutation } = useNuxtApp()
 const { params } = useRoute()
 const { banEdit } = useEditState()
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
-const input = ref<FileInput<Partial<UpdateArticleInput>>>(
-  defaultInput as FileInput<Partial<UpdateArticleInput>>
+const defaultInput = Object.fromEntries(projectInputs.map((v) => [v.key, v.default]))
+const input = ref<FileInput<Partial<UpdateProjectInput>>>(
+  defaultInput as FileInput<Partial<UpdateProjectInput>>
 )
 const form = ref<any>()
 const open = ref<boolean>(false)
-useHead({ title: '記事編集' })
+useHead({ title: 'プロジェクト編集' })
 const getItem = async () => {
-  const { data } = await getQuery<GetArticleQuery, UpdateArticleInput>({
-    query: getArticle,
-    queryName: 'getArticle',
+  const { data } = await getQuery<GetProjectQuery, UpdateProjectInput>({
+    query: getProject,
+    queryName: 'getProject',
     variables: { id: params.id }
   })
   if (data.value) input.value = data.value
@@ -31,7 +31,7 @@ const updateItem = async () => {
   await $extendMutation({
     type: 'update',
     key: input.value.file?.key || '',
-    query: updateArticle,
+    query: updateProject,
     input: filterAttr({ ...input.value }, excludeAttr),
     file: input.value.file?.file
   })
@@ -41,10 +41,10 @@ const deleteItem = async () => {
   await $extendMutation({
     type: 'delete',
     key: input.value.file?.key || '',
-    query: deleteArticle,
+    query: deleteProject,
     input: { id: input.value.id }
   })
-  navigateTo('/admin/article')
+  navigateTo('/admin/project')
 }
 await getItem()
 </script>
@@ -70,7 +70,7 @@ await getItem()
     </div>
     <v-form ref="form">
       <atom-input
-        v-for="item in articleInputs"
+        v-for="item in projectInputs"
         :key="item.key"
         v-model="input[item.key as keyof typeof input]"
         :input="item"

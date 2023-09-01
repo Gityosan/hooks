@@ -2,8 +2,6 @@
 import { validation } from '~/assets/validation'
 import { User, GetUserQuery } from '~/assets/API'
 import { getUser } from '~/assets/graphql/queries'
-const { $getQuery } = useNuxtApp()
-const { setExistError, setErrorMessages } = useErrorState()
 const config = useRuntimeConfig()
 const { banEdit } = useEditState()
 const { params } = useRoute()
@@ -13,23 +11,18 @@ const body = ref<string>('')
 const user = ref<User>({} as User)
 const form = ref<any>(null)
 const fetchUser = async () => {
-  user.value = await $getQuery<GetUserQuery, User>({
+  const { data } = await getQuery<GetUserQuery, User>({
     query: getUser,
-    variables: {
-      id: params.id || null
-    }
+    queryName: 'getUser',
+    variables: { id: params.id }
   })
-  useHead({ title: user.value.name })
+  if (data.value) {
+    user.value = data.value
+    useHead({ title: user.value.name })
+  }
 }
 const submit = async () => {
-  const validate = await form.value?.validate()
-  if (!validate.valid) {
-    setExistError(true)
-    setErrorMessages(
-      form.value?.errors.map((v: any) => v.errorMessages.map((m: string) => `${v.id}：${m}`)).flat()
-    )
-    return
-  }
+  if (!(await checkValidation(form.value))) return
   const content =
     'TO: <@' +
     user.value.discordId +
@@ -71,7 +64,9 @@ await fetchUser()
   />
   <module-user-large :user="user" class="my-8" />
   <v-card class="rounded-lg mb-16">
-    <v-tabs v-model="tab" class="bg-main-color text-white" :items="tabs"></v-tabs>
+    <v-tabs v-model="tab" bg-color="red" color="white">
+      <v-tab v-for="t in tabs" :key="t" :value="t" />
+    </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="tabs[0]">
         <div class="ma-5">{{ user.forRecruitment }}</div>
@@ -169,6 +164,6 @@ await fetchUser()
       counter="500"
       class="mb-5"
     />
-    <atom-button text="送信" class="w-100" :loading="banEdit" @click="submit()" />
+    <atom-button-outlined text="送信" class="w-100" :loading="banEdit" @click="submit()" />
   </v-form>
 </template>

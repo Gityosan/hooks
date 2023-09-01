@@ -12,46 +12,66 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void
 }>()
-const setFileObject = async (v: S3Object | null) => {
-  if (!v || !('name' in v)) return []
-  files.value = [new File([], v.name, { type: v.type || '' })]
-}
 const resetFileObject = () => {
   files.value = []
   imageURL.value = ''
 }
-const onImagePicked = async () => {
+const emitImg = async () => {
   if (!files.value.length) return
   const data = await $makeS3Object(files.value[0])
   emit('update:model-value', data)
 }
+const onImagePicked = async (e: Event) => {
+  const images = (e.target as HTMLInputElement)?.files
+  if (images) files.value = Array.from(images)
+  await emitImg()
+}
+const onDrop = async (e: DragEvent) => {
+  if (!e.dataTransfer) return
+  files.value = Array.from(e.dataTransfer.files)
+  await emitImg()
+}
 const files = ref<File[]>([])
 const imageURL = ref<string>('')
 imageURL.value = await typeSafetyImage(props.modelValue)
-await setFileObject(props.modelValue)
-watch(props, async (_, c) => {
-  imageURL.value = await typeSafetyImage(c.modelValue)
-  await setFileObject(c.modelValue)
+watch(files, (_, c) => {
+  imageURL.value = URL.createObjectURL(files.value[0])
 })
 </script>
 <template>
-  <v-file-input
-    v-model="files"
-    density="compact"
-    clearable
-    class="text-main-color"
-    variant="underlined"
-    accept="image/*"
-    @click:clear="resetFileObject()"
-    @change="onImagePicked()"
-  />
-  <div class="w-100 height-200 rounded-lg border-width-1 border-solid border-main-color">
+  <div
+    class="w-100 height-200 bg-grey-lighten-4 rounded border-width-1 border-dotted border-grey-lighten-1"
+  >
     <v-img v-if="imageURL" :src="imageURL" :aspect-ratio="16 / 9" class="max-height-198" />
-    <atom-text
+    <div
       v-else
-      text="ここに画像が表示されます"
-      line-height="line-height-72"
-      class="w-100 text-center my-16"
-    />
+      class="pa-10 d-flex flex-column justify-center align-center"
+      @drop.stop="onDrop($event)"
+    >
+      <atom-text
+        text="ここにドラッグ&ドロップ"
+        color="text-grey-darken-1"
+        line-height="line-height-lg"
+        class="mb-4"
+      />
+      <atom-text
+        text="または"
+        color="text-grey-darken-1"
+        line-height="line-height-lg"
+        class="mb-4"
+      />
+      <label
+        class="px-4 py-2 d-flex align-center bg-white rounded border-solid border-width-1 border-grey-lighten-1 cursor-pointer"
+      >
+        <v-icon icon="mdi-folder-open" class="mr-2" />
+        <atom-text text="ファイルを選択" />
+        <input
+          type="file"
+          accept="image/png, image/jpeg, image/gif"
+          class="d-none"
+          @input="onImagePicked($event)"
+        />
+      </label>
+    </div>
   </div>
 </template>

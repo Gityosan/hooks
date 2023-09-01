@@ -55,7 +55,7 @@ export const listQuery = async <S, T>({
   setBanEdit(true)
   const result = await useAsyncData<T[] | null>(
     queryName,
-    async (): Promise<T[] | null> => {
+    async (): Promise<T[]> => {
       const items: T[] = []
       const variables = {
         limit: config.public.limit,
@@ -69,10 +69,8 @@ export const listQuery = async <S, T>({
           variables,
           authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
         })
-        if (!res.data) return null
         const rawData = Object.getOwnPropertyDescriptor(res.data, queryName)?.value
-        if (!rawData) return null
-        else if (Array.isArray(rawData.items)) items.push(...rawData.items)
+        if (Array.isArray(rawData?.items)) items.push(...rawData.items)
         if (rawData.nextToken) {
           variables.nextToken = rawData.nextToken
           await callbackQuery()

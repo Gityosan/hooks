@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { Article, GetArticleQuery } from '~/assets/API'
 import { getArticle } from '~/assets/graphql/queries'
-const { $getQuery } = useNuxtApp()
 const { params } = useRoute()
 const article = ref<Article>({} as Article)
 const fetchArticle = async () => {
-  article.value = await $getQuery<GetArticleQuery, Article>({
+  const { data } = await getQuery<GetArticleQuery, Article>({
     query: getArticle,
-    variables: { id: params.id || null }
+    queryName: 'getArticle',
+    variables: { id: params.id }
   })
-  useHead({ title: article.value.title })
+  if (data.value) {
+    article.value = data.value
+    useHead({ title: article.value.title })
+  }
 }
 await fetchArticle()
 </script>

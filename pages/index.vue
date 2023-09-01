@@ -29,8 +29,8 @@ const explains = [
       <atom-text text="Lumosは初心者から経験者まで幅広く在籍する" class="ml-1 letter-spacing-10" />
       <atom-text text="インカレプログラミングサークルです。" class="ml-1 letter-spacing-10" />
       <div class="d-flex flex-nowrap my-5" style="gap: 0 10px">
-        <atom-button text="参加する" @click="navigateTo('/contact')" />
-        <atom-button
+        <atom-button-outlined text="参加する" @click="navigateTo('/contact')" />
+        <atom-button-outlined
           text="話だけでも聞いてみる"
           @click="
             navigateTo('https://twitter.com/lumos_program', {
@@ -80,8 +80,8 @@ const explains = [
     class="mb-10 text-center"
   />
   <div class="d-flex flex-nowrap justify-center align-center mb-10" style="gap: 0 50px">
-    <atom-button text="参加する" @click="navigateTo('/contact')" />
-    <atom-button
+    <atom-button-outlined text="参加する" @click="navigateTo('/contact')" />
+    <atom-button-outlined
       text="話だけでも聞いてみる"
       @click="navigateTo('https://twitter.com/lumos_program', { external: true })"
     />

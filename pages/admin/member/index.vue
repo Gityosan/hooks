@@ -1,34 +1,39 @@
 <script setup lang="ts">
-import { UpdateArticleInput, ListArticlesQuery } from '~/assets/API'
+import { UpdateUserInput, ListUsersQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
-import { articleInputs } from '~/assets/enum'
-import { createArticle, deleteArticle } from '~/assets/graphql/mutations'
-import { listArticles } from '~/assets/graphql/queries'
+import { userInputs } from '~/assets/enum'
+import { createUser, deleteUser } from '~/assets/graphql/mutations'
+import { listUsers } from '~/assets/graphql/queries'
 const { $extendMutation } = useNuxtApp()
 const { isAdmin } = useLoginState()
 const { banEdit } = useEditState()
 const { myUser } = useMyUser()
-const articles = ref<UpdateArticleInput[]>([])
+const users = ref<UpdateUserInput[]>([])
 const open = ref<boolean>(false)
 const form = ref<any>()
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default])) as FileInput<
-  Partial<UpdateArticleInput>
+const defaultInput = Object.fromEntries(userInputs.map((v) => [v.key, v.default])) as FileInput<
+  Partial<UpdateUserInput>
 >
-const input = ref<FileInput<Partial<UpdateArticleInput>>>(defaultInput)
-useHead({ title: '記事一覧' })
+const input = ref<FileInput<Partial<UpdateUserInput>>>(defaultInput)
+useHead({ title: 'メンバー一覧' })
 const headers = [
-  { title: 'タイトル', key: 'title' },
-  { title: '公開・下書き', key: 'published' },
-  { title: '筆者', key: 'user' },
+  { title: 'アイコン', key: 'file' },
+  { title: '名前', key: 'name' },
+  { title: 'Eメール', key: 'email' },
+  { title: '大学・学校', key: 'university' },
+  { title: '学部・学科', key: 'faculty' },
+  { title: '就活中', key: 'jobHunting' },
+  { title: '加入日', key: 'join' },
+  { title: '卒業日', key: 'leave' },
   { title: '操作', key: 'action' }
 ]
 const getItems = async () => {
-  const { data } = await listQuery<ListArticlesQuery, UpdateArticleInput>({
-    query: listArticles,
-    queryName: 'listArticles',
-    filter: isAdmin.value ? {} : { userArticleId: { eq: myUser.value.id || null } }
+  const { data } = await listQuery<ListUsersQuery, UpdateUserInput>({
+    query: listUsers,
+    queryName: 'listUsers',
+    filter: isAdmin.value ? {} : { userUserId: { eq: myUser.value.id || null } }
   })
-  if (data.value) articles.value = data.value
+  if (data.value) users.value = data.value
 }
 const createItem = async () => {
   if (!(await checkValidation(form.value))) return
@@ -38,7 +43,7 @@ const createItem = async () => {
   await $extendMutation({
     type: 'create',
     key: input.value.file?.key || '',
-    query: createArticle,
+    query: createUser,
     input: filterAttr({ ...input.value }, excludeAttr),
     file: input.value.file?.file
   })
@@ -50,58 +55,55 @@ await getItems()
 </script>
 <template>
   <div class="d-flex align-center py-3">
-    <atom-text text="記事" line-height="line-height-lg" />
+    <atom-text text="メンバー" line-height="line-height-lg" />
     <v-spacer />
-    <atom-button-outlined
+    <atom-button
       text="アイテムの追加"
-      icon="mdi-plus-circle"
       :disabled="banEdit"
       @click="open = true"
+      icon="mdi-plus-circle"
     />
   </div>
   <module-data-table
     :headers="headers"
-    :items="articles"
-    :custom-columns="['published', 'user']"
+    :items="users"
+    :custom-columns="['file', 'jobHunting']"
     class="mb-15"
     @fetch="getItems()"
-    @edit="(id) => navigateTo(`/admin/article/${id}`)"
+    @edit="(id) => navigateTo(`/admin/user/${id}`)"
     @delete="
       (id) =>
         $extendMutation({
           type: 'delete',
           key: input.file?.key || '',
-          query: deleteArticle,
+          query: deleteUser,
           input: { id }
         })
     "
   >
-    <template #published="{ item }">
-      {{ item.columns.published ? '公開済み' : '下書き' }}
+    <template #file="{ item }">
+      <atom-icon-img :file="item.columns.file" width="48" class="mx-auto" />
     </template>
-    <template #user="{ item }">{{ item.columns.user.name }}</template>
+    <template #jobHunting="{ item }">
+      {{ item.columns.jobHunting ? '就活中' : '未就活' }}
+    </template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
     <v-card class="pa-5">
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button-outlined
-          text="キャンセル"
-          icon="mdi-close"
-          :disabled="banEdit"
-          @click="open = false"
-        />
-        <atom-button-outlined
+        <atom-button text="キャンセル" :disabled="banEdit" @click="open = false" icon="mdi-close" />
+        <atom-button
           text="保存"
-          icon="mdi-content-save"
           :disabled="banEdit"
           @click="createItem()"
+          icon="mdi-content-save"
         />
       </div>
       <v-form ref="form">
         <atom-input
-          v-for="i in articleInputs"
+          v-for="i in userInputs"
           :key="i.key"
           v-model="input[i.key as keyof typeof input]"
           :input="i"

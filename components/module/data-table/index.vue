@@ -85,9 +85,12 @@ const deleteItems = async () => {
         :model-value="perPage"
         @update:model-value="$emit('update:per-page', $event)"
       />
-      <atom-button text="再取得" :disabled="banEdit" @click="$emit('fetch')">
-        <v-icon icon="mdi-reload" size="18" class="mr-1" />
-      </atom-button>
+      <atom-button-outlined
+        text="再取得"
+        :disabled="banEdit"
+        @click="$emit('fetch')"
+        icon="mdi-reload"
+      />
     </div>
     <v-data-table
       v-model="selectedIds"
@@ -194,22 +197,20 @@ const deleteItems = async () => {
       <template #item.action="{ item }">
         <slot name="action" :item="item">
           <div class="d-flex flex-nowrap" style="gap: 0 8px">
-            <atom-button
+            <atom-button-outlined
               text="編集"
               variant="small"
               :disabled="banEdit"
               @click="$emit('edit', item.value)"
-            >
-              <v-icon icon="mdi-pencil" size="14" class="mr-1" />
-            </atom-button>
-            <atom-button
+              icon="mdi-pencil"
+            />
+            <atom-button-outlined
               text="削除"
               variant="small"
               :disabled="banEdit"
               @click="deleteReady(item.value)"
-            >
-              <v-icon icon="mdi-delete" size="14" class="mr-1" />
-            </atom-button>
+              icon="mdi-delete"
+            />
           </div>
         </slot>
       </template>

@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { Skill, GetSkillQuery } from '~/assets/API'
 import { getSkill } from '~/assets/graphql/queries'
-const { $getQuery } = useNuxtApp()
 const { params } = useRoute()
 const skill = ref<Skill>({} as Skill)
 const fetchSkill = async () => {
-  skill.value = await $getQuery<GetSkillQuery, Skill>({
+  const { data } = await getQuery<GetSkillQuery, Skill>({
     query: getSkill,
-    variables: {
-      id: params.id || null
-    }
+    queryName: 'getSkill',
+    variables: { id: params.id }
   })
-  useHead({ title: skill.value.title })
+  if (data.value) {
+    skill.value = data.value
+    useHead({ title: skill.value.title })
+  }
 }
 await fetchSkill()
 </script>

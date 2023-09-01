@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { UpdateArticleInput, ListArticlesQuery } from '~/assets/API'
+import { UpdatePortfolioInput, ListPortfoliosQuery } from '~/assets/API'
 import { FileInput } from '~/assets/type'
-import { articleInputs } from '~/assets/enum'
-import { createArticle, deleteArticle } from '~/assets/graphql/mutations'
-import { listArticles } from '~/assets/graphql/queries'
+import { portfolioInputs } from '~/assets/enum'
+import { createPortfolio, deletePortfolio } from '~/assets/graphql/mutations'
+import { listPortfolios } from '~/assets/graphql/queries'
 const { $extendMutation } = useNuxtApp()
 const { isAdmin } = useLoginState()
 const { banEdit } = useEditState()
 const { myUser } = useMyUser()
-const articles = ref<UpdateArticleInput[]>([])
+const portfolios = ref<UpdatePortfolioInput[]>([])
 const open = ref<boolean>(false)
 const form = ref<any>()
-const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default])) as FileInput<
-  Partial<UpdateArticleInput>
->
-const input = ref<FileInput<Partial<UpdateArticleInput>>>(defaultInput)
-useHead({ title: '記事一覧' })
+const defaultInput = Object.fromEntries(
+  portfolioInputs.map((v) => [v.key, v.default])
+) as FileInput<Partial<UpdatePortfolioInput>>
+const input = ref<FileInput<Partial<UpdatePortfolioInput>>>(defaultInput)
+useHead({ title: 'ポートフォリオ一覧' })
 const headers = [
   { title: 'タイトル', key: 'title' },
   { title: '公開・下書き', key: 'published' },
-  { title: '筆者', key: 'user' },
+  { title: '作者', key: 'user' },
   { title: '操作', key: 'action' }
 ]
 const getItems = async () => {
-  const { data } = await listQuery<ListArticlesQuery, UpdateArticleInput>({
-    query: listArticles,
-    queryName: 'listArticles',
-    filter: isAdmin.value ? {} : { userArticleId: { eq: myUser.value.id || null } }
+  const { data } = await listQuery<ListPortfoliosQuery, UpdatePortfolioInput>({
+    query: listPortfolios,
+    queryName: 'listPortfolios',
+    filter: isAdmin.value ? {} : { userPortfolioId: { eq: myUser.value.id || null } }
   })
-  if (data.value) articles.value = data.value
+  if (data.value) portfolios.value = data.value
 }
 const createItem = async () => {
   if (!(await checkValidation(form.value))) return
@@ -38,7 +38,7 @@ const createItem = async () => {
   await $extendMutation({
     type: 'create',
     key: input.value.file?.key || '',
-    query: createArticle,
+    query: createPortfolio,
     input: filterAttr({ ...input.value }, excludeAttr),
     file: input.value.file?.file
   })
@@ -50,58 +50,56 @@ await getItems()
 </script>
 <template>
   <div class="d-flex align-center py-3">
-    <atom-text text="記事" line-height="line-height-lg" />
+    <atom-text text="ポートフォリオ" line-height="line-height-lg" />
     <v-spacer />
-    <atom-button-outlined
+    <atom-button
       text="アイテムの追加"
-      icon="mdi-plus-circle"
       :disabled="banEdit"
       @click="open = true"
+      icon="mdi-plus-circle"
     />
   </div>
   <module-data-table
     :headers="headers"
-    :items="articles"
-    :custom-columns="['published', 'user']"
+    :items="portfolios"
+    :custom-columns="['title', 'published', 'user']"
     class="mb-15"
     @fetch="getItems()"
-    @edit="(id) => navigateTo(`/admin/article/${id}`)"
+    @edit="(id) => navigateTo(`/admin/portfolio/${id}`)"
     @delete="
       (id) =>
         $extendMutation({
           type: 'delete',
           key: input.file?.key || '',
-          query: deleteArticle,
+          query: deletePortfolio,
           input: { id }
         })
     "
   >
+    <template #title="{ item }">
+      <nuxt-link :href="item.columns.url" target="_blank">{{ item.columns.title }}</nuxt-link>
+    </template>
     <template #published="{ item }">
       {{ item.columns.published ? '公開済み' : '下書き' }}
     </template>
-    <template #user="{ item }">{{ item.columns.user.name }}</template>
+    <template #user="{ item }"> {{ item.columns.user.name }}</template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
     <v-card class="pa-5">
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button-outlined
-          text="キャンセル"
-          icon="mdi-close"
-          :disabled="banEdit"
-          @click="open = false"
-        />
-        <atom-button-outlined
+        <atom-button text="キャンセル" :disabled="banEdit" @click="open = false" icon="mdi-close" />
+        <atom-button
           text="保存"
-          icon="mdi-content-save"
           :disabled="banEdit"
           @click="createItem()"
+          icon="mdi-content-save"
         />
       </div>
       <v-form ref="form">
         <atom-input
-          v-for="i in articleInputs"
+          v-for="i in portfolioInputs"
           :key="i.key"
           v-model="input[i.key as keyof typeof input]"
           :input="i"

@@ -1,22 +1,11 @@
 <script setup lang="ts">
-import { User, GetUserQuery } from '~/assets/API'
+import { User } from '~/assets/API'
 import { Greetings } from '~/assets/enum'
-import { getUser } from '~/assets/graphql/queries'
-const { $getQuery } = useNuxtApp()
 const { myUser, cognitoUser } = useMyUser()
-const user = ref<User>({} as User)
 const randomIndex = Math.floor(Math.random() * Greetings().length)
 useHead({ title: 'Admin Top' })
-const fetchUser = async () => {
-  if (!myUser.value.id) return
-  user.value = await $getQuery<GetUserQuery, User>({
-    query: getUser,
-    variables: { id: myUser.value.id }
-  })
-}
-console.log(myUser.value)
-await fetchUser()
-console.log(cognitoUser.value)
+console.debug(cognitoUser.value)
+console.debug(myUser.value)
 </script>
 <template>
   <div class="d-flex">

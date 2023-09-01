@@ -33,12 +33,12 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           .then((res: any) => {
             const name = Object.keys(res.data).length && Object.keys(res.data)[0]
             if (!name) return
-            if (isDev) console.log(res.data[name])
+            if (isDev) console.debug(res.data[name])
             setBanEdit(false)
             return res.data[name]
           })
           .catch((e) => {
-            if (isDev) console.log(e)
+            if (isDev) console.debug(e)
             clearError()
             setBanEdit(false)
           })
@@ -67,7 +67,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
             authMode: isSignedIn.value ? 'AMAZON_COGNITO_USER_POOLS' : 'AWS_IAM'
           })
           if (errors?.length) {
-            if (isDev) console.log(errors)
+            if (isDev) console.debug(errors)
             clearError()
           }
           if (!data || !Object.keys(data).length) return
@@ -80,7 +80,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           }
         }
         await callbackQuery()
-        if (isDev) console.log(items)
+        if (isDev) console.debug(items)
         setBanEdit(false)
         return items
       },
@@ -100,13 +100,13 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           .then((res: any) => {
             const name = Object.keys(res.data).length && Object.keys(res.data)[0]
             if (!name) return
-            if (isDev) console.log(res.data[name])
+            if (isDev) console.debug(res.data[name])
             addSnackbar({ text: '保存が完了しました' })
             setBanEdit(false)
             return res.data[name]
           })
           .catch((e) => {
-            if (isDev) console.log(e)
+            if (isDev) console.debug(e)
             addSnackbar({ type: 'alert', text: '保存に失敗しました' })
             clearError()
             setBanEdit(false)
@@ -177,13 +177,13 @@ export default defineNuxtPlugin((nuxtApp: any) => {
           level,
           contentType: file.type
         }).catch((e) => {
-          if (isDev) console.log('createImage', e)
+          if (isDev) console.debug('createImage', e)
         })
       },
       removeImage: async (key?: string, level: StorageAccessLevel = 'protected') => {
         if (!key) return
         return await Storage.remove(key, { level }).catch((e) => {
-          console.log('deleteImage', e)
+          console.debug('deleteImage', e)
         })
       },
       signUp: async (username: string, password: string) => {
@@ -255,7 +255,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
       signIn: async (username: string, password: string) => {
         await Auth.signIn(username, password)
           .then((user) => {
-            console.log(user)
+            console.debug(user)
           })
           .catch((e) => {
             alert('ログインに失敗しました。')

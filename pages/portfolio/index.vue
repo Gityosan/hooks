@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { Portfolio, ListPortfoliosQuery } from '~/assets/API'
 import { listPortfolios } from '~/assets/graphql/queries'
-const { $listQuery } = useNuxtApp()
 const portfolios = ref<Portfolio[]>([])
 useHead({ title: 'ポートフォリオ一覧' })
 const getPortfolios = async () => {
-  portfolios.value = await $listQuery<ListPortfoliosQuery, Portfolio>({
+  const { data } = await listQuery<ListPortfoliosQuery, Portfolio>({
     query: listPortfolios,
+    queryName: 'listPortfolios',
     filter: { published: { eq: true } }
   })
+  if (data.value) portfolios.value = data.value
 }
 await getPortfolios()
 </script>

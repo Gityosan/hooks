@@ -34,7 +34,7 @@ const menu = [
     />
     <v-spacer></v-spacer>
     <template v-if="!xs">
-      <atom-button
+      <atom-button-outlined
         v-for="item in menu.filter((v) => v.outside)"
         :key="item.text"
         :text="item.text"

@@ -8,7 +8,7 @@ import {
 } from '~/assets/API'
 import { getEvent } from '~/assets/graphql/queries'
 import { createEventUsers, deleteEventUsers } from '~/assets/graphql/mutations'
-const { $getQuery, $getImage, $baseMutation } = useNuxtApp()
+const { $getImage, $baseMutation } = useNuxtApp()
 const { params } = useRoute()
 const { isSignedIn } = useLoginState()
 const { myUser } = useMyUser()
@@ -34,14 +34,16 @@ const leave = async () => {
   event.value.user.items = event.value.user?.items.filter((v) => v?.userID !== myUser.value.id)
 }
 const fetchEvent = async () => {
-  event.value = await $getQuery<GetEventQuery, Event>({
+  const { data } = await getQuery<GetEventQuery, Event>({
     query: getEvent,
-    variables: {
-      id: params.id || null
-    }
+    queryName: 'getEvent',
+    variables: { id: params.id }
   })
-  imageUrl.value = await $getImage(event.value.file?.key, event.value.file?.identityId)
-  useHead({ title: event.value.title })
+  if (data.value) {
+    event.value = data.value
+    imageUrl.value = await $getImage(event.value.file?.key, event.value.file?.identityId)
+    useHead({ title: event.value.title })
+  }
 }
 const tabs = ['参加メンバー', '記事']
 const tab = ref<string>('')
@@ -59,13 +61,13 @@ await fetchEvent()
     <div class="d-flex mt-16 justify-space-between">
       <atom-text font-size="text-h4" :text="event.title" />
       <template v-if="isSignedIn">
-        <atom-button
+        <atom-button-outlined
           v-if="!event.user?.items.map((v) => v?.userID).includes(myUser.id)"
           :loading="banEdit"
           text="参加する"
           @click="enter()"
         />
-        <atom-button v-else :loading="banEdit" text="参加をやめる" @click="leave()" />
+        <atom-button-outlined v-else :loading="banEdit" text="参加をやめる" @click="leave()" />
       </template>
     </div>
     <div class="d-flex flex-nowrap justify-start bg-transparent my-2" style="gap: 0 10px">

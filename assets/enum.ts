@@ -196,7 +196,7 @@ export const eventInputs: InputType[] = [
     rules: [v.maxFileSize(5)]
   }
 ]
-export const memberInputs: InputType[] = [
+export const userInputs: InputType[] = [
   {
     key: 'name',
     title: 'お名前',

@@ -70,7 +70,12 @@ const unsetLink = () => {
           :model-value="color"
           @update:model-value="$emit('update:color', $event)"
         />
-        <atom-button text="保存" text-class="text-caption" class="my-2 w-100" @click="saveItem()" />
+        <atom-button-outlined
+          text="保存"
+          text-class="text-caption"
+          class="my-2 w-100"
+          @click="saveItem()"
+        />
       </div>
     </v-menu>
     <v-menu v-else-if="icon === 'mdi-link'" v-model="open" :close-on-content-click="false">
@@ -140,7 +145,7 @@ const unsetLink = () => {
         <div class="d-flex">
           <atom-text text="画像をアップロード" line-height="line-height-40" />
           <v-spacer />
-          <atom-button text="挿入" @click="func && func(file.file)" />
+          <atom-button-outlined text="挿入" @click="func && func(file.file)" />
         </div>
         <atom-input-file v-model="file" />
       </div>

@@ -1,38 +1,37 @@
 import { Auth } from 'aws-amplify'
-import { Regexp, memberInputs } from '~/assets/enum'
+import { Regexp } from '~/assets/enum'
 import { User, ListUsersQuery } from '~/assets/API'
 import { listUsers } from '~/assets/graphql/queries'
 import { createUser } from '~/assets/graphql/mutations'
 import { useLoginState, useMyUser } from '~/composables/useState'
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const { $listQuery, $baseMutation } = useNuxtApp()
+  const { $baseMutation } = useNuxtApp()
   const { isSignedIn, setSignedIn, setAdmin } = useLoginState()
   const { setCognitoUser, setMyUser } = useMyUser()
-  const config = useRuntimeConfig()
-  const isDev = config.public.isDev
-  if (isDev) console.log(from.path + '=>' + to.path)
+  console.debug(from.path + '=>' + to.path)
   if (to.name !== 'index' && Regexp.normalize.test(to.path)) {
     return navigateTo(to.path.substring(0, to.path.length - 1))
   }
   if (!Regexp.whiteList.test(to.path)) return navigateTo('/')
   const user = await Auth.currentUserPoolUser().catch(() => clearError())
-  if (isDev) console.log('currentUserPoolUser', user)
+  console.debug('currentUserPoolUser', user)
   setSignedIn(!!user)
   if (user) {
     setCognitoUser(user)
-    const self = await $listQuery<ListUsersQuery, User>({
+    const { data } = await listQuery<ListUsersQuery, User>({
       query: listUsers,
+      queryName: 'listUsers',
       // @ts-ignore
       filter: { email: { eq: user.attributes.email } }
     })
-    if (!self.length) {
+    if (!data.value?.length) {
       const res = await $baseMutation({
         query: createUser,
         input: { email: user.attributes.email }
       })
-      if (isDev) console.log('新規User作成', res)
+      console.debug('新規User作成', res)
     } else {
-      setMyUser(filterAttr(self[0], memberInputs))
+      setMyUser(data.value[0])
     }
   }
   if (to.path.includes('login') && isSignedIn.value) return navigateTo('/admin')

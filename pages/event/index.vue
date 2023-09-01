@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { Event, ListEventsQuery } from '~/assets/API'
 import { listEvents } from '~/assets/graphql/queries'
-const { $listQuery } = useNuxtApp()
 const { isSignedIn } = useLoginState()
 const events = ref<Event[]>([])
 useHead({ title: 'イベント一覧' })
 const getEvents = async () => {
-  events.value = await $listQuery<ListEventsQuery, Event>({
+  const { data } = await listQuery<ListEventsQuery, Event>({
     query: listEvents,
+    queryName: 'listEvents',
     filter: { published: { eq: true } }
   })
+  if (data.value) events.value = data.value
 }
 await getEvents()
 </script>
@@ -17,7 +18,7 @@ await getEvents()
   <div class="d-flex py-10">
     <atom-text font-size="text-h4" text="Event" />
     <v-spacer />
-    <atom-button v-if="isSignedIn" text="新規作成" @click="navigateTo('/admin/event')" />
+    <atom-button-outlined v-if="isSignedIn" text="新規作成" @click="navigateTo('/admin/event')" />
   </div>
   <div class="d-flex flex-wrap">
     <module-content-medium

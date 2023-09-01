@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ListUsersQuery, User } from '~/assets/API'
 import { listUsers } from '~/assets/graphql/queries'
-const { $listQuery } = useNuxtApp()
 const users = ref<User[]>([])
 useHead({ title: 'ユーザー一覧' })
 const getUsers = async () => {
-  users.value = await $listQuery<ListUsersQuery, User>({
-    query: listUsers
+  const { data } = await listQuery<ListUsersQuery, User>({
+    query: listUsers,
+    queryName: 'listUsers'
   })
+  if (data.value) users.value = data.value
 }
 await getUsers()
 </script>

@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { Project, ListProjectsQuery } from '~/assets/API'
 import { listProjects } from '~/assets/graphql/queries'
-const { $listQuery } = useNuxtApp()
 const { isSignedIn } = useLoginState()
 const projects = ref<Project[]>([])
 useHead({ title: 'プロジェクト一覧' })
 const getProjects = async () => {
-  projects.value = await $listQuery<ListProjectsQuery, Project>({
+  const { data } = await listQuery<ListProjectsQuery, Project>({
     query: listProjects,
+    queryName: 'listProjects',
     filter: { published: { eq: true } }
   })
+  if (data.value) projects.value = data.value
 }
 await getProjects()
 </script>
@@ -17,7 +18,7 @@ await getProjects()
   <div class="d-flex py-10">
     <atom-text font-size="text-h4" text="Project" />
     <v-spacer />
-    <atom-button v-if="isSignedIn" text="新規作成" @click="navigateTo('/admin/project')" />
+    <atom-button-outlined v-if="isSignedIn" text="新規作成" @click="navigateTo('/admin/project')" />
   </div>
   <div class="d-flex flex-wrap">
     <module-content-medium
