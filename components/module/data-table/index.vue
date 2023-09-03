@@ -88,8 +88,8 @@ const deleteItems = async () => {
       <atom-button-outlined
         text="再取得"
         :disabled="banEdit"
-        @click="$emit('fetch')"
         icon="mdi-reload"
+        @click="$emit('fetch')"
       />
     </div>
     <v-data-table
@@ -176,16 +176,15 @@ const deleteItems = async () => {
                 font-size="text-subtitle-2"
                 line-height="line-height-lg"
               />
-              <atom-button
+              <atom-button-outlined
                 v-if="selectedIds.length > 1"
                 text="選択したアイテムの削除"
                 variant="small"
                 :disabled="banEdit"
-                class="ml-2"
+                icon="mdi-delete"
+                class="ml-2 bg-white"
                 @click="open = true"
-              >
-                <v-icon icon="mdi-delete" size="14" class="mr-1" />
-              </atom-button>
+              />
             </div>
           </td>
         </tr>
@@ -201,15 +200,15 @@ const deleteItems = async () => {
               text="編集"
               variant="small"
               :disabled="banEdit"
-              @click="$emit('edit', item.value)"
               icon="mdi-pencil"
+              @click="$emit('edit', item.value)"
             />
             <atom-button-outlined
               text="削除"
               variant="small"
               :disabled="banEdit"
-              @click="deleteReady(item.value)"
               icon="mdi-delete"
+              @click="deleteReady(item.value)"
             />
           </div>
         </slot>

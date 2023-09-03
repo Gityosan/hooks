@@ -51,7 +51,7 @@ await fetchSkill()
       :img-key="item?.article.file?.key"
       :identity-id="item?.article.file?.identityId"
       class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click-func="navigateTo('/article/' + item?.article.id)"
+      @click="navigateTo('/article/' + item?.article.id)"
     />
   </div>
 </template>

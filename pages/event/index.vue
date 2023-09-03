@@ -30,7 +30,7 @@ await getEvents()
       :updated-at="item.updatedAt"
       :title="item.title"
       class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click-func="navigateTo('/event/' + item.id)"
+      @click="navigateTo('/event/' + item.id)"
     >
       <atom-text
         font-size="text-subtitle-2"

@@ -149,7 +149,7 @@ await fetchProject()
             :updated-at="item?.updatedAt"
             :title="item?.title"
             class="v-col-12 v-col-sm-6 v-col-md-4"
-            @click-func="navigateTo('/article/' + item?.id)"
+            @click="navigateTo('/article/' + item?.id)"
           >
             <atom-text
               font-size="text-subtitle-2"

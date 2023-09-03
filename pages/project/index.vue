@@ -30,7 +30,7 @@ await getProjects()
       :updated-at="item.updatedAt"
       :title="item.title"
       class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click-func="navigateTo('/project/' + item.id)"
+      @click="navigateTo('/project/' + item.id)"
     >
       <atom-text
         font-size="text-subtitle-2"

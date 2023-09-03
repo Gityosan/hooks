@@ -21,7 +21,7 @@ const isHovering = ref<boolean>(false)
   <button
     type="button"
     :disabled="disabled"
-    class="pl-3 pr-4 py-2 d-flex align-center"
+    class="px-4 py-2 d-flex align-center"
     :class="[disabled ? 'opacity-dot3 cursor-not-allowed' : { 'opacity-dot7': isHovering }]"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
@@ -30,10 +30,8 @@ const isHovering = ref<boolean>(false)
       <v-icon
         v-if="icon"
         :icon="icon"
-        :class="[
-          variant === 'large' ? 'height-16' : variant === 'medium' ? 'height-14' : 'height-12',
-          { 'mr-2': text }
-        ]"
+        :size="variant === 'large' ? '24w' : variant === 'medium' ? '21' : '18'"
+        :class="[{ 'mr-1': text }]"
       />
       <v-img
         v-if="src"

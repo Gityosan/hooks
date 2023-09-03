@@ -85,7 +85,7 @@ await fetchUser()
             :img-key="item?.file?.key"
             :identity-id="item?.file?.identityId"
             class="v-col-12 v-col-sm-6 v-col-md-4"
-            @click-func="navigateTo('/portfolio/' + item?.id)"
+            @click="navigateTo('/portfolio/' + item?.id)"
           />
         </div>
       </v-window-item>
@@ -100,7 +100,7 @@ await fetchUser()
             :img-key="item?.file?.key"
             :identity-id="item?.file?.identityId"
             class="v-col-12 v-col-sm-6 v-col-md-4"
-            @click-func="navigateTo('/article/' + item?.id)"
+            @click="navigateTo('/article/' + item?.id)"
           />
         </div>
       </v-window-item>
@@ -115,7 +115,7 @@ await fetchUser()
             :img-key="item?.project.file?.key"
             :identity-id="item?.project.file?.identityId"
             class="v-col-12 v-col-sm-6 v-col-md-4"
-            @click-func="navigateTo('/project/' + item?.project.id)"
+            @click="navigateTo('/project/' + item?.project.id)"
           />
         </div>
       </v-window-item>
@@ -130,7 +130,7 @@ await fetchUser()
             :img-key="item?.event.file?.key"
             :identity-id="item?.event.file?.identityId"
             class="v-col-12 v-col-sm-6 v-col-md-4"
-            @click-func="navigateTo('/event/' + item?.event.id)"
+            @click="navigateTo('/event/' + item?.event.id)"
           />
         </div>
       </v-window-item>

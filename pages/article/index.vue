@@ -15,30 +15,34 @@ const getArticles = async () => {
 await getArticles()
 </script>
 <template>
-  <div class="d-flex py-10">
-    <atom-text font-size="text-h4" text="Article" />
+  <div class="d-flex align-center py-10">
+    <atom-text text="Article" font-size="text-h5" line-height="line-height-lg" />
     <v-spacer />
-    <atom-button-outlined v-if="isSignedIn" text="新規作成" @click="navigateTo('/admin/article')" />
+    <nuxt-link v-if="isSignedIn" to="/admin/article">
+      <atom-button text="新規作成" />
+    </nuxt-link>
   </div>
   <div class="d-flex flex-wrap">
-    <module-content-medium
+    <nuxt-link
       v-for="item in articles"
       :key="item?.id"
-      :created-at="item?.createdAt"
-      :updated-at="item?.updatedAt"
-      :title="item?.title"
-      :img-key="item?.file?.key"
-      :identity-id="item?.file?.identityId"
-      class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click-func="navigateTo('/article/' + item?.id)"
+      :to="`/article/${item?.id}`"
+      class="text-decoration-none v-col-12 v-col-sm-6 v-col-md-4"
     >
-      <div class="d-flex flex-wrap justify-end bg-transparent my-2 mr-5" style="gap: 0 10px">
+      <module-content-medium
+        :created-at="item?.createdAt"
+        :updated-at="item?.updatedAt"
+        :title="item?.title"
+        :img-key="item?.file?.key"
+        :identity-id="item?.file?.identityId"
+      >
         <atom-text
+          :text="item.user?.name"
           font-size="text-caption"
           font-weight="font-weight-regular"
-          :text="item.user?.name"
+          class="text-right"
         />
-      </div>
-    </module-content-medium>
+      </module-content-medium>
+    </nuxt-link>
   </div>
 </template>

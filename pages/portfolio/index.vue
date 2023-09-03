@@ -25,7 +25,7 @@ await getPortfolios()
       :updated-at="item.updatedAt"
       :title="item.title"
       class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click-func="navigateTo(item.url, { external: true })"
+      @click="navigateTo(item.url, { external: true })"
     >
     </module-content-medium>
   </div>

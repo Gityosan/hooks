@@ -55,9 +55,9 @@ classベースでデザインするためによく使うstyleをクラス化す�
 */
 $transition: ease, ease-out, ease-in, ease-in-out;
 $transition-time: (
-  'short': 0.1s,
+  'short': 0.2s,
   'medium': 0.3s,
-  'long': 0.5s
+  'long': 0.4s
 );
 @each $i in $transition {
   @each $k, $v in $transition-time {

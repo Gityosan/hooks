@@ -47,11 +47,11 @@ await getItems()
   <div class="d-flex align-center py-3">
     <atom-text text="スキルタグ" line-height="line-height-lg" />
     <v-spacer />
-    <atom-button
+    <atom-button-outlined
       text="アイテムの追加"
       :disabled="banEdit"
-      @click="open = true"
       icon="mdi-plus-circle"
+      @click="open = true"
     />
   </div>
   <module-data-table
@@ -68,12 +68,12 @@ await getItems()
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button text="キャンセル" :disabled="banEdit" @click="open = false" icon="mdi-close" />
+        <atom-button text="キャンセル" :disabled="banEdit" icon="mdi-close" @click="open = false" />
         <atom-button
           text="保存"
           :disabled="banEdit"
-          @click="createItem()"
           icon="mdi-content-save"
+          @click="createItem()"
         />
       </div>
       <v-form ref="form">
