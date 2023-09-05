@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { $getImage } = useNuxtApp()
 const isHovering = ref<boolean>(false)
 const imageUrl = ref<string>('/no_image.png')
 const Props = withDefaults(
@@ -18,7 +17,7 @@ const Props = withDefaults(
     identityId: ''
   }
 )
-imageUrl.value = await $getImage(Props.imgKey, Props.identityId)
+imageUrl.value = await getImage(Props.imgKey, Props.identityId)
 </script>
 <template>
   <div

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { S3Object } from '~~/assets/API'
-const { $makeS3Object } = useNuxtApp()
 const props = withDefaults(defineProps<{ modelValue: S3Object | null }>(), { modelValue: null })
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void
@@ -12,7 +11,7 @@ const resetFileObject = () => {
 }
 const emitImg = async () => {
   if (!files.value.length) return
-  const data = await $makeS3Object(files.value[0])
+  const data = await makeS3Object(files.value[0])
   emit('update:model-value', data)
 }
 const onImagePicked = async (e: Event) => {

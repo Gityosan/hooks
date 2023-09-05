@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { InputType } from '~/assets/type'
-const { $listQuery, $baseMutation } = useNuxtApp()
 const { banEdit } = useEditState()
 const items = ref<any>([])
 const tabs = ['新規作成・編集', '一覧']
@@ -29,7 +28,7 @@ const getRelation = async () => {
 }
 const mutateRelation = async () => {
   if (!(await checkValidation(form.value))) return
-  await $baseMutation({
+  await baseMutation({
     query: input.value.id ? props.updateMutation : props.createMutation,
     input: input.value.id
       ? filterAttr(input.value, props.inputs)
@@ -93,7 +92,7 @@ await getRelation()
               )
             }
           "
-          @delete="(id) => $baseMutation({ query: deleteMutation, input: { id } })"
+          @delete="(id) => baseMutation({ query: deleteMutation, input: { id } })"
         />
       </v-window-item>
     </v-window>

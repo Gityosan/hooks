@@ -4,7 +4,6 @@ import { FileInput } from '~/assets/type'
 import { projectInputs } from '~/assets/enum'
 import { deleteProject, updateProject } from '~/assets/graphql/mutations'
 import { getProject } from '~/assets/graphql/queries'
-const { $extendMutation } = useNuxtApp()
 const { params } = useRoute()
 const { banEdit } = useEditState()
 const defaultInput = Object.fromEntries(projectInputs.map((v) => [v.key, v.default]))
@@ -28,7 +27,7 @@ const updateItem = async () => {
   const excludeAttr = Object.keys(input.value).filter(
     (v) => v !== 'id' && !Object.keys(defaultInput).includes(v)
   )
-  await $extendMutation({
+  await extendMutation({
     type: 'update',
     key: input.value.file?.key || '',
     query: updateProject,
@@ -38,7 +37,7 @@ const updateItem = async () => {
   await getItem()
 }
 const deleteItem = async () => {
-  await $extendMutation({
+  await extendMutation({
     type: 'delete',
     key: input.value.file?.key || '',
     query: deleteProject,
@@ -57,15 +56,15 @@ await getItem()
         :loading="banEdit"
         text="保存する"
         class="mr-4 flex-0"
-        @click="updateItem()"
         icon="mdi-content-save"
+        @click="updateItem()"
       />
       <atom-button-outlined
         :loading="banEdit"
         text="削除する"
         class="mr-4 flex-0"
-        @click="open = true"
         icon="mdi-delete"
+        @click="open = true"
       />
     </div>
     <v-form ref="form">

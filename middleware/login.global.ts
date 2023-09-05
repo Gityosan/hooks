@@ -5,7 +5,6 @@ import { listUsers } from '~/assets/graphql/queries'
 import { createUser } from '~/assets/graphql/mutations'
 import { useLoginState, useMyUser } from '~/composables/useState'
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const { $baseMutation } = useNuxtApp()
   const { isSignedIn, setSignedIn, setAdmin } = useLoginState()
   const { setCognitoUser, setMyUser } = useMyUser()
   console.debug(from.path + '=>' + to.path)
@@ -25,7 +24,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       filter: { email: { eq: user.attributes.email } }
     })
     if (!data.value?.length) {
-      const res = await $baseMutation({
+      const res = await baseMutation({
         query: createUser,
         input: { email: user.attributes.email }
       })

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { $getImage } = useNuxtApp()
 const imageUrl = ref<string>('/no_image_s.png')
 const props = withDefaults(
   defineProps<{
@@ -11,7 +10,7 @@ const props = withDefaults(
     identityId: ''
   }
 )
-imageUrl.value = await $getImage(props.imgKey, props.identityId)
+imageUrl.value = await getImage(props.imgKey, props.identityId)
 </script>
 <template>
   <v-card

@@ -4,7 +4,6 @@ import { FileInput } from '~/assets/type'
 import { skillInputs } from '~/assets/enum'
 import { deleteSkill, updateSkill } from '~/assets/graphql/mutations'
 import { getSkill } from '~/assets/graphql/queries'
-const { $baseMutation } = useNuxtApp()
 const { params } = useRoute()
 const { banEdit } = useEditState()
 const defaultInput = Object.fromEntries(skillInputs.map((v) => [v.key, v.default]))
@@ -28,14 +27,14 @@ const updateItem = async () => {
   const excludeAttr = Object.keys(input.value).filter(
     (v) => v !== 'id' && !Object.keys(defaultInput).includes(v)
   )
-  await $baseMutation({
+  await baseMutation({
     query: updateSkill,
     input: filterAttr({ ...input.value }, excludeAttr)
   })
   await getItem()
 }
 const deleteItem = async () => {
-  await $baseMutation({ query: deleteSkill, input: { id: input.value.id } })
+  await baseMutation({ query: deleteSkill, input: { id: input.value.id } })
   navigateTo('/admin/skill')
 }
 await getItem()
@@ -49,15 +48,15 @@ await getItem()
         :loading="banEdit"
         text="保存する"
         class="mr-4 flex-0"
-        @click="updateItem()"
         icon="mdi-content-save"
+        @click="updateItem()"
       />
       <atom-button-outlined
         :loading="banEdit"
         text="削除する"
         class="mr-4 flex-0"
-        @click="open = true"
         icon="mdi-delete"
+        @click="open = true"
       />
     </div>
     <v-form ref="form">

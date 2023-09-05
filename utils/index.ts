@@ -1,4 +1,3 @@
-import { S3Object } from '~~/assets/API'
 import { HandledS3ObjectInput, FetchOptionArgsType, FetchOptionResponseType } from '~/assets/type'
 export const options = <T>({
   query = {},
@@ -61,12 +60,11 @@ export const checkValidation = async (form: any): Promise<boolean> => {
 export const typeSafetyImage = async (
   file: HandledS3ObjectInput | string | File | null
 ): Promise<string> => {
-  const { $getImage } = useNuxtApp()
   if (!file) return ''
   else if (typeof file === 'string') return file
   else if (file instanceof File) return URL.createObjectURL(file)
   else if (file.file instanceof File) return URL.createObjectURL(file.file)
-  else return await $getImage(file.key, file.identityId)
+  else return await getImage(file.key, file.identityId)
 }
 export const itemsSort = (items: any[], prop: string, order: 'asc' | 'desc' = 'asc'): any[] => {
   const extract = items.map((v, i) => {

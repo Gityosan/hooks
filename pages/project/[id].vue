@@ -8,7 +8,6 @@ import {
 } from '~/assets/API'
 import { getProject } from '~/assets/graphql/queries'
 import { createProjectUsers, deleteProjectUsers } from '~/assets/graphql/mutations'
-const { $getImage, $baseMutation } = useNuxtApp()
 const { params } = useRoute()
 const { isSignedIn } = useLoginState()
 const { myUser } = useMyUser()
@@ -16,7 +15,7 @@ const { banEdit } = useEditState()
 const project = ref<Project>({} as Project)
 const imageUrl = ref<string>('/no_image.png')
 const enter = async () => {
-  const res = await $baseMutation<CreateProjectUsersInput, ProjectUsers>({
+  const res = await baseMutation<CreateProjectUsersInput, ProjectUsers>({
     query: createProjectUsers,
     input: { userID: myUser.value.id, projectID: params.id }
   })
@@ -26,7 +25,7 @@ const enter = async () => {
 const leave = async () => {
   const res = project.value.user?.items.find((v) => v?.userID === myUser.value.id)
   if (!res) return
-  await $baseMutation<DeleteProjectUsersInput, ProjectUsers>({
+  await baseMutation<DeleteProjectUsersInput, ProjectUsers>({
     query: deleteProjectUsers,
     input: { id: res.id }
   })
@@ -41,7 +40,7 @@ const fetchProject = async () => {
   })
   if (data.value) {
     project.value = data.value
-    imageUrl.value = await $getImage(project.value.file?.key, project.value.file?.identityId)
+    imageUrl.value = await getImage(project.value.file?.key, project.value.file?.identityId)
     useHead({ title: project.value.title })
   }
 }

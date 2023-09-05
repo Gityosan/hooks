@@ -4,7 +4,6 @@ import { FileInput } from '~/assets/type'
 import { portfolioInputs } from '~/assets/enum'
 import { createPortfolio, deletePortfolio } from '~/assets/graphql/mutations'
 import { listPortfolios } from '~/assets/graphql/queries'
-const { $extendMutation } = useNuxtApp()
 const { isAdmin } = useLoginState()
 const { banEdit } = useEditState()
 const { myUser } = useMyUser()
@@ -35,7 +34,7 @@ const createItem = async () => {
   const excludeAttr = Object.entries(input.value)
     .filter(([_, v]) => v === null)
     .map(([k, _]) => k)
-  await $extendMutation({
+  await extendMutation({
     type: 'create',
     key: input.value.file?.key || '',
     query: createPortfolio,
@@ -68,7 +67,7 @@ await getItems()
     @edit="(id) => navigateTo(`/admin/portfolio/${id}`)"
     @delete="
       (id) =>
-        $extendMutation({
+        extendMutation({
           type: 'delete',
           key: input.file?.key || '',
           query: deletePortfolio,

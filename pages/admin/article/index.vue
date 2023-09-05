@@ -4,7 +4,6 @@ import { FileInput } from '~/assets/type'
 import { articleInputs } from '~/assets/enum'
 import { createArticle, deleteArticle } from '~/assets/graphql/mutations'
 import { listArticles } from '~/assets/graphql/queries'
-const { $extendMutation } = useNuxtApp()
 const { isAdmin } = useLoginState()
 const { banEdit } = useEditState()
 const { myUser } = useMyUser()
@@ -35,7 +34,7 @@ const createItem = async () => {
   const excludeAttr = Object.entries(input.value)
     .filter(([_, v]) => v === null)
     .map(([k, _]) => k)
-  await $extendMutation({
+  await extendMutation({
     type: 'create',
     key: input.value.file?.key || '',
     query: createArticle,
@@ -68,7 +67,7 @@ await getItems()
     @edit="(id) => navigateTo(`/admin/article/${id}`)"
     @delete="
       (id) =>
-        $extendMutation({
+        extendMutation({
           type: 'delete',
           key: input.file?.key || '',
           query: deleteArticle,

@@ -8,7 +8,6 @@ import {
 } from '~/assets/API'
 import { getEvent } from '~/assets/graphql/queries'
 import { createEventUsers, deleteEventUsers } from '~/assets/graphql/mutations'
-const { $getImage, $baseMutation } = useNuxtApp()
 const { params } = useRoute()
 const { isSignedIn } = useLoginState()
 const { myUser } = useMyUser()
@@ -16,7 +15,7 @@ const { banEdit } = useEditState()
 const event = ref<Event>({} as Event)
 const imageUrl = ref<string>('/no_image.png')
 const enter = async () => {
-  const res = await $baseMutation<CreateEventUsersInput, EventUsers>({
+  const res = await baseMutation<CreateEventUsersInput, EventUsers>({
     query: createEventUsers,
     input: { userID: myUser.value.id, eventID: params.id }
   })
@@ -26,7 +25,7 @@ const enter = async () => {
 const leave = async () => {
   const res = event.value.user?.items.find((v) => v?.userID === myUser.value.id)
   if (!res) return
-  await $baseMutation<DeleteEventUsersInput, EventUsers>({
+  await baseMutation<DeleteEventUsersInput, EventUsers>({
     query: deleteEventUsers,
     input: { id: res.id }
   })
@@ -41,7 +40,7 @@ const fetchEvent = async () => {
   })
   if (data.value) {
     event.value = data.value
-    imageUrl.value = await $getImage(event.value.file?.key, event.value.file?.identityId)
+    imageUrl.value = await getImage(event.value.file?.key, event.value.file?.identityId)
     useHead({ title: event.value.title })
   }
 }

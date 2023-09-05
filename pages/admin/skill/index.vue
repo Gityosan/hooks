@@ -4,7 +4,6 @@ import { FileInput } from '~/assets/type'
 import { skillInputs } from '~/assets/enum'
 import { createSkill, deleteSkill } from '~/assets/graphql/mutations'
 import { listSkills } from '~/assets/graphql/queries'
-const { $baseMutation } = useNuxtApp()
 const { isAdmin } = useLoginState()
 const { banEdit } = useEditState()
 const { myUser } = useMyUser()
@@ -33,7 +32,7 @@ const createItem = async () => {
   const excludeAttr = Object.entries(input.value)
     .filter(([_, v]) => v === null)
     .map(([k, _]) => k)
-  await $baseMutation({
+  await baseMutation({
     query: createSkill,
     input: filterAttr({ ...input.value }, excludeAttr)
   })
@@ -60,7 +59,7 @@ await getItems()
     class="mb-15"
     @fetch="getItems()"
     @edit="(id) => navigateTo(`/admin/skill/${id}`)"
-    @delete="(id) => $baseMutation({ query: deleteSkill, input: { id } })"
+    @delete="(id) => baseMutation({ query: deleteSkill, input: { id } })"
   >
   </module-data-table>
   <v-dialog v-model="open" persistent>
