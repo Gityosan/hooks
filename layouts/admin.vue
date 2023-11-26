@@ -113,9 +113,16 @@ const menu = [
       class="pl-5 pr-10 pb-10 bg-white overflow-y-auto scrollbar-hidden position-relative"
       :style="{ flex: '1', height: '100dvh' }"
     >
-      <atom-text font-size="text-h6" line-height="line-height-lg" text="Hooks Admin" class="mt-5" />
-      <atom-breadcrumbs class="mb-5" />
-      <NuxtPage />
+      <div class="mx-auto" style="max-width: 750px">
+        <atom-text
+          font-size="text-h6"
+          line-height="line-height-lg"
+          text="Hooks Admin"
+          class="mt-5"
+        />
+        <atom-breadcrumbs class="mb-5 mt-2" />
+        <NuxtPage />
+      </div>
     </div>
     <div
       class="d-flex position-absolute top-0 right-0 z-index-10 transition-medium-ease-out"

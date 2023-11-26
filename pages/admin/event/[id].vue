@@ -48,9 +48,9 @@ const deleteItem = async () => {
 await getItem()
 </script>
 <template>
-  <div class="position-relative mx-auto" style="max-width: 750px">
-    <div class="d-flex py-5 position-sticky top-0 right-0 bg-white z-index-2">
-      <atom-text :text="input.id + 'の更新'" font-size="text-h6" class="my-2 line-clamp-1" />
+  <div class="position-relative">
+    <div class="d-flex py-5 position-sticky top-0 right-0 bg-white z-index-3">
+      <atom-text text="編集" font-size="text-h6" class="my-2 line-clamp-1" />
       <v-spacer />
       <atom-button-outlined
         :loading="banEdit"
