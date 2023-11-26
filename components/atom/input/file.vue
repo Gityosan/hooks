@@ -53,7 +53,7 @@ watch(props, async (_, c) => {
       <div
         class="w-100 h-100 pa-10 d-flex flex-column justify-center align-center position-absolute top-0 left-0 transition-short-ease-out"
         :class="[
-          { 'bg-black': isDropOvering || (imageURL && isHovering) },
+          { 'bg-grey-darken-2': isDropOvering || (imageURL && isHovering) },
           isDropOvering || (imageURL && isHovering)
             ? 'opacity-dot8'
             : imageURL
@@ -67,13 +67,13 @@ watch(props, async (_, c) => {
       >
         <atom-text
           text="ここにドラッグ&ドロップ"
-          :color="imageURL ? 'text-white' : 'text-grey-darken-1'"
+          :color="imageURL || isDropOvering ? 'text-white' : 'text-grey-darken-1'"
           line-height="line-height-lg"
           class="mb-4"
         />
         <atom-text
           text="または"
-          :color="imageURL ? 'text-white' : 'text-grey-darken-1'"
+          :color="imageURL || isDropOvering ? 'text-white' : 'text-grey-darken-1'"
           line-height="line-height-lg"
           class="mb-4"
         />

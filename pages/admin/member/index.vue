@@ -81,7 +81,7 @@ await getItems()
     "
   >
     <template #file="{ item }">
-      <atom-icon-img :file="item.columns.file" width="48" class="mx-auto" />
+      <atom-icon-img :file="item.columns.file" width="40" class="mx-auto my-1 rounded-circle" />
     </template>
     <template #jobHunting="{ item }">
       {{ item.columns.jobHunting ? '就活中' : '未就活' }}

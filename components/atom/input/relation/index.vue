@@ -24,7 +24,7 @@ const props = withDefaults(
   }
 )
 const getRelation = async () => {
-  items.value = await $listQuery({ query: props.query })
+  items.value = await listQuery({ query: props.query })
 }
 const mutateRelation = async () => {
   if (!(await checkValidation(form.value))) return

@@ -17,12 +17,5 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <v-img
-    :src="imageUrl"
-    :width="width"
-    :aspect-ratio="1 / 1"
-    cover
-    style="aspect-ratio: 1"
-    class="rounded-pill"
-  />
+  <v-img :src="imageUrl" :width="width" :aspect-ratio="1 / 1" cover style="aspect-ratio: 1" />
 </template>

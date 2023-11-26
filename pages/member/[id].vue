@@ -64,8 +64,8 @@ await fetchUser()
   />
   <module-user-large :user="user" class="my-8" />
   <v-card class="rounded-lg mb-16">
-    <v-tabs v-model="tab" bg-color="red" color="white">
-      <v-tab v-for="t in tabs" :key="t" :value="t" />
+    <v-tabs v-model="tab" :items="tabs">
+      <!-- <v-tab v-for="t in tabs" :key="t" :value="t" /> -->
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="tabs[0]">
