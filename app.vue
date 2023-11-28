@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Hub } from 'aws-amplify'
-import { HubCapsule } from '@aws-amplify/core'
+import type { HubCapsule } from '@aws-amplify/core'
 import { Regexp } from '~/assets/enum'
 useHead({ titleTemplate: (title) => `${title} | Hooks` })
 const { path } = useRoute()
@@ -24,7 +24,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <atom-snackbar-list />
-  <atom-modal-error />
+  <AtomSnackbarList />
+  <AtomModalError />
   <NuxtLayout :name="$route.path.includes('admin') ? 'admin' : 'default'" />
 </template>

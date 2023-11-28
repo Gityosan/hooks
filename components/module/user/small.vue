@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from '~/assets/API'
+import type { User } from '~/assets/API'
 withDefaults(
   defineProps<{
     user?: User

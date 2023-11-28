@@ -1,4 +1,8 @@
-import { HandledS3ObjectInput, FetchOptionArgsType, FetchOptionResponseType } from '~/assets/type'
+import type {
+  HandledS3ObjectInput,
+  FetchOptionArgsType,
+  FetchOptionResponseType
+} from '~/assets/type'
 export const options = <T>({
   query = {},
   method = 'GET',
@@ -120,3 +124,19 @@ export const reverseSanitize = (str?: string | null): string => {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
 }
+
+export const sortObjectKeys = (obj: any): any => {
+  if (Array.isArray(obj)) return obj.sort().map(sortObjectKeys)
+  if (!isObject(obj) || !obj) return obj
+  let sortedObject = {}
+  const sortedKeys = Object.keys(obj).sort()
+  for (const key of sortedKeys) {
+    sortedObject = { ...sortedObject, [key]: sortObjectKeys(obj[key]) }
+  }
+  return sortedObject
+}
+
+export const scrollbarXVisible = (e: HTMLElement): boolean => e.scrollHeight > e.clientHeight
+export const scrollbarYVisible = (e: HTMLElement): boolean => e.scrollWidth > e.clientWidth
+export const scrollbarXWidth = (e: HTMLElement): number => e.scrollHeight - e.clientHeight
+export const scrollbarYWidth = (e: HTMLElement): number => e.scrollWidth - e.clientWidth

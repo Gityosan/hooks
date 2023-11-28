@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListSkillsQuery, Skill } from '~/assets/API'
+import type { ListSkillsQuery, Skill } from '~/assets/API'
 import { listSkills } from '~/assets/graphql/queries'
 const skills = ref<Skill[]>([])
 useHead({ title: 'スキル一覧' })

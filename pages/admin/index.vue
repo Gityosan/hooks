@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from '~/assets/API'
+import type { User } from '~/assets/API'
 import { Greetings } from '~/assets/enum'
 const { myUser, cognitoUser } = useMyUser()
 const randomIndex = Math.floor(Math.random() * Greetings().length)

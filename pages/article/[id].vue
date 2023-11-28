@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Article, GetArticleQuery } from '~/assets/API'
+import type { Article, GetArticleQuery } from '~/assets/API'
 import { getArticle } from '~/assets/graphql/queries'
 const { params } = useRoute()
 const article = ref<Article>({} as Article)

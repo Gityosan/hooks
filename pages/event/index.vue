@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Event, ListEventsQuery } from '~/assets/API'
+import type { Event, ListEventsQuery } from '~/assets/API'
 import { listEvents } from '~/assets/graphql/queries'
 const { isSignedIn } = useLoginState()
 const events = ref<Event[]>([])

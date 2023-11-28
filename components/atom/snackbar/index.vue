@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SnackbarType } from '~/assets/type'
+import type { SnackbarType } from '~/assets/type'
 const { deleteSnackbar } = useSnackbar()
 const props = withDefaults(
   defineProps<{
@@ -18,9 +18,12 @@ setTimeout(function () {
 setTimeout(function () {
   active.value = false
 }, props.item.timeout)
-setTimeout(function () {
-  if (props.item.id) deleteSnackbar(props.item.id)
-}, (props.item.timeout || 3000) + unitTime)
+setTimeout(
+  function () {
+    if (props.item.id) deleteSnackbar(props.item.id)
+  },
+  (props.item.timeout || 3000) + unitTime
+)
 </script>
 <template>
   <v-card

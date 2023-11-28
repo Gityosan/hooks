@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Portfolio, ListPortfoliosQuery } from '~/assets/API'
+import type { Portfolio, ListPortfoliosQuery } from '~/assets/API'
 import { listPortfolios } from '~/assets/graphql/queries'
 const portfolios = ref<Portfolio[]>([])
 useHead({ title: 'ポートフォリオ一覧' })

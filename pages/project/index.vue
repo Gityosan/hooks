@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Project, ListProjectsQuery } from '~/assets/API'
+import type { Project, ListProjectsQuery } from '~/assets/API'
 import { listProjects } from '~/assets/graphql/queries'
 const { isSignedIn } = useLoginState()
 const projects = ref<Project[]>([])

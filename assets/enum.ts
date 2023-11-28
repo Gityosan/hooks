@@ -1,5 +1,5 @@
 import { validation as v } from './validation'
-import { InputType, InputComponentsType, SnackbarType, SnackbarTypeList } from '~/assets/type'
+import type { InputType, InputComponentsType, SnackbarType, SnackbarTypeList } from '~/assets/type'
 export const Regexp = {
   normalize: /\/$/,
   public: /(^\/(login)?$|^(\/(event|project|skill|article|member))?(\/\d+)?$)/,

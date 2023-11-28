@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { S3Object } from '~~/assets/API'
+import type { S3Object } from '~~/assets/API'
 const props = withDefaults(defineProps<{ modelValue: S3Object | null }>(), { modelValue: null })
 const emit = defineEmits<{
   (e: 'update:model-value', value: any): void

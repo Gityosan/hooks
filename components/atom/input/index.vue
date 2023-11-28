@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InputType } from '~/assets/type'
+import type { InputType } from '~/assets/type'
 import { InputComponents } from '~/assets/enum'
 const props = withDefaults(
   defineProps<{

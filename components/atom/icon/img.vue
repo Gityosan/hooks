@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { S3ObjectInput } from '~/assets/API'
+import type { S3ObjectInput } from '~/assets/API'
 const props = withDefaults(
   defineProps<{
     src?: string | null

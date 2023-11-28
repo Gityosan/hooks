@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Skill, GetSkillQuery } from '~/assets/API'
+import type { Skill, GetSkillQuery } from '~/assets/API'
 import { getSkill } from '~/assets/graphql/queries'
 const { params } = useRoute()
 const skill = ref<Skill>({} as Skill)

@@ -1,6 +1,6 @@
-import { AsyncDataOptions } from 'nuxt/app'
-import { NitroFetchOptions } from 'nitropack'
-import { S3ObjectInput } from '~/assets/API'
+import type { AsyncDataOptions } from 'nuxt/app'
+import type { NitroFetchOptions } from 'nitropack'
+import type { S3ObjectInput } from '~/assets/API'
 export type HandledS3ObjectInput = S3ObjectInput & { file?: File }
 export type FileInput<T> = {
   [P in keyof T]: T[P] extends S3ObjectInput | null | undefined ? HandledS3ObjectInput | null : T[P]

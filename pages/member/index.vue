@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListUsersQuery, User } from '~/assets/API'
+import type { ListUsersQuery, User } from '~/assets/API'
 import { listUsers } from '~/assets/graphql/queries'
 const users = ref<User[]>([])
 useHead({ title: 'ユーザー一覧' })
