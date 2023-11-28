@@ -1,4 +1,4 @@
-import vuetify from 'vite-plugin-vuetify'
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
   ssr: false,
   app: {
@@ -18,35 +18,29 @@ export default defineNuxtConfig({
       ]
     }
   },
-  components: { global: true, dirs: ['~/components'] },
-  typescript: {
-    shim: false,
-    strict: true
+  components: {
+    global: true,
+    dirs: ['~/components']
   },
-  css: ['vuetify/styles', '@/assets/css/index.scss'],
-  build: {
-    transpile: ['vuetify']
-  },
+  typescript: { shim: false, strict: true },
+  css: ['@/assets/css/index.scss'],
+  build: { transpile: ['vuetify'] },
   modules: [
-    (options, nuxt) => {
+    (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
-        if (config.plugins) config.plugins.push(vuetify())
+        // @ts-expect-error
+        config.plugins.push(vuetify({ autoImport: true }))
       })
     }
   ],
   vite: {
-    resolve: {
-      alias: {
-        './runtimeConfig': './runtimeConfig.browser'
-      }
-    },
     define: {
       'window.global': {},
       'process.env.DEBUG': false
     },
-    server: {
-      watch: {
-        usePolling: true
+    vue: {
+      template: {
+        transformAssetUrls
       }
     }
   },
@@ -56,5 +50,8 @@ export default defineNuxtConfig({
       limit: 100,
       discordWebhook: ''
     }
+  },
+  devtools: {
+    enabled: true
   }
 })
