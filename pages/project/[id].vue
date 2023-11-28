@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {
+import type {
   Project,
   GetProjectQuery,
   ProjectUsers,
@@ -11,7 +11,7 @@ import { createProjectUsers, deleteProjectUsers } from '~/assets/graphql/mutatio
 const { params } = useRoute()
 const { isSignedIn } = useLoginState()
 const { myUser } = useMyUser()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const project = ref<Project>({} as Project)
 const imageUrl = ref<string>('/no_image.png')
 const enter = async () => {
@@ -62,11 +62,11 @@ await fetchProject()
       <template v-if="isSignedIn">
         <atom-button-outlined
           v-if="!project.user?.items.map((v) => v?.userID).includes(myUser.id)"
-          :loading="banEdit"
+          :loading="ineditable"
           text="参加する"
           @click="enter()"
         />
-        <atom-button-outlined v-else :loading="banEdit" text="参加をやめる" @click="leave()" />
+        <atom-button-outlined v-else :loading="ineditable" text="参加をやめる" @click="leave()" />
       </template>
     </div>
     <div class="d-flex flex-nowrap justify-start bg-transparent mt-2 mb-2" style="gap: 0 10px">

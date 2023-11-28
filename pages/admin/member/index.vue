@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { UpdateUserInput, ListUsersQuery } from '~/assets/API'
-import { FileInput } from '~/assets/type'
+import type { UpdateUserInput, ListUsersQuery } from '~/assets/API'
+import type { FileInput } from '~/assets/type'
 import { userInputs } from '~/assets/enum'
 import { createUser, deleteUser } from '~/assets/graphql/mutations'
 import { listUsers } from '~/assets/graphql/queries'
 const { isAdmin } = useLoginState()
-const { banEdit } = useEditState()
-const { myUser } = useMyUser()
+const { ineditable } = useEditState()
 const users = ref<UpdateUserInput[]>([])
 const open = ref<boolean>(false)
 const form = ref<any>()
@@ -23,14 +22,13 @@ const headers = [
   { title: '学部・学科', key: 'faculty' },
   { title: '就活中', key: 'jobHunting' },
   { title: '加入日', key: 'join' },
-  { title: '卒業日', key: 'leave' },
-  { title: '操作', key: 'action' }
+  { title: '卒業日', key: 'leave' }
 ]
+if (isAdmin.value) headers.push({ title: '操作', key: 'action' })
 const getItems = async () => {
   const { data } = await listQuery<ListUsersQuery, UpdateUserInput>({
     query: listUsers,
-    queryName: 'listUsers',
-    filter: isAdmin.value ? {} : { userUserId: { eq: myUser.value.id || null } }
+    queryName: 'listUsers'
   })
   if (data.value) users.value = data.value
 }
@@ -58,7 +56,7 @@ await getItems()
     <v-spacer />
     <atom-button-outlined
       text="アイテムの追加"
-      :disabled="banEdit"
+      :disabled="ineditable"
       icon="mdi-plus-circle"
       @click="open = true"
     />
@@ -68,7 +66,7 @@ await getItems()
     :items="users"
     :custom-columns="['file', 'jobHunting']"
     class="mb-15"
-    @fetch="getItems()"
+    @fetch="getItems"
     @edit="(id) => navigateTo(`/admin/user/${id}`)"
     @delete="
       (id) =>
@@ -81,10 +79,10 @@ await getItems()
     "
   >
     <template #file="{ item }">
-      <atom-icon-img :file="item.columns.file" width="40" class="mx-auto my-1 rounded-circle" />
+      <atom-icon-img :file="item?.file" width="40" class="mx-auto my-1 rounded-circle" />
     </template>
     <template #jobHunting="{ item }">
-      {{ item.columns.jobHunting ? '就活中' : '未就活' }}
+      {{ item?.jobHunting ? '就活中' : '未就活' }}
     </template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
@@ -92,10 +90,15 @@ await getItems()
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button text="キャンセル" :disabled="banEdit" icon="mdi-close" @click="open = false" />
+        <atom-button
+          text="キャンセル"
+          :disabled="ineditable"
+          icon="mdi-close"
+          @click="open = false"
+        />
         <atom-button
           text="保存"
-          :disabled="banEdit"
+          :disabled="ineditable"
           icon="mdi-content-save"
           @click="createItem()"
         />

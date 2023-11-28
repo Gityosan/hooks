@@ -15,7 +15,7 @@ const props = withDefaults(
     items: () => [],
     customColumns: () => [],
     page: 1,
-    perPage: 10,
+    perPage: 30,
     totalPageCount: 1,
     showExpand: false
   }
@@ -24,9 +24,11 @@ const emit = defineEmits<{
   (e: 'fetch'): void
   (e: 'edit', id: string): void
   (e: 'delete', id: string): void
+  (e: 'update:page', page: number): void
+  (e: 'update:per-page', perPage: number): void
 }>()
 const { mdAndUp, sm } = useDisplay()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const records = ref<any[]>(props.items)
 const open = ref<boolean>(false)
 const selectedIds = ref<string[]>([])
@@ -87,7 +89,7 @@ const deleteItems = async () => {
       />
       <atom-button-outlined
         text="再取得"
-        :disabled="banEdit"
+        :disabled="ineditable"
         icon="mdi-reload"
         @click="$emit('fetch')"
       />
@@ -97,7 +99,7 @@ const deleteItems = async () => {
       :headers="headers"
       :items="records"
       :search="search"
-      :loading="banEdit"
+      :loading="ineditable"
       no-data-text="表示できるデータがありません"
       item-title="name"
       item-value="id"
@@ -180,7 +182,7 @@ const deleteItems = async () => {
                 v-if="selectedIds.length > 1"
                 text="選択したアイテムの削除"
                 variant="small"
-                :disabled="banEdit"
+                :disabled="ineditable"
                 icon="mdi-delete"
                 class="ml-2 bg-white"
                 @click="open = true"
@@ -193,22 +195,22 @@ const deleteItems = async () => {
       <template v-for="c in customColumns" :key="c" #[`item.${c}`]="{ item }">
         <slot :name="c" :item="item" />
       </template>
-      <template #item.action="{ item }">
+      <template v-if="headers.find((v) => v.key === 'action')" #item.action="{ item }">
         <slot name="action" :item="item">
           <div class="d-flex flex-nowrap" style="gap: 0 8px">
             <atom-button-outlined
               text="編集"
               variant="small"
-              :disabled="banEdit"
+              :disabled="ineditable"
               icon="mdi-pencil"
-              @click="$emit('edit', item.value)"
+              @click="$emit('edit', item.id)"
             />
             <atom-button-outlined
               text="削除"
               variant="small"
-              :disabled="banEdit"
+              :disabled="ineditable"
               icon="mdi-delete"
-              @click="deleteReady(item.value)"
+              @click="deleteReady(item.id)"
             />
           </div>
         </slot>
@@ -238,13 +240,13 @@ const deleteItems = async () => {
         <div class="d-flex justify-space-around">
           <atom-button-switch
             text="削除します"
-            :loading="banEdit"
+            :loading="ineditable"
             class="rounded-pill width-200"
             @click="deleteItems()"
           />
           <atom-button-switch
             text="キャンセル"
-            :loading="banEdit"
+            :loading="ineditable"
             class="rounded-pill width-200"
             @click="open = false"
           />

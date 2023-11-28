@@ -1,6 +1,6 @@
 import { CognitoUser } from 'amazon-cognito-identity-js'
-import { User } from '~/assets/API'
-import { SnackbarType, SnackbarTypeList } from '~/assets/type'
+import type { User } from '~/assets/API'
+import type { SnackbarType, SnackbarTypeList } from '~/assets/type'
 import { iconTypes } from '~/assets/enum'
 
 // ログイン可能状態とログイン状態の状態管理
@@ -101,14 +101,14 @@ export const useErrorState = () => {
     addErrorMessages: addErrorMessages(errorMessages)
   }
 }
-// banEditなど編集状態の管理
+// ineditableなど編集状態の管理
 export const useEditState = () => {
-  const banEdit = useState<boolean>('banEdit', () => false)
-  const setBanEdit = (banEdit: Ref<boolean>) => (v: boolean) => {
-    banEdit.value = v
+  const ineditable = useState<boolean>('ineditable', () => false)
+  const setIneditable = (ineditable: Ref<boolean>) => (v: boolean) => {
+    ineditable.value = v
   }
   return {
-    banEdit: readonly(banEdit),
-    setBanEdit: setBanEdit(banEdit)
+    ineditable: readonly(ineditable),
+    setIneditable: setIneditable(ineditable)
   }
 }

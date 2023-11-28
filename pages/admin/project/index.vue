@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UpdateProjectInput, ListProjectsQuery } from '~/assets/API'
-import { FileInput } from '~/assets/type'
+import type { UpdateProjectInput, ListProjectsQuery } from '~/assets/API'
+import type { FileInput } from '~/assets/type'
 import { projectInputs } from '~/assets/enum'
 import { createProject, deleteProject } from '~/assets/graphql/mutations'
 import { listProjects } from '~/assets/graphql/queries'
 const { isAdmin } = useLoginState()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const { myUser } = useMyUser()
 const projects = ref<UpdateProjectInput[]>([])
 const open = ref<boolean>(false)
@@ -56,7 +56,7 @@ await getItems()
     <v-spacer />
     <atom-button-outlined
       text="アイテムの追加"
-      :disabled="banEdit"
+      :disabled="ineditable"
       icon="mdi-plus-circle"
       @click="open = true"
     />
@@ -66,7 +66,7 @@ await getItems()
     :items="projects"
     :custom-columns="['wanted', 'published', 'user']"
     class="mb-15"
-    @fetch="getItems()"
+    @fetch="getItems"
     @edit="(id) => navigateTo(`/admin/project/${id}`)"
     @delete="
       (id) =>
@@ -79,13 +79,13 @@ await getItems()
     "
   >
     <template #wanted="{ item }">
-      {{ item.columns.wanted ? '募集中' : '募集停止' }}
+      {{ item.wanted ? '募集中' : '募集停止' }}
     </template>
     <template #published="{ item }">
-      {{ item.columns.published ? '公開済み' : '下書き' }}
+      {{ item.published ? '公開済み' : '下書き' }}
     </template>
     <template #user="{ item }">
-      {{ item.columns.user.items.map((v: any) => v?.user.name).join(' / ') }}
+      {{ item.user.items.map((v: any) => v?.user.name).join(' / ') }}
     </template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
@@ -93,10 +93,15 @@ await getItems()
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button text="キャンセル" :disabled="banEdit" icon="mdi-close" @click="open = false" />
+        <atom-button
+          text="キャンセル"
+          :disabled="ineditable"
+          icon="mdi-close"
+          @click="open = false"
+        />
         <atom-button
           text="保存"
-          :disabled="banEdit"
+          :disabled="ineditable"
           icon="mdi-content-save"
           @click="createItem()"
         />

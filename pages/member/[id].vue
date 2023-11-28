@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { validation } from '~/assets/validation'
-import { User, GetUserQuery } from '~/assets/API'
+import type { User, GetUserQuery } from '~/assets/API'
 import { getUser } from '~/assets/graphql/queries'
 const config = useRuntimeConfig()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const { params } = useRoute()
 const tab = ref<string>('')
 const name = ref<string>('')
@@ -164,6 +164,6 @@ await fetchUser()
       counter="500"
       class="mb-5"
     />
-    <atom-button-outlined text="送信" class="w-100" :loading="banEdit" @click="submit()" />
+    <atom-button-outlined text="送信" class="w-100" :loading="ineditable" @click="submit()" />
   </v-form>
 </template>

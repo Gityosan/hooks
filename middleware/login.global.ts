@@ -1,6 +1,6 @@
 import { Auth } from 'aws-amplify'
 import { Regexp } from '~/assets/enum'
-import { User, ListUsersQuery } from '~/assets/API'
+import type { User, ListUsersQuery } from '~/assets/API'
 import { listUsers } from '~/assets/graphql/queries'
 import { createUser } from '~/assets/graphql/mutations'
 import { useLoginState, useMyUser } from '~/composables/useState'
@@ -20,17 +20,15 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const { data } = await listQuery<ListUsersQuery, User>({
       query: listUsers,
       queryName: 'listUsers',
-      // @ts-ignore
       filter: { email: { eq: user.attributes.email } }
     })
-    if (!data.value?.length) {
+    if (data.value?.length) setMyUser(data.value[0])
+    else {
       const res = await baseMutation({
         query: createUser,
         input: { email: user.attributes.email }
       })
       console.debug('新規User作成', res)
-    } else {
-      setMyUser(data.value[0])
     }
   }
   if (to.path.includes('login') && isSignedIn.value) return navigateTo('/admin')

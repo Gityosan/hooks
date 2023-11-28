@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { InputType } from '~/assets/type'
-const { banEdit } = useEditState()
+import type { InputType } from '~/assets/type'
+const { ineditable } = useEditState()
 const items = ref<any>([])
 const tabs = ['新規作成・編集', '一覧']
 const tab = ref<string>('')
@@ -55,13 +55,13 @@ await getRelation()
           />
           <v-spacer />
           <atom-button-outlined
-            :loading="banEdit"
+            :loading="ineditable"
             text="リセット"
             class="mr-3"
             @click="input = defaultInput"
           />
           <atom-button-outlined
-            :loading="banEdit"
+            :loading="ineditable"
             :text="input.id ? '更新' : '新規作成'"
             @click="mutateRelation()"
           />
@@ -83,7 +83,7 @@ await getRelation()
             })
           "
           :items="items"
-          @fetch="getRelation()"
+          @fetch="getRelation"
           @edit="
             (id) => {
               input = filterAttr(

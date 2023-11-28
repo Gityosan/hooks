@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UpdateArticleInput, GetArticleQuery } from '~/assets/API'
-import { FileInput } from '~/assets/type'
+import type { UpdateArticleInput, GetArticleQuery } from '~/assets/API'
+import type { FileInput } from '~/assets/type'
 import { articleInputs } from '~/assets/enum'
 import { deleteArticle, updateArticle } from '~/assets/graphql/mutations'
 import { getArticle } from '~/assets/graphql/queries'
 const { params } = useRoute()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const defaultInput = Object.fromEntries(articleInputs.map((v) => [v.key, v.default]))
 const input = ref<FileInput<Partial<UpdateArticleInput>>>(
   defaultInput as FileInput<Partial<UpdateArticleInput>>
@@ -20,7 +20,6 @@ const getItem = async () => {
     variables: { id: params.id }
   })
   if (data.value) input.value = data.value
-  console.debug(input.value)
 }
 const updateItem = async () => {
   if (!(await checkValidation(form.value))) return
@@ -53,14 +52,14 @@ await getItem()
       <atom-text text="編集" font-size="text-h6" class="my-2 line-clamp-1" />
       <v-spacer />
       <atom-button-outlined
-        :loading="banEdit"
+        :loading="ineditable"
         text="保存する"
         class="mr-4 flex-0"
         icon="mdi-content-save"
         @click="updateItem()"
       />
       <atom-button-outlined
-        :loading="banEdit"
+        :loading="ineditable"
         text="削除する"
         class="mr-4 flex-0"
         icon="mdi-delete"
@@ -81,13 +80,13 @@ await getItem()
         <div class="d-flex justify-space-around">
           <atom-button-switch
             text="削除します"
-            :loading="banEdit"
+            :loading="ineditable"
             class="rounded-pill width-200"
             @click="deleteItem()"
           />
           <atom-button-switch
             text="キャンセル"
-            :loading="banEdit"
+            :loading="ineditable"
             class="rounded-pill width-200"
             @click="open = false"
           />

@@ -1,23 +1,28 @@
 import { API, Auth, Storage } from 'aws-amplify'
-import { StorageAccessLevel } from '@aws-amplify/storage'
-import { GraphQLQuery } from '@aws-amplify/api'
+import type { StorageAccessLevel } from '@aws-amplify/storage'
+import type { GraphQLQuery } from '@aws-amplify/api'
 import { v4 as uuidv4 } from 'uuid'
+import type { AsyncDataOptions } from 'nuxt/app'
 
 export const getQuery = async <S, T>({
   query,
   queryName,
-  variables = {}
+  variables = {},
+  options = {}
 }: {
   query: string
   queryName: string
   variables?: object
+  options?: AsyncDataOptions<T | null>
 }) => {
   const { isSignedIn } = useLoginState()
-  const { setBanEdit } = useEditState()
+  const { setIneditable } = useEditState()
   const { setExistError, addErrorMessages } = useErrorState()
-  setBanEdit(true)
+  setIneditable(true)
+  const asyncDataOptions = { lazy: false, watch: [], ...(options || {}) }
+  const queryParams = isEmptyObject(variables) ? '' : JSON.stringify(sortObjectKeys(variables))
   const result = await useAsyncData<T | null>(
-    queryName,
+    `${queryName}${queryParams}`,
     async (): Promise<T | null> => {
       const res = await API.graphql<GraphQLQuery<S>>({
         query,
@@ -28,33 +33,37 @@ export const getQuery = async <S, T>({
       const rawData = Object.getOwnPropertyDescriptor(res.data, queryName)?.value
       return rawData || null
     },
-    { lazy: false, watch: [] }
+    asyncDataOptions
   )
   if (result.error.value) {
     clearError()
     setExistError(true)
     addErrorMessages(`${result.error.value?.message}`)
   }
-  console.debug('data.value', result.data.value)
-  setBanEdit(false)
+  console.debug(`${queryName}${queryParams}`, result.data.value)
+  setIneditable(false)
   return result
 }
 export const listQuery = async <S, T>({
   query,
   queryName,
-  filter = {}
+  filter = {},
+  options = {}
 }: {
   query: string
   queryName: string
   filter?: object
+  options?: AsyncDataOptions<T[] | null>
 }) => {
   const config = useRuntimeConfig()
   const { isSignedIn } = useLoginState()
-  const { setBanEdit } = useEditState()
+  const { setIneditable } = useEditState()
   const { setExistError, addErrorMessages } = useErrorState()
-  setBanEdit(true)
+  setIneditable(true)
+  const asyncDataOptions = { lazy: false, watch: [], ...(options || {}) }
+  const queryParams = isEmptyObject(filter) ? '' : JSON.stringify(sortObjectKeys(filter))
   const result = await useAsyncData<T[] | null>(
-    queryName,
+    `${queryName}${queryParams}`,
     async (): Promise<T[]> => {
       const items: T[] = []
       const variables = {
@@ -79,7 +88,7 @@ export const listQuery = async <S, T>({
       await callbackQuery()
       return items
     },
-    { lazy: false, watch: [] }
+    asyncDataOptions
   )
   if (result.error.value) {
     clearError()
@@ -87,7 +96,7 @@ export const listQuery = async <S, T>({
     addErrorMessages(`${result.error.value?.message}`)
   }
   console.debug('data.value', result.data.value)
-  setBanEdit(false)
+  setIneditable(false)
   return result
 }
 export const baseMutation = async <T, S>({
@@ -99,8 +108,8 @@ export const baseMutation = async <T, S>({
 }): Promise<S> => {
   const { isSignedIn } = useLoginState()
   const { addSnackbar } = useSnackbar()
-  const { setBanEdit } = useEditState()
-  setBanEdit(true)
+  const { setIneditable } = useEditState()
+  setIneditable(true)
   return await API.graphql<GraphQLQuery<T>>({
     query,
     variables: { input: Object.fromEntries(Object.entries(input).filter((v) => !!v[1])) },
@@ -111,14 +120,15 @@ export const baseMutation = async <T, S>({
       if (!name) return
       console.debug(res.data[name])
       addSnackbar({ text: '保存が完了しました' })
-      setBanEdit(false)
       return res.data[name]
     })
     .catch((e) => {
       console.debug(e)
       addSnackbar({ type: 'alert', text: '保存に失敗しました' })
       clearError()
-      setBanEdit(false)
+    })
+    .finally(() => {
+      setIneditable(false)
     })
 }
 export const extendMutation = async <T, S>({
@@ -136,9 +146,9 @@ export const extendMutation = async <T, S>({
 }): Promise<S | null> => {
   const { isSignedIn } = useLoginState()
   const { addSnackbar } = useSnackbar()
-  const { setBanEdit } = useEditState()
+  const { setIneditable } = useEditState()
   try {
-    setBanEdit(true)
+    setIneditable(true)
     const { data }: any = await API.graphql<GraphQLQuery<T>>({
       query,
       variables: { input },
@@ -148,13 +158,13 @@ export const extendMutation = async <T, S>({
     if (type === 'delete' || type === 'update') await removeImage(key)
     if (type === 'create' || type === 'update') await putImage(key, file)
     addSnackbar({ text: '保存が完了しました' })
-    setBanEdit(false)
+    setIneditable(false)
     if (name) return data[name]
     else return null
   } catch (e) {
     addSnackbar({ type: 'alert', text: '保存に失敗しました' })
     clearError()
-    setBanEdit(false)
+    setIneditable(false)
     return null
   }
 }

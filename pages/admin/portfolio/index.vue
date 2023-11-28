@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UpdatePortfolioInput, ListPortfoliosQuery } from '~/assets/API'
-import { FileInput } from '~/assets/type'
+import type { UpdatePortfolioInput, ListPortfoliosQuery } from '~/assets/API'
+import type { FileInput } from '~/assets/type'
 import { portfolioInputs } from '~/assets/enum'
 import { createPortfolio, deletePortfolio } from '~/assets/graphql/mutations'
 import { listPortfolios } from '~/assets/graphql/queries'
 const { isAdmin } = useLoginState()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const { myUser } = useMyUser()
 const portfolios = ref<UpdatePortfolioInput[]>([])
 const open = ref<boolean>(false)
@@ -53,7 +53,7 @@ await getItems()
     <v-spacer />
     <atom-button-outlined
       text="アイテムの追加"
-      :disabled="banEdit"
+      :disabled="ineditable"
       icon="mdi-plus-circle"
       @click="open = true"
     />
@@ -63,7 +63,7 @@ await getItems()
     :items="portfolios"
     :custom-columns="['title', 'published', 'user']"
     class="mb-15"
-    @fetch="getItems()"
+    @fetch="getItems"
     @edit="(id) => navigateTo(`/admin/portfolio/${id}`)"
     @delete="
       (id) =>
@@ -76,22 +76,27 @@ await getItems()
     "
   >
     <template #title="{ item }">
-      <nuxt-link :href="item.columns.url" target="_blank">{{ item.columns.title }}</nuxt-link>
+      <nuxt-link :href="item.url" target="_blank">{{ item.title }}</nuxt-link>
     </template>
     <template #published="{ item }">
-      {{ item.columns.published ? '公開済み' : '下書き' }}
+      {{ item.published ? '公開済み' : '下書き' }}
     </template>
-    <template #user="{ item }"> {{ item.columns.user.name }}</template>
+    <template #user="{ item }"> {{ item.user.name }}</template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
     <v-card class="pa-5">
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button text="キャンセル" :disabled="banEdit" icon="mdi-close" @click="open = false" />
+        <atom-button
+          text="キャンセル"
+          :disabled="ineditable"
+          icon="mdi-close"
+          @click="open = false"
+        />
         <atom-button
           text="保存"
-          :disabled="banEdit"
+          :disabled="ineditable"
           icon="mdi-content-save"
           @click="createItem()"
         />

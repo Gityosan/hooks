@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { validation } from '~/assets/validation'
 const { setExistError, setErrorMessages } = useErrorState()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const config = useRuntimeConfig()
 const name = ref<string>('')
 const body = ref<string>('')
@@ -61,6 +61,6 @@ const submit = async () => {
       counter="500"
       class="mb-5"
     />
-    <atom-button-outlined text="送信" class="w-100" :loading="banEdit" @click="submit()" />
+    <atom-button-outlined text="送信" class="w-100" :loading="ineditable" @click="submit()" />
   </v-form>
 </template>

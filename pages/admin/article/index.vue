@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UpdateArticleInput, ListArticlesQuery } from '~/assets/API'
-import { FileInput } from '~/assets/type'
+import type { UpdateArticleInput, ListArticlesQuery } from '~/assets/API'
+import type { FileInput } from '~/assets/type'
 import { articleInputs } from '~/assets/enum'
 import { createArticle, deleteArticle } from '~/assets/graphql/mutations'
 import { listArticles } from '~/assets/graphql/queries'
 const { isAdmin } = useLoginState()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const { myUser } = useMyUser()
 const articles = ref<UpdateArticleInput[]>([])
 const open = ref<boolean>(false)
@@ -54,7 +54,7 @@ await getItems()
     <atom-button-outlined
       text="アイテムの追加"
       icon="mdi-plus-circle"
-      :disabled="banEdit"
+      :disabled="ineditable"
       @click="open = true"
     />
   </div>
@@ -63,7 +63,7 @@ await getItems()
     :items="articles"
     :custom-columns="['published', 'user']"
     class="mb-15"
-    @fetch="getItems()"
+    @fetch="getItems"
     @edit="(id) => navigateTo(`/admin/article/${id}`)"
     @delete="
       (id) =>
@@ -76,9 +76,9 @@ await getItems()
     "
   >
     <template #published="{ item }">
-      {{ item.columns.published ? '公開済み' : '下書き' }}
+      {{ item.published ? '公開済み' : '下書き' }}
     </template>
-    <template #user="{ item }">{{ item.columns.user.name }}</template>
+    <template #user="{ item }">{{ item.user.name }}</template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
     <v-card class="pa-5">
@@ -88,13 +88,13 @@ await getItems()
         <atom-button-outlined
           text="キャンセル"
           icon="mdi-close"
-          :disabled="banEdit"
+          :disabled="ineditable"
           @click="open = false"
         />
         <atom-button-outlined
           text="保存"
           icon="mdi-content-save"
-          :disabled="banEdit"
+          :disabled="ineditable"
           @click="createItem()"
         />
       </div>

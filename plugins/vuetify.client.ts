@@ -1,8 +1,8 @@
 import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
-import * as labs from 'vuetify/labs/components'
 export default defineNuxtPlugin((app) => {
-  const vuetify = createVuetify({ components: { ...components, ...labs } })
+  const vuetify = createVuetify({ components })
   app.vueApp.use(vuetify)
 })

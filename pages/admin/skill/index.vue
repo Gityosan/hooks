@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { UpdateSkillInput, ListSkillsQuery } from '~/assets/API'
-import { FileInput } from '~/assets/type'
+import type { UpdateSkillInput, ListSkillsQuery } from '~/assets/API'
+import type { FileInput } from '~/assets/type'
 import { skillInputs } from '~/assets/enum'
 import { createSkill, deleteSkill } from '~/assets/graphql/mutations'
 import { listSkills } from '~/assets/graphql/queries'
 const { isAdmin } = useLoginState()
-const { banEdit } = useEditState()
+const { ineditable } = useEditState()
 const { myUser } = useMyUser()
 const skills = ref<UpdateSkillInput[]>([])
 const open = ref<boolean>(false)
@@ -48,7 +48,7 @@ await getItems()
     <v-spacer />
     <atom-button-outlined
       text="アイテムの追加"
-      :disabled="banEdit"
+      :disabled="ineditable"
       icon="mdi-plus-circle"
       @click="open = true"
     />
@@ -57,7 +57,7 @@ await getItems()
     :headers="headers"
     :items="skills"
     class="mb-15"
-    @fetch="getItems()"
+    @fetch="getItems"
     @edit="(id) => navigateTo(`/admin/skill/${id}`)"
     @delete="(id) => baseMutation({ query: deleteSkill, input: { id } })"
   >
@@ -67,10 +67,15 @@ await getItems()
       <div class="d-flex align-center py-3 bg-white" style="gap: 0 8px">
         <atom-text text="新規作成" line-height="line-height-lg" />
         <v-spacer />
-        <atom-button text="キャンセル" :disabled="banEdit" icon="mdi-close" @click="open = false" />
+        <atom-button
+          text="キャンセル"
+          :disabled="ineditable"
+          icon="mdi-close"
+          @click="open = false"
+        />
         <atom-button
           text="保存"
-          :disabled="banEdit"
+          :disabled="ineditable"
           icon="mdi-content-save"
           @click="createItem()"
         />

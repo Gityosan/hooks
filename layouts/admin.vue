@@ -48,7 +48,6 @@ const menu = [
           :color="isSignedIn ? (isAdmin ? 'text-accent-color' : 'text-white') : 'text-main-color'"
         />
       </div>
-
       <atom-text
         font-size="text-caption"
         text="Pages"
@@ -85,14 +84,13 @@ const menu = [
           line-height="line-height-30"
         />
       </v-btn>
-
       <v-spacer></v-spacer>
       <v-btn
         class="height-30 px-2 mb-2 border-solid border-width-1 border-white min-width-0 transition-medium-ease-out"
         :class="expand ? 'width-144' : 'width-36'"
         variant="text"
         :ripple="false"
-        @click="$signOut()"
+        @click="signOut()"
       >
         <v-icon
           icon="mdi-logout"
@@ -126,8 +124,8 @@ const menu = [
     </div>
     <div
       class="d-flex position-absolute top-0 right-0 z-index-10 transition-medium-ease-out"
-      :class="open ? 'right-0' : 'right-n200'"
-      :style="{ width: '232px', height: '100dvh' }"
+      :class="open ? 'right-0' : `right-n${200 + 12}`"
+      :style="{ width: `${232 + 12}px`, height: '100dvh' }"
     >
       <div class="width-32 h-100">
         <div class="w-100 height-48"></div>
@@ -149,7 +147,10 @@ const menu = [
           </v-card>
         </v-hover>
       </div>
-      <div class="width-200 h-100 bg-white" style="border-left: 1px solid var(--main-color)">
+      <div
+        class="width-200 h-100 bg-white border-main-color border-left-solid"
+        :class="open ? 'border-width-1' : 'border-width-0'"
+      >
         <v-hover v-for="m in menu" v-slot="{ isHovering, props }">
           <nuxt-link :to="m.path" :style="{ 'text-decoration': 'none' }" v-bind="props">
             <atom-text
