@@ -179,6 +179,14 @@ $border-style: none, hidden, dotted, dashed, solid, double, groove, ridge, inset
   }
 }
 @for $i from 0 through 200 {
+  .border-radius-#{$i} {
+    border-radius: $i * 1px !important;
+  }
+  .letter-spacing-#{$i} {
+    letter-spacing: $i * 0.1px !important;
+  }
+}
+@for $i from 0 through 300 {
   .top-#{$i} {
     top: $i * 1px;
   }
@@ -203,14 +211,6 @@ $border-style: none, hidden, dotted, dashed, solid, double, groove, ridge, inset
   .bottom-n#{$i} {
     bottom: $i * -1px;
   }
-  .border-radius-#{$i} {
-    border-radius: $i * 1px !important;
-  }
-  .letter-spacing-#{$i} {
-    letter-spacing: $i * 0.1px !important;
-  }
-}
-@for $i from 0 through 300 {
   .height-#{$i} {
     height: $i * 1px !important;
   }
