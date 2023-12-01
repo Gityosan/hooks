@@ -21,6 +21,7 @@ export type InputTypeList =
   | 'switch'
   | 'fileinput'
   | 'select'
+  | 'radiogroup'
 export type SchemaTypeList =
   | 'ID'
   | 'String'

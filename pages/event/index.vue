@@ -34,7 +34,7 @@ await getEvents()
     >
       <atom-text
         font-size="text-subtitle-2"
-        :text="item.wanted ? '募集中' : '募集終了'"
+        :text="item.wanted ? '募集中' : '募集停止'"
         :color="item.wanted ? 'text-white' : 'text-grey-darken-1'"
         class="rounded text-center border-width-1 border-solid pa-1 mx-2"
         :class="[

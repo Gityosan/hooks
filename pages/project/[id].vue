@@ -93,7 +93,7 @@ await fetchProject()
       <div class="v-col-12 v-col-sm-6">
         <atom-text
           font-size="text-subtitle-2"
-          :text="project.wanted ? '募集中' : '募集終了'"
+          :text="project.wanted ? '募集中' : '募集停止'"
           :color="project.wanted ? 'text-white' : 'text-grey-darken-1'"
           class="rounded width-120 text-center border-width-1 border-solid pa-1"
           :class="[

@@ -17,8 +17,8 @@ const input = ref<FileInput<Partial<UpdateProjectInput>>>(defaultInput)
 useHead({ title: 'プロジェクト一覧' })
 const headers = [
   { title: 'タイトル', key: 'title' },
-  { title: '募集・停止', key: 'wanted' },
-  { title: '公開・下書き', key: 'published' },
+  { title: '募集状態', key: 'wanted' },
+  { title: '公開状態', key: 'published' },
   { title: '開始(予定)日', key: 'start' },
   { title: '終了(予定)日', key: 'end' },
   { title: '参加者', key: 'user' },
@@ -82,7 +82,7 @@ await getItems()
       {{ item.wanted ? '募集中' : '募集停止' }}
     </template>
     <template #published="{ item }">
-      {{ item.published ? '公開済み' : '下書き' }}
+      {{ item.published ? '公開済み' : '非公開' }}
     </template>
     <template #user="{ item }">
       {{ item.user.items.map((v: any) => v?.user.name).join(' / ') }}

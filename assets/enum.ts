@@ -62,14 +62,13 @@ export const InputComponents = (key?: string, v?: any): InputComponentsType => {
       props: {
         density: 'compact',
         'hide-details': true,
-        inset: true,
         class: v ? 'text-main-color' : 'text-grey-darken-4',
-        label: v ? 'している' : 'していない',
         style: 'width: fit-content;'
       }
     },
     fileinput: { comp: 'atom-input-file' },
-    select: { comp: 'atom-input-select' }
+    select: { comp: 'atom-input-select' },
+    radiogroup: { comp: 'atom-input-radio-group' }
   }
 }
 export const articleInputs: InputType[] = [
@@ -93,12 +92,18 @@ export const articleInputs: InputType[] = [
   },
   {
     key: 'published',
-    title: '公開中かどうか',
-    type: 'switch',
+    title: '公開状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: []
+    rules: [],
+    props: {
+      items: [
+        { label: '公開中', value: true },
+        { label: '非公開', value: false }
+      ]
+    }
   },
   {
     key: 'userArticleId',
@@ -170,21 +175,33 @@ export const eventInputs: InputType[] = [
   },
   {
     key: 'wanted',
-    title: '募集中かどうか',
-    type: 'switch',
+    title: '募集状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: [v.required]
+    rules: [],
+    props: {
+      items: [
+        { label: '募集中', value: true },
+        { label: '募集停止', value: false }
+      ]
+    }
   },
   {
     key: 'published',
-    title: '公開中かどうか',
-    type: 'switch',
+    title: '公開状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: []
+    rules: [],
+    props: {
+      items: [
+        { label: '公開中', value: true },
+        { label: '非公開', value: false }
+      ]
+    }
   },
   {
     key: 'file',
@@ -244,12 +261,18 @@ export const userInputs: InputType[] = [
   },
   {
     key: 'jobHunting',
-    title: '就活中かどうか',
-    type: 'switch',
+    title: '就活状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: []
+    rules: [],
+    props: {
+      items: [
+        { label: '就活中', value: true },
+        { label: '就活外', value: false }
+      ]
+    }
   },
   {
     key: 'join',
@@ -390,12 +413,18 @@ export const portfolioInputs: InputType[] = [
   },
   {
     key: 'published',
-    title: '公開中かどうか',
-    type: 'switch',
+    title: '公開状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: []
+    rules: [],
+    props: {
+      items: [
+        { label: '公開中', value: true },
+        { label: '非公開', value: false }
+      ]
+    }
   },
   {
     key: 'file',
@@ -456,21 +485,33 @@ export const projectInputs: InputType[] = [
   },
   {
     key: 'wanted',
-    title: '募集中かどうか',
-    type: 'switch',
+    title: '募集状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: []
+    rules: [],
+    props: {
+      items: [
+        { label: '募集中', value: true },
+        { label: '募集停止', value: false }
+      ]
+    }
   },
   {
     key: 'published',
-    title: '公開中かどうか',
-    type: 'switch',
+    title: '公開状態',
+    type: 'radiogroup',
     schemaType: 'Boolean',
     isArray: false,
     default: false,
-    rules: []
+    rules: [],
+    props: {
+      items: [
+        { label: '公開中', value: true },
+        { label: '非公開', value: false }
+      ]
+    }
   },
   {
     key: 'file',

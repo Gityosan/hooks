@@ -17,7 +17,7 @@ const input = ref<FileInput<Partial<UpdateArticleInput>>>(defaultInput)
 useHead({ title: '記事一覧' })
 const headers = [
   { title: 'タイトル', key: 'title' },
-  { title: '公開・下書き', key: 'published' },
+  { title: '公開状態', key: 'published' },
   { title: '筆者', key: 'user' },
   { title: '操作', key: 'action' }
 ]
@@ -76,7 +76,7 @@ await getItems()
     "
   >
     <template #published="{ item }">
-      {{ item.published ? '公開済み' : '下書き' }}
+      {{ item.published ? '公開済み' : '非公開' }}
     </template>
     <template #user="{ item }">{{ item.user.name }}</template>
   </module-data-table>

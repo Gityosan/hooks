@@ -52,7 +52,7 @@ const deleteItems = async () => {
 }
 </script>
 <template>
-  <v-card>
+  <v-card class="pt-2 pb-5">
     <div class="d-flex align-center py-3 px-5" style="gap: 0 8px">
       <v-text-field
         v-model="search"
@@ -109,7 +109,7 @@ const deleteItems = async () => {
       show-select
       :show-expand="showExpand"
       :style="{ '--v-table-row-height': '64px' }"
-      class="white-space-nowrap pb-5 text-subtitle-2"
+      class="white-space-nowrap text-subtitle-2 rounded-t-0"
       :page="1"
       :items-per-page="perPage"
       @update:page="$emit('update:page', $event)"
