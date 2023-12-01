@@ -79,9 +79,37 @@ await getItems()
       <nuxt-link :href="item.url" target="_blank">{{ item.title }}</nuxt-link>
     </template>
     <template #published="{ item }">
-      {{ item.published ? '公開済み' : '非公開' }}
+      <v-chip
+        :text="item.published ? '公開中' : '非公開'"
+        :color="item.published ? 'orange' : 'grey'"
+        density="comfortable"
+        class="font-weight-bold"
+      >
+        <template #prepend>
+          <v-icon
+            :icon="item.published ? 'mdi-circle-medium' : 'mdi-eye-off-outline'"
+            size="16"
+            class="mr-1 my-1"
+          />
+        </template>
+      </v-chip>
     </template>
-    <template #user="{ item }"> {{ item.user.name }}</template>
+    <template #user="{ item }">
+      <v-chip
+        v-for="v in item.user.items.slice(0, 3)"
+        :text="v.user.name"
+        density="comfortable"
+        variant="outlined"
+        size="small"
+        class="mr-1"
+      />
+      <v-chip
+        v-if="item.user.items.length > 3"
+        :text="`+${item.user.items.length - 3}`"
+        variant="outlined"
+        size="x-small"
+      />
+    </template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
     <v-card class="pa-5">

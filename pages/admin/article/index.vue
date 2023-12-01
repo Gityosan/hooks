@@ -76,9 +76,24 @@ await getItems()
     "
   >
     <template #published="{ item }">
-      {{ item.published ? '公開済み' : '非公開' }}
+      <v-chip
+        :text="item.published ? '公開中' : '非公開'"
+        :color="item.published ? 'orange' : 'grey'"
+        density="comfortable"
+        class="font-weight-bold"
+      >
+        <template #prepend>
+          <v-icon
+            :icon="item.published ? 'mdi-circle-medium' : 'mdi-eye-off-outline'"
+            size="16"
+            class="mr-1 my-1"
+          />
+        </template>
+      </v-chip>
     </template>
-    <template #user="{ item }">{{ item.user.name }}</template>
+    <template #user="{ item }">
+      <v-chip :text="item.user.name" density="comfortable" variant="outlined" />
+    </template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
     <v-card class="pa-5">

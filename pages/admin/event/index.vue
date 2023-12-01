@@ -78,16 +78,55 @@ await getItems()
     "
   >
     <template #wanted="{ item }">
-      {{ item.wanted ? '募集中' : '募集停止' }}
+      <v-chip
+        :text="item.wanted ? '募集中' : '募集停止'"
+        :color="item.wanted ? 'success' : 'grey'"
+        density="comfortable"
+        class="font-weight-bold"
+      >
+        <template #prepend>
+          <v-icon
+            :icon="item.wanted ? 'mdi-check' : 'mdi-pause-octagon-outline'"
+            size="16"
+            class="mr-1 my-1"
+          />
+        </template>
+      </v-chip>
     </template>
     <template #published="{ item }">
-      {{ item.published ? '公開済み' : '非公開' }}
+      <v-chip
+        :text="item.published ? '公開中' : '非公開'"
+        :color="item.published ? 'orange' : 'grey'"
+        density="comfortable"
+        class="font-weight-bold"
+      >
+        <template #prepend>
+          <v-icon
+            :icon="item.published ? 'mdi-circle-medium' : 'mdi-eye-off-outline'"
+            size="16"
+            class="mr-1 my-1"
+          />
+        </template>
+      </v-chip>
     </template>
     <template #date="{ item }">
       {{ item.date.join(' / ') }}
     </template>
     <template #user="{ item }">
-      {{ item.user.items.map((v: any) => v?.user.name).join(' / ') }}
+      <v-chip
+        v-for="v in item.user.items.slice(0, 3)"
+        :text="v.user.name"
+        density="comfortable"
+        variant="outlined"
+        size="small"
+        class="mr-1"
+      />
+      <v-chip
+        v-if="item.user.items.length > 3"
+        :text="`+${item.user.items.length - 3}`"
+        variant="outlined"
+        size="x-small"
+      />
     </template>
   </module-data-table>
   <v-dialog v-model="open" persistent>
