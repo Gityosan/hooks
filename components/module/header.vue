@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+const { currentRoute } = useRouter()
 const { isSignedIn, isAdmin } = useLoginState()
 const { xs } = useDisplay()
 const active = ref<boolean>(false)
@@ -16,6 +17,9 @@ const menu = [
   { text: '管理画面', outside: false, path: '/admin' },
   { text: 'タイピングゲーム', outside: false, path: '/typing-game' }
 ]
+watch(currentRoute, () => {
+  active.value = false
+})
 </script>
 <template>
   <div

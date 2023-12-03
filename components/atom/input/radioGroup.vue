@@ -23,8 +23,8 @@ const isSelected = (value: any): boolean => {
 <template>
   <v-radio-group
     :model-value="modelValue"
-    @update:model-value="$emit('update:model-value', $event)"
     inline
+    @update:model-value="$emit('update:model-value', $event)"
   >
     <v-radio
       v-for="(item, index) in items"

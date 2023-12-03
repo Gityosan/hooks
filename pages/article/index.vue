@@ -19,29 +19,23 @@ await getArticles()
     <atom-text text="Article" font-size="text-h5" line-height="line-height-lg" />
     <v-spacer />
     <nuxt-link v-if="isSignedIn" to="/admin/article">
-      <atom-button text="新規作成" />
+      <atom-button text="編集する" />
     </nuxt-link>
   </div>
   <div class="d-flex flex-wrap">
     <nuxt-link
       v-for="item in articles"
-      :key="item?.id"
-      :to="`/article/${item?.id}`"
-      class="text-decoration-none v-col-12 v-col-sm-6 v-col-md-4"
+      :key="item.id"
+      :to="`/article/${item.id}`"
+      class="text-decoration-none v-col-12 v-col-sm-6 v-col-md-4 pa-4"
     >
       <module-content-medium
         :created-at="item?.createdAt"
-        :updated-at="item?.updatedAt"
+        :user-name="item.user?.name"
         :title="item?.title"
         :img-key="item?.file?.key"
         :identity-id="item?.file?.identityId"
       >
-        <atom-text
-          :text="item.user?.name"
-          font-size="text-caption"
-          font-weight="font-weight-regular"
-          class="text-right"
-        />
       </module-content-medium>
     </nuxt-link>
   </div>

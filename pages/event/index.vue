@@ -18,31 +18,40 @@ await getEvents()
   <div class="d-flex py-10">
     <atom-text font-size="text-h4" text="Event" />
     <v-spacer />
-    <atom-button-outlined v-if="isSignedIn" text="新規作成" @click="navigateTo('/admin/event')" />
+    <nuxt-link v-if="isSignedIn" to="/admin/event">
+      <atom-button text="編集する" />
+    </nuxt-link>
   </div>
   <div class="d-flex flex-wrap">
-    <module-content-medium
+    <nuxt-link
       v-for="item in events"
       :key="item.id"
-      :img-key="item.file?.key"
-      :identity-id="item.file?.identityId"
-      :created-at="item.createdAt"
-      :updated-at="item.updatedAt"
-      :title="item.title"
-      class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click="navigateTo('/event/' + item.id)"
+      :to="`/event/${item.id}`"
+      class="text-decoration-none v-col-12 v-col-sm-6 v-col-md-4 pa-4"
     >
-      <atom-text
-        font-size="text-subtitle-2"
-        :text="item.wanted ? '募集中' : '募集停止'"
-        :color="item.wanted ? 'text-white' : 'text-grey-darken-1'"
-        class="rounded text-center border-width-1 border-solid pa-1 mx-2"
-        :class="[
-          item.wanted
-            ? 'border-light-blue-darken-4 bg-light-blue-darken-4'
-            : 'border-grey-darken-1 bg-transparent'
-        ]"
-      />
-    </module-content-medium>
+      <module-content-medium
+        :created-at="item.createdAt"
+        :title="item.title"
+        :img-key="item.file?.key"
+        :identity-id="item.file?.identityId"
+      >
+        <template #meta>
+          <v-chip
+            :text="item.wanted ? '募集中' : '募集停止'"
+            :color="item.wanted ? 'success' : 'grey'"
+            density="compact"
+            class="font-weight-bold line-height-20"
+          >
+            <template #prepend>
+              <v-icon
+                :icon="item.wanted ? 'mdi-check' : 'mdi-pause-octagon-outline'"
+                size="20"
+                class="mr-1"
+              />
+            </template>
+          </v-chip>
+        </template>
+      </module-content-medium>
+    </nuxt-link>
   </div>
 </template>

@@ -111,7 +111,7 @@ const menu = [
       class="pl-5 pr-10 pb-10 bg-white overflow-y-auto scrollbar-hidden position-relative"
       :style="{ flex: '1', height: '100dvh' }"
     >
-      <div class="mx-auto" style="max-width: 750px">
+      <div class="mx-auto" style="max-width: 800px">
         <atom-text
           font-size="text-h6"
           line-height="line-height-lg"
@@ -124,7 +124,7 @@ const menu = [
     </div>
     <div
       class="d-flex position-absolute top-0 right-0 z-index-10 transition-medium-ease-out"
-      :class="open ? 'right-0' : `right-n${200 + 12}`"
+      :class="open ? 'right-0' : 'right-n200'"
       :style="{ width: `${232 + 12}px`, height: '100dvh' }"
     >
       <div class="width-32 h-100">

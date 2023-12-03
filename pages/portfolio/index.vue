@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router'
 import type { Portfolio, ListPortfoliosQuery } from '~/assets/API'
 import { listPortfolios } from '~/assets/graphql/queries'
 const portfolios = ref<Portfolio[]>([])
@@ -16,17 +17,20 @@ await getPortfolios()
 <template>
   <atom-text font-size="text-h4" text="Portfolio" class="py-10" />
   <div class="d-flex flex-wrap">
-    <module-content-medium
+    <nuxt-link
       v-for="item in portfolios"
       :key="item.id"
-      :img-key="item.file?.key"
-      :identity-id="item.file?.identityId"
-      :created-at="item.createdAt"
-      :updated-at="item.updatedAt"
-      :title="item.title"
-      class="v-col-12 v-col-sm-6 v-col-md-4"
-      @click="navigateTo(item.url, { external: true })"
+      :to="item.url ? `${item.url}` : '/'"
+      target="_blank"
+      class="text-decoration-none v-col-12 v-col-sm-6 v-col-md-4 pa-4"
     >
-    </module-content-medium>
+      <module-content-medium
+        :created-at="item.createdAt"
+        :title="item.title"
+        :img-key="item.file?.key"
+        :identity-id="item.file?.identityId"
+      >
+      </module-content-medium>
+    </nuxt-link>
   </div>
 </template>
