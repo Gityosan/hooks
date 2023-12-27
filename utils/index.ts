@@ -140,3 +140,12 @@ export const scrollbarXVisible = (e: HTMLElement): boolean => e.scrollHeight > e
 export const scrollbarYVisible = (e: HTMLElement): boolean => e.scrollWidth > e.clientWidth
 export const scrollbarXWidth = (e: HTMLElement): number => e.scrollHeight - e.clientHeight
 export const scrollbarYWidth = (e: HTMLElement): number => e.scrollWidth - e.clientWidth
+export const bytesToSize = (bytes: number | string | undefined | null): string => {
+  if (bytes === undefined) return ''
+  bytes = Number(bytes)
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  if (bytes === 0) return 'n/a'
+  const i = parseInt(`${Math.floor(Math.log(bytes) / Math.log(1024))}`, 10)
+  if (i === 0) return `${bytes} ${sizes[i]})`
+  return `${(bytes / 1024 ** i).toFixed(1)} ${sizes[i]}`
+}

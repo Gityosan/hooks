@@ -51,14 +51,14 @@ watch(props, async (_, c) => {
     <v-img v-if="imageURL" :src="imageURL" :aspect-ratio="16 / 9" class="max-height-198" />
     <v-hover v-slot="{ isHovering, props: hover }">
       <div
-        class="w-100 h-100 pa-10 d-flex flex-column justify-center align-center position-absolute top-0 left-0 transition-short-ease-out"
+        class="w-100 h-100 pa-10 d-flex flex-column justify-center align-center position-absolute top-0 left-0 rounded transition-short-ease-out"
         :class="[
           { 'bg-grey-darken-2': isDropOvering || (imageURL && isHovering) },
           isDropOvering || (imageURL && isHovering)
             ? 'opacity-dot8'
             : imageURL
-            ? 'opacity-dot0'
-            : 'opacity-dot10'
+              ? 'opacity-dot0'
+              : 'opacity-dot10'
         ]"
         v-bind="hover"
         @drop.stop.prevent="onDrop($event)"
@@ -79,7 +79,7 @@ watch(props, async (_, c) => {
         />
         <atom-button
           v-if="imageURL"
-          text="リセット"
+          :text="`リセット（ ${modelValue?.name || ''} ）`"
           icon="mdi-close"
           class="bg-white rounded border-solid border-width-1 border-grey-lighten-1"
           @click="resetFileObject()"
