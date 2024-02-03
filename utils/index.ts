@@ -98,7 +98,7 @@ export const getYMD = (string: string | null = '', separator = '/') => {
 }
 export const isObject = (v: unknown) => v !== null && typeof v === 'object'
 export const isFile = (v: unknown): v is File => v instanceof File
-export const isDate = (v: unknown): v is File => v instanceof Date
+export const isDate = (v: unknown): v is Date => v instanceof Date
 export const isEmptyObject = (v: any): v is object =>
   isObject(v) && !isFile(v) && !isDate(v) && !Object.keys(v).length
 export const filterAttr = <T>(object: T, excludeAttr: string[] = []): T => {
